@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Item.belongsTo(models.Category, {
         foreignKey: 'category_id'
       })
-      Item.belongsTo(models.TransactionDetail, {
+      Item.hasMany(models.TransactionDetail, {
         foreignKey: 'item_id'
       })
     }
@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     stock: DataTypes.INTEGER,
     image_url: DataTypes.STRING,
-    supplier_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Item',
