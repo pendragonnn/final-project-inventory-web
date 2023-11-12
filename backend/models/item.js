@@ -15,7 +15,11 @@ module.exports = (sequelize, DataTypes) => {
        
       })
       Item.hasMany(models.TransactionDetail, {
+<<<<<<< HEAD
         foreignKey: 'item_id'  //hasMany
+=======
+        foreignKey: 'item_id'
+>>>>>>> 3413891fc6e1c31f0e6ec744cee1f54190acb65c
       })
     }
   }
@@ -30,8 +34,11 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     stock: DataTypes.INTEGER,
     image_url: DataTypes.STRING,
+<<<<<<< HEAD
     supplier_id: DataTypes.INTEGER,
     deletedAt:DataTypes.DATE
+=======
+>>>>>>> 3413891fc6e1c31f0e6ec744cee1f54190acb65c
   }, {
     sequelize,
     modelName: 'Item',
