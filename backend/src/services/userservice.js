@@ -1,7 +1,7 @@
 const userRepo = require("../repository/userRepo");
 
 const getAllUser = async () => {
-  return await userRepo.getAllUser()
+  return await userRepo.getAllUser();
 };
 
 const getUserById = async (id) => {
