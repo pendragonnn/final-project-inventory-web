@@ -7,7 +7,7 @@ dotenv.config()
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const router = require("./src/routes/index")
+const router = require("./src/route/index")
 app.use(router)
 
 const PORT = process.env.AppPORT 
