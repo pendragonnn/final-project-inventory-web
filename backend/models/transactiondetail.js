@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       TransactionDetail.hasMany(models.TransactionHeader, {
         foreignKey: 'header_id'
       })
-      TransactionDetail.hasMany(models.Item, {
+      TransactionDetail.belongsTo(models.Item, {
         foreignKey: 'item_id'
       })
     }
