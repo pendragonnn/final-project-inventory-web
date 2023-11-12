@@ -1,5 +1,5 @@
-const itemService = require("../services/itemService");
-const repository = require("../repositories/itemsRepository");
+const itemService = require("../service/itemService");
+const repository = require("../repository/itemsRepository");
 
 const itemsController = {
 

@@ -1,4 +1,4 @@
-const itemRepository = require("../repositories/itemsRepository");
+const itemRepository = require("../../repositories/itemsRepository");
 
 const itemService = {
   validateCategory: function (category_id) {
