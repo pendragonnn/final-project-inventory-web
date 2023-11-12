@@ -1,4 +1,4 @@
-const usersevice = require("../services/userservice");
+const usersevice = require("../service/userservice");
 const fs = require("fs");
 
 const getAllUser = async (req, res) => {
