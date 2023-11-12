@@ -1,20 +1,17 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
+const express = require("express");;
+const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-dotenv.config();
 
-const itemsRouter = require("./src/route/items");
+const app = express();
+dotenv.config()
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+const router = require("./src/route/index")
+app.use(router)
+
+const PORT = process.env.AppPORT 
 
 app.listen(PORT, () => {
-  console.log(`app Running in localhost:${PORT}`);
+  console.log(`Server running on https://localhost: ${PORT}`);
 });
-
-
-
-app.use(express.json());
-
-app.use("/",itemsRouter);
-
-

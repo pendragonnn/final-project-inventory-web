@@ -1,6 +1,6 @@
 const { Utils } = require("sequelize");
 const models = require("../../models");
-const handleItem = require("../../utils/itemUtils")
+const handleItem = require("../util/itemUtils")
 const Item = models.Item;
 
 const itemRepository = {
