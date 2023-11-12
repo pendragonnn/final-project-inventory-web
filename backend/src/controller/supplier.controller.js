@@ -1,77 +1,83 @@
-// src/controller/supplier.controller.js
-const supplierService = require("../service/supplier.service");
+const {
+  getAllSuppliers,
+  getSupplierById,
+  insertSupplier,
+  editSupplierById,
+  deleteSupplierById,
+} = require("../service/supplier.service");
 
-const createSupplier = async (req, res) => {
+const allSuppliers = async (req, res) => {
+  const suppliers = await getAllSuppliers();
+  res.json(suppliers);
+};
+
+const supplierById = async (req, res) => {
   try {
-    const supplierData = req.body;
-    const newSupplier = await supplierService.createSupplier(supplierData);
-    res.status(201).json(newSupplier);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    const supplierId = req.params.id;
+    const supplier = await getSupplierById(supplierId);
+
+    res.send(supplier);
+  } catch (err) {
+    res.status(404).send(err.message);
   }
 };
 
-const getSuppliers = async (req, res) => {
+const postSupplier = async (req, res) => {
   try {
-    const suppliers = await supplierService.getSuppliers();
-    res.status(200).json(suppliers);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+    const newSupplierData = req.body;
 
-const getSupplierById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const supplier = await supplierService.getSupplierById(id);
-    if (supplier) {
-      res.status(200).json(supplier);
-    } else {
-      res.status(404).json({ message: "Supplier not found" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    const supplier = await insertSupplier(newSupplierData);
+
+    res.json({
+      data: supplier,
+      message: "Supplier berhasil ditambahkan",
+    });
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 };
 
 const updateSupplier = async (req, res) => {
+  const supplierId = req.params.id;
+  const supplierData = req.body;
+
+  if (!(supplierData.name && supplierData.address && supplierData.phone)) {
+    return res.status(400).send("Data harus diisi semua");
+  }
+
   try {
-    const { id } = req.params;
-    const updatedData = req.body;
-    const result = await supplierService.updateSupplier(id, updatedData);
-    if (result[0] === 1) {
-      res.status(200).json({ message: "Supplier updated successfully" });
-    } else {
-      res.status(404).json({ message: "Supplier not found" });
+    const supplier = await editSupplierById(supplierId, supplierData);
+    if (!supplier) {
+      return res
+        .status(400)
+        .json({ Error: "Data sudah ada atau supplier tidak ditemukan" });
     }
+
+    res.send({
+      data: supplier,
+      message: "supplier berhasil diupdate!",
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error); // Tambahkan log untuk melihat kesalahan
+    return res.status(500).json({ Error: "Terjadi kesalahan server" });
   }
 };
 
-const deleteSupplier = async (req, res) => {
+const removeSupplier = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await supplierService.deleteSupplier(id);
-    if (result === 1) {
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "Supplier not found" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    const supplierId = req.params.id;
+
+    await deleteSupplierById(supplierId);
+    res.send("Data berhasil dihapus");
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 };
 
 module.exports = {
-  createSupplier,
-  getSuppliers,
-  getSupplierById,
+  allSuppliers,
+  supplierById,
+  postSupplier,
   updateSupplier,
-  deleteSupplier,
+  removeSupplier,
 };
