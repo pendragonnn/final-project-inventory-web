@@ -1,5 +1,5 @@
 const usersevice = require("../services/userservice");
-const fs = require("fs");
+const fs = require("fs")
 
 const getAllUser = async (req, res) => {
   try {

@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const router = require("./src/routes/index")
 app.use(router)
 
-const PORT = process.env.AppPORT
+const PORT = process.env.AppPORT || 3000
 
 app.listen(PORT, () => {
   console.log(`Server running on https://localhost: ${PORT}`);
