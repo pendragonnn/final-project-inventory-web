@@ -15,17 +15,12 @@ module.exports = (sequelize, DataTypes) => {
        
       })
       Item.hasMany(models.TransactionDetail, {
-<<<<<<< HEAD
 
-        foreignKey: 'item_id'  //hasMany        foreignKey: 'item_id'
 
-=======
-<<<<<<< HEAD
-        foreignKey: 'item_id'  //hasMany
-=======
-        foreignKey: 'item_id'
->>>>>>> 3413891fc6e1c31f0e6ec744cee1f54190acb65c
->>>>>>> 546562d79de5dbd8e8fdd885cbb63056eaa85c07
+        foreignKey: 'item_id' 
+
+
+
       })
     }
   }
@@ -40,17 +35,14 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     stock: DataTypes.INTEGER,
     image_url: DataTypes.STRING,
-<<<<<<< HEAD
+
+    supplier_id: DataTypes.INTEGER,
+    deletedAt:DataTypes.DATE,
+
+
     supplier_id: DataTypes.INTEGER,
     deletedAt:DataTypes.DATE
 
-=======
-<<<<<<< HEAD
-    supplier_id: DataTypes.INTEGER,
-    deletedAt:DataTypes.DATE
-=======
->>>>>>> 3413891fc6e1c31f0e6ec744cee1f54190acb65c
->>>>>>> 546562d79de5dbd8e8fdd885cbb63056eaa85c07
   }, {
     sequelize,
     modelName: 'Item',
