@@ -3,7 +3,7 @@ const route = express.Router();
 const userCont = require("../controller/user.controller");
 const upload = require('../../config/multerConfig');
 
-route.get("/users", userCont.getAllUser)
+route.get("/users", userCont.getAllUser);
 route.get("/users/:id", userCont.getUserById);
 route.post("/users", userCont.createNewUser);
 route.put("/users/:id", userCont.updateUserById);
