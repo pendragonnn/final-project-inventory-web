@@ -14,9 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       Item.hasMany(models.TransactionDetail, {
         foreignKey: "item_id", //hasMany        foreignKey: 'item_id'
       })
-      //       foreignKey: 'item_id'  //hasMany
-      // =======
-      //         foreignKey: 'item_id'
     }
   }
   Item.init(
@@ -30,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       image_url: DataTypes.STRING,
-      // supplier_id: DataTypes.STRING,
-      // deletedAt: DataTypes.DATE,
+      supplier_id: DataTypes.STRING,
+      deletedAt: DataTypes.DATE,
     },
     {
       sequelize,
