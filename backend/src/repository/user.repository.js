@@ -33,7 +33,7 @@ const insertUser = async (userData) => {
 
     return user;
   } catch (error) {
-    console.error("Gagal membuat outlet:", error);
+    console.error("Gagal membuat user", error);
     throw error;
   }
 };
