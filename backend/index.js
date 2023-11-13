@@ -5,7 +5,7 @@ const app = express()
 dotenv.config()
 app.use(express.json())
 
-const router = require("./src/route/transactionheader.route")
+const router = require("./src/route/index")
 app.use(router)
 
 const PORT = process.env.PORT

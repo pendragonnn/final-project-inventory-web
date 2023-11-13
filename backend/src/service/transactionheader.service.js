@@ -18,32 +18,12 @@ const getTransactionHeaderById = async (id) => {
   const transactionheader = await findTransactionHeadertById(id)
 
   if (!transactionheader) {
-    throw err("transaction header not found")
+    throw Error("transaction header not found")
   }
   return transactionheader
 }
 
 const insertTransactionHeader = async (newTransactionHeader) => {
-  // const transactionheaderUser_id = await findTransactionHeadertByUserId(
-  //   newTransactionHeader.user_id
-  // )
-  // const transactionheaderOutlet_id = await findTransactionHeadertByOutletId(
-  //   newTransactionHeader.outlet_id
-  // )
-  // const transactionheaderSupplier_id = await findTransactionHeadertBySupplierId(
-  //   newTransactionHeader.supplier_id
-  // )
-
-  // if (transactionheaderUser_id) {
-  //   throw new Error("User sudah terdaftar")
-  // }
-  // if (transactionheaderOutlet_id) {
-  //   throw new Error("Outlet sudah terdaftar")
-  // }
-  // if (transactionheaderSupplier_id) {
-  //   throw new Error("Supplier sudah terdaftar")
-  // }
-
   const transactionheader = await createTransactionHeader(newTransactionHeader)
 
   return transactionheader

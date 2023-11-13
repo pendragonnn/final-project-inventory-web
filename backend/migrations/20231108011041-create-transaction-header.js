@@ -1,60 +1,72 @@
-'use strict';
+"use strict"
+
+const { sequelize } = require("../models")
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('TransactionHeaders', {
+    await queryInterface.createTable("TransactionHeaders", {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       user_id: {
         type: Sequelize.STRING,
         references: {
           model: {
-            tableName: 'Users'
+            tableName: "Users",
           },
-          key:'id'
-        }
+          key: "id",
+        },
       },
       outlet_id: {
         type: Sequelize.STRING,
         references: {
           model: {
-            tableName: 'Outlets'
+            tableName: "Outlets",
           },
-          key:'id'
-        }
+          key: "id",
+        },
+      },
+      item_id: {
+        type: Sequelize.STRING,
+        references: {
+          model: {
+            tableName: "Items",
+          },
+          key: "id",
+        },
       },
       supplier_id: {
         type: Sequelize.STRING,
         references: {
           model: {
-            tableName: 'Suppliers'
+            tableName: "Suppliers",
           },
-          key:'id'
-        }
+          key: "id",
+        },
       },
       information: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       transaction_date: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       total_amount: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('TransactionHeaders');
-  }
-};
+    await queryInterface.dropTable("TransactionHeaders")
+  },
+}

@@ -57,11 +57,9 @@ const updateTransactionHeader = async (req, res) => {
       transactionheaderData
     )
     if (!transactionheader) {
-      return res
-        .status(400)
-        .json({
-          Error: "Data sudah ada atau Transaction Header tidak ditemukan",
-        })
+      return res.status(400).json({
+        Error: "Data sudah ada atau Transaction Header tidak ditemukan",
+      })
     }
 
     res.send({

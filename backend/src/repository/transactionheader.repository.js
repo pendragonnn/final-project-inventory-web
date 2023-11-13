@@ -51,7 +51,7 @@ function generateNewId(existingIds) {
   }, 0)
 
   const newNumber = maxNumber + 1
-  const newId = `O-${String(newNumber).padStart(4, "0")}`
+  const newId = `TH-${String(newNumber).padStart(4, "0")}`
 
   return newId
 }
@@ -71,9 +71,11 @@ const createTransactionHeader = async (transactionheaderData) => {
     // Menambahkan outlet baru
     const transactionheader = await TransactionsHeaders.create({
       id: newId,
-      // user_id: transactionheaderData.user_id,
-      // outlet_id: transactionheaderData.outlet_id,
-      // supplier_id: transactionheaderData.supplier_id,
+      user_id: transactionheaderData.user_id,
+      outlet_id: transactionheaderData.outlet_id,
+      supplier_id: transactionheaderData.supplier_id,
+      item_id: transactionheaderData.item_id,
+      transaction_date: transactionheaderData.transaction_date,
       information: transactionheaderData.information,
       total_amount: transactionheaderData.total_amount,
     })
@@ -88,6 +90,10 @@ const createTransactionHeader = async (transactionheaderData) => {
 const editTransactionHeader = async (id, transactionheaderData) => {
   const updatedTransactionHeader = await TransactionsHeaders.update(
     {
+      outlet_id: transactionheaderData.outlet_id,
+      supplier_id: transactionheaderData.supplier_id,
+      item_id: transactionheaderData.item_id,
+      transaction_date: transactionheaderData.transaction_date,
       information: transactionheaderData.information,
       total_amount: transactionheaderData.total_amount,
     },
