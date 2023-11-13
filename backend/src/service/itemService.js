@@ -79,9 +79,9 @@ const itemService = {
 
   // softDeleteItems: async function (id) {
   //   try {
-  //     return await itemRepository.softDeleteItem(id);
+  //     return await itemRepository.softDeleteItem(id)
   //   } catch (error) {
-  //     throw new Error("Failed to soft delete item: " + error.message);
+  //     throw new Error("Failed to soft delete item: " + error.message)
   //   }
   // },
 }

@@ -12,11 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "category_id",
       })
       Item.hasMany(models.TransactionDetail, {
-
-
-
-        foreignKey: 'item_id' 
-
+        foreignKey: "item_id",
       })
     }
   }
@@ -33,24 +29,20 @@ module.exports = (sequelize, DataTypes) => {
       image_url: DataTypes.STRING,
       supplier_id: DataTypes.STRING,
       deletedAt: DataTypes.DATE,
-   
-    price: DataTypes.INTEGER,
-    stock: DataTypes.INTEGER,
-    image_url: DataTypes.STRING,
 
-    supplier_id: DataTypes.INTEGER,
-    deletedAt:DataTypes.DATE,
+      price: DataTypes.INTEGER,
+      stock: DataTypes.INTEGER,
+      image_url: DataTypes.STRING,
 
-
-    supplier_id: DataTypes.INTEGER,
-    deletedAt:DataTypes.DATE
-
-  }, {
-    sequelize,
-    modelName: 'Item',
-    paranoid: true, 
-    timestamps: true
-  });
-  return Item;
-};
-
+      supplier_id: DataTypes.INTEGER,
+      deletedAt: DataTypes.DATE,
+    },
+    {
+      sequelize,
+      modelName: "Item",
+      paranoid: true,
+      timestamps: true,
+    }
+  )
+  return Item
+}
