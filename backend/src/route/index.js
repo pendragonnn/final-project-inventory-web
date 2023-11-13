@@ -6,6 +6,7 @@ const transactiondetailRoutes = require("./transactiondetail.route")
 
 router.use("/transaction_header", transactionheaderRoutes)
 router.use("/transaction_detail", transactiondetailRoutes)
+
 const suppliersRoutes = require("../route/supplier.route")
 router.use("/", suppliersRoutes)
 const outletsRoutes = require("../route/outlet.route")
