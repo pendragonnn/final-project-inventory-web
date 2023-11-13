@@ -1,21 +1,21 @@
-const { Utils } = require("sequelize");
-const models = require("../../models");
+const { Utils } = require("sequelize")
+const models = require("../../models")
 const handleItem = require("../util/itemUtils")
-const Item = models.Item;
+const Item = models.Item
 
 const itemRepository = {
   getAllItems: async function () {
     try {
-      return await Item.findAndCountAll();
+      return await Item.findAll()
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message)
     }
   },
   getDetailItems: async function (id) {
     try {
-      return await Item.findByPk(id);
+      return await Item.findByPk(id)
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message)
     }
   },
 
@@ -30,19 +30,19 @@ const itemRepository = {
   ) {
     try {
       // Pindahkan definisi existingIds di luar fungsi generateNewId
-      const existingIds = await Item.findAll({ attributes: ["id"] });
+      const existingIds = await Item.findAll({ attributes: ["id"] })
 
-      const newId = handleItem.generateNewId(existingIds);
+      const newId = handleItem.generateNewId(existingIds)
 
-      console.log(newId);
+      console.log(newId)
 
       // Pastikan newId tidak null sebelum mencoba membuat item
       if (!newId) {
-        throw new Error("Failed to generate a valid ID");
+        throw new Error("Failed to generate a valid ID")
       }
 
       if (typeof category_id !== "string") {
-        throw new Error("Invalid value for 'category_id'");
+        throw new Error("Invalid value for 'category_id'")
       }
 
       const newItem = await Item.create({
@@ -54,17 +54,15 @@ const itemRepository = {
         stock,
         image_url,
         supplier_id,
-      });
+      })
 
-      return newItem;
+      return newItem
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message)
     }
   },
 
-
   updateItems: async function (
-  
     name,
     description,
     category_id,
@@ -85,30 +83,30 @@ const itemRepository = {
           supplier_id,
         },
         { where: { id: id } }
-      );
+      )
 
-      return updatedItem;
+      return updatedItem
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error(error.message)
     }
   },
-  softDeleteItem: async function (id) {
-    try {
-      const [rowsAffected, deletedItem] = await Item.update(
-        { deletedAt: new Date() },
-        { where: { id: id }, returning: true }
-      );
+  // softDeleteItem: async function (id) {
+  //   try {
+  //     const [rowsAffected, deletedItem] = await Item.update(
+  //       { deletedAt: new Date() },
+  //       { where: { id: id }, returning: true }
+  //     )
 
-      if (rowsAffected === 0) {
-        throw new Error("Item not fount");
-      }
+  //     if (rowsAffected === 0) {
+  //       throw new Error("Item not fount")
+  //     }
 
-      return deletedItem[0];
-    } catch (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-  },
-};
+  //     return deletedItem[0]
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw new Error(error.message)
+  //   }
+  // },
+}
 
-module.exports = itemRepository;
+module.exports = itemRepository
