@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const authRoutes = require("./auth.route");
+router.use("/", authRoutes);
 const suppliersRoutes = require("../route/supplier.route");
 router.use("/", suppliersRoutes);
 const outletsRoutes = require("../route/outlet.route");
