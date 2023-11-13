@@ -1,44 +1,46 @@
-'use strict';
+"use strict"
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    return queryInterface.bulkInsert('TransactionHeaders', [
+  async up(queryInterface, Sequelize) {
+    return queryInterface.bulkInsert("TransactionHeaders", [
       {
-        id: 'TH-0001',
-        user_id: 'U-0002',
-        outlet_id: 'O-0001',
-        information: 'Issuing',
+        id: "TH-0001",
+        user_id: "U-0002",
+        outlet_id: "O-0001",
+        item_id: "I-0001",
+        information: "Issuing",
         transaction_date: new Date(),
         total_amount: 10000000,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        id: 'TH-0002',
-        user_id: 'U-0002',
-        supplier_id: 'S-0001',
-        information: 'Recieving',
+        id: "TH-0002",
+        user_id: "U-0002",
+        supplier_id: "S-0001",
+        item_id: "I-0002",
+        information: "Recieving",
         transaction_date: new Date(),
         total_amount: 10000000,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        id: 'TH-0003',
-        user_id: 'U-0002',
-        outlet_id: 'O-0002',
-        information: 'Issuing',
+        id: "TH-0003",
+        user_id: "U-0002",
+        outlet_id: "O-0002",
+        item_id: "I-0003",
+        information: "Issuing",
         transaction_date: new Date(),
         total_amount: 8000000,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      
-    ]);
+    ])
   },
 
-  async down (queryInterface, Sequelize) {
-    return queryInterface.bulkDelete('TransactionHeaders', null, {});
-  }
-};
+  async down(queryInterface, Sequelize) {
+    return queryInterface.bulkDelete("TransactionHeaders", null, {})
+  },
+}
