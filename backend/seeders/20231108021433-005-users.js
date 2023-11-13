@@ -6,7 +6,7 @@ module.exports = {
     return queryInterface.bulkInsert("Users", [
       {
         id: "U-0001",
-        role_id: "R-0001",
+        role_id: "1",
         full_name: "Deddy Coral",
         username: "deddy_admin",
         email: "uhuy@gmail.com",
@@ -17,7 +17,7 @@ module.exports = {
       },
       {
         id: "U-0002",
-        role_id: "R-0002",
+        role_id: "2",
         full_name: "Alana Cho",
         username: "alana_staff",
         email: "uhuy@gmail.com",
@@ -28,7 +28,7 @@ module.exports = {
       },
       {
         id: "U-0003",
-        role_id: "R-0003",
+        role_id: "3",
         full_name: "Diandra Hakim",
         username: "diandra_manager",
         email: "uhuy@gmail.com",
