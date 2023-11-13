@@ -41,10 +41,8 @@ const createOutlet = async (outletData) => {
     // Mengambil semua ID yang sudah ada
     const existingIds = await Outlets.findAll({ attributes: ["id"] });
 
-    // Membuat ID baru dengan format "O-XXXX"
     const newId = generateNewId(existingIds.map((outlet) => outlet.id));
 
-    // Menambahkan outlet baru
     const outlet = await Outlets.create({
       id: newId,
       name: outletData.name,
@@ -59,7 +57,6 @@ const createOutlet = async (outletData) => {
   }
 };
 
-// Fungsi untuk membuat ID baru dengan format "O-XXXX"
 function generateNewId(existingIds) {
   const maxNumber = existingIds.reduce((max, id) => {
     const currentNumber = parseInt(id.split("-")[1], 10);
