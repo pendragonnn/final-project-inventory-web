@@ -17,19 +17,17 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
   }
-  User.init(
-    {
-      role_id: DataTypes.STRING,
-      full_name: DataTypes.STRING,
-      username: DataTypes.STRING,
-      email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      image_url: DataTypes.STRING,
-    },
-    {
-      sequelize,
-      modelName: "User",
-    }
-  )
-  return User
-}
+
+  User.init({
+    role_id: DataTypes.STRING,
+    full_name: DataTypes.STRING,
+    username: DataTypes.STRING,
+    password: DataTypes.STRING,
+    image_url: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
+  return User;
+};
+
