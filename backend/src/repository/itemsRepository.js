@@ -3,10 +3,12 @@ const models = require("../../models")
 const handleItem = require("../util/itemUtils")
 const Item = models.Item
 
-const itemRepository = {
+const itemRepository = { 
   getAllItems: async function () {
+  
     try {
       return await Item.findAll()
+      
     } catch (error) {
       throw new Error(error.message)
     }
@@ -26,24 +28,20 @@ const itemRepository = {
     price,
     stock,
     image_url,
-    supplier_id
+  
   ) {
     try {
-      // Pindahkan definisi existingIds di luar fungsi generateNewId
+    
       const existingIds = await Item.findAll({ attributes: ["id"] })
 
       const newId = handleItem.generateNewId(existingIds)
 
       console.log(newId)
 
-      // Pastikan newId tidak null sebelum mencoba membuat item
       if (!newId) {
         throw new Error("Failed to generate a valid ID")
       }
 
-      if (typeof category_id !== "string") {
-        throw new Error("Invalid value for 'category_id'")
-      }
 
       const newItem = await Item.create({
         id: newId,
@@ -53,8 +51,7 @@ const itemRepository = {
         price,
         stock,
         image_url,
-        supplier_id,
-      })
+      });
 
       return newItem
     } catch (error) {
@@ -63,50 +60,56 @@ const itemRepository = {
   },
 
   updateItems: async function (
+    id,
     name,
     description,
     category_id,
     price,
     stock,
     image_url,
-    supplier_id
+  
   ) {
     try {
-      const updatedItem = await Item.update(
-        {
-          name,
-          description,
-          category_id,
-          price,
-          stock,
-          image_url,
-          supplier_id,
-        },
-        { where: { id: id } }
-      )
+      this.validateCategory(category_id)
 
-      return updatedItem
+      return await itemRepository.updateItems(
+        id,
+        name,
+        description,
+        category_id,
+        price,
+        stock,
+        image_url,
+    
+      )
     } catch (error) {
-      throw new Error(error.message)
+      throw new Error("Failed to update item: " + error.message)
     }
   },
-  // softDeleteItem: async function (id) {
-  //   try {
-  //     const [rowsAffected, deletedItem] = await Item.update(
-  //       { deletedAt: new Date() },
-  //       { where: { id: id }, returning: true }
-  //     )
 
-  //     if (rowsAffected === 0) {
-  //       throw new Error("Item not fount")
-  //     }
+  
+  deleteItem: async function (id) {
+    try {
+      const itemToDelete = await Item.findByPk(id);
 
-  //     return deletedItem[0]
-  //   } catch (error) {
-  //     console.log(error)
-  //     throw new Error(error.message)
-  //   }
-  // },
+      if (!itemToDelete) {
+        throw new Error("Item not found");
+      }
+
+      await itemToDelete.destroy();
+
+      return { message: "Item deleted successfully" };
+    } catch (error) {
+      throw new Error("Failed to delete item: " + error.message);
+    }
+  },
+
+ 
+  
+   
+ 
+  
+
 }
 
 module.exports = itemRepository

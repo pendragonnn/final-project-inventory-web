@@ -20,3 +20,44 @@ app.get("/test", (req, res)=>{
 app.listen(PORT, ()=>{
     console.log(`App running in port: ${PORT}`);
 });
+
+
+
+
+  // uploadImage: async function (req, res) {
+  //   const file = req.file
+  //   try {
+  //     if (!file) {
+  //       return res.status(400).send({
+  //         status: false,
+  //         message: "No file is selected",
+  //       })
+  //     }
+
+  //     const urlImage = `../upload/${file.filename}`
+  //     const { name, description, category_id, price, stock, supplier_id } =
+  //       req.body
+
+  //     // Lakukan validasi atau pemeriksaan apakah category_id sesuai dengan yang diinginkan
+
+  //     const items = await repository.createItems(
+  //       name,
+  //       description,
+  //       category_id,
+  //       price,
+  //       stock,
+  //       urlImage,
+  //       supplier_id
+  //     )
+
+  //     if (!items) {
+  //       return res.status(404).json({ message: "Film not found" })
+  //     }
+
+  //     await items.save()
+  //     res.json({ message: "Upload image success" })
+  //   } catch (error) {
+  //     console.error(error)
+  //     res.status(500).json({ message: "Upload image fail" })
+  //   }
+  // },

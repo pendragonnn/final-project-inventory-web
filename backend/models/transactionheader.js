@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       TransactionHeader.hasMany(models.TransactionDetail, {
         foreignKey: "header_id",
       })
-      TransactionHeader.hasMany(models.Item, {
+      TransactionHeader.belongsTo(models.Item, {
         foreignKey: "item_id",
       })
     }

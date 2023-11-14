@@ -13,8 +13,8 @@ router.post(
   upload.single("image_url"),
   itemsController.uploadImage
 )
-router.put("/items/:id", itemsController.updateItems)
-// router.delete('/items/:id', itemsController.softDeleteItems);
+router.put("/items/:id", itemsController.updateItem)
+router.delete('/items/:id', itemsController.deleteItem);
 router.use("/items/upload", express.static(uploadDir))
 
 module.exports = router
