@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Item.belongsTo(models.Category, {
         foreignKey: "category_id",
       })
-      Item.hasMany(models.TransactionDetail, {
+      Item.hasMany(models.TransactionHeader, {
 
 
 
@@ -24,25 +24,17 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       description: DataTypes.STRING,
-      category_id: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
+      category_id:DataTypes.STRING,
       price: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       image_url: DataTypes.STRING,
-      supplier_id: DataTypes.STRING,
-      deletedAt: DataTypes.DATE,
+      
+    
    
-    price: DataTypes.INTEGER,
-    stock: DataTypes.INTEGER,
-    image_url: DataTypes.STRING,
-    deletedAt:DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Item',
-    paranoid: true, 
-    timestamps: true
+   
   });
   return Item;
 };
