@@ -6,7 +6,9 @@ const suppliersRoutes = require("../route/supplier.route");
 const outletsRoutes = require("../route/outlet.route");
 const userRouter = require("./userRouter");
 const itemRouter = require("./items");
+const authRoutes = require("./auth.route");
 
+router.use("/", authRoutes);
 router.use("/transaction_header", transactionheaderRoutes);
 router.use("/transaction_detail", transactiondetailRoutes);
 router.use("/", itemRouter);
