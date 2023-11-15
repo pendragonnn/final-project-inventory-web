@@ -1,19 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const swaggerUi = require("swagger-ui-express");
+const apiDocumentation = require("./src/doc/apidocs.json");
+const router = require("./src/route/index");
+const authRoutes = require("./src/route/auth.route");
+dotenv.config();
 
 const app = express();
 
-dotenv.config();
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiDocumentation));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const router = require("./src/route/index");
+app.use(authRoutes);
 app.use(router);
-
-app.use(router);
-
-// app.use(itemRouter);
 
 const PORT = process.env.PORT;
 

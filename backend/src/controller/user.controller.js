@@ -1,22 +1,36 @@
-const usersevice = require("../service/userservice");
+const {
+  getAllUsers,
+  getUserById,
+  insertUser,
+  editUserById,
+  deleteUserById,
+  updateUserPhoto,
+} = require("../service/user.service");
 const fs = require("fs");
 
-const getAllUser = async (req, res) => {
+const allUsers = async (req, res) => {
+  const page = req.query.page || 1
+  const size = req.query.size || 10
   try {
-    const users = await usersevice.getAllUser();
-    res.status(200).json({ data: users });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const { users, dataLength } = await getAllUsers(page, size);
+    res.status(200).json({ 
+      data: users,
+      totalItems: users.length,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(dataLength / size)
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-const getUserById = async (req, res) => {
+const userById = async (req, res) => {
   try {
-    const id = req.params.id;
-    const user = await usersevice.getUserById(id);
+    const userId = req.params.id;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User tidak ditemukan" });
     }
     res.status(200).json({ data: user });
   } catch (error) {
@@ -24,39 +38,50 @@ const getUserById = async (req, res) => {
   }
 };
 
-const createNewUser = async (req, res) => {
+const postUser = async (req, res) => {
   try {
-    const userData = req.body;
-    await usersevice.createNewUser(userData);
-    res.status(200).json({ message: "New user created" });
+    const newUserData = req.body;
+
+    const user = await insertUser(newUserData);
+
+    res.status(200).json({ data: user, message: "User berhasil ditambahkan" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const updateUserById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const userData = req.body;
-    const updateduser = await usersevice.updateUserById(id, userData);
+const updateUser = async (req, res) => {
+  const id = req.params.id;
+  const userData = req.body;
 
-    if (!updateduser) {
-      return res.status(404).json({ message: " User not found " });
-    }
-    res.status(200).json({ message: " user update succesfully " });
+  if(!userData) {
+    return res.status(400).json({ message: "Data harus diisi semua" })
+  }
+
+  try {
+  const user = await editUserById(id, userData);
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: "Data sudah ada atau User tidak ditemukan" });
+  }
+  
+  res.status(200).json({ 
+    data: user, 
+    message: " User berhasil diupdate!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const deleteUserById = async (req, res) => {
+const removeUser = async (req, res) => {
   try {
-    const id = req.params.id;
-    const deleteduser = await usersevice.deleteUserById(id);
-    if (!deleteduser) {
-      return res.status(404).json({ message: " User not found" });
-    }
-    res.status(200).json({ message: " User deleted succesfully " });
+    const userId = req.params.id;
+
+    await deleteUserById(userId);
+
+    res.status(200).json({ message: "Data berhasil dihapus" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -65,7 +90,7 @@ const deleteUserById = async (req, res) => {
 const uploadUserPhoto = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await usersevice.getUserById(id);
+    const user = await getUserById(id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -77,9 +102,7 @@ const uploadUserPhoto = async (req, res) => {
 
     const image_url = req.file.path;
 
-    fs.unlinkSync(req.file.path);
-
-    const updatedUser = await usersevice.updateUserPhoto(id, image_url);
+    const updatedUser = await updateUserPhoto(id, image_url);
 
     res
       .status(200)
@@ -90,10 +113,10 @@ const uploadUserPhoto = async (req, res) => {
 };
 
 module.exports = {
-  getAllUser,
-  getUserById,
-  createNewUser,
-  updateUserById,
-  deleteUserById,
+  allUsers,
+  userById,
+  postUser,
+  updateUser,
+  removeUser,
   uploadUserPhoto,
 };

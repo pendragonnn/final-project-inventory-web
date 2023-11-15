@@ -1,0 +1,1996 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Inventory Web API",
+    "description": "Inventory Web API Documentation",
+    "version": "1.0.0"
+  },
+  "server": [
+    {
+      "url": "http://localhost:5000",
+      "description": "localhost"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication and Authorization",
+      "description": "Authentication and Authorization User"
+    },
+    {
+      "name": "Outlets",
+      "description": "CRUD API Operation for Outlet data"
+    },
+    {
+      "name": "Suppliers",
+      "description": "CRUD API Operation for Supplier data "
+    },
+    {
+      "name": "Categories",
+      "description": "CRUD API Operation for Category data"
+    },
+    {
+      "name": "Roles",
+      "description": "GET All and GET Role by ID"
+    },
+    {
+      "name": "Users",
+      "description": "CRUD API Operation for user data"
+    },
+    {
+      "name": "Items",
+      "description": "CRUD API Operation for item data"
+    },
+    {
+      "name": "Transaction Detail",
+      "description": "CRUD API Operation for transaction detail data"
+    },
+    {
+      "name": "Transaction Header",
+      "description": "CRUD API Operaion for transaction header data"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Authentication and Authorization"
+        ],
+        "summary": "User Register",
+        "description": "For User Register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "example": "1000",
+                    "type": "integer"
+                  },
+                  "email": {
+                    "example": "wisnuandika104@gmail.com",
+                    "type": "string"
+                  },
+                  "gender": {
+                    "example": "Male",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "infolokerboskumantab",
+                    "type": "string"
+                  },
+                  "role": {
+                    "example": "Student",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Authentication and Authorization"
+        ],
+        "summary": "User Login",
+        "description": "For User Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "wisnuandika104@gmail.com",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "infolokerboskumantab",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": [
+          "Authentication and Authorization"
+        ],
+        "summary": "User Logout",
+        "description": "For User Logout",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/outlet": {
+      "post": {
+        "tags": [
+          "Outlets"
+        ],
+        "summary": "Post Outlet",
+        "description": "Adding new Outlet data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Sepatu Kilat Jakarta Timur",
+                    "type": "string"
+                  },
+                  "address": {
+                    "example": "Jalan Jayabaya no. 23",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "example": "089767987123",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Outlets"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Outlets",
+        "description": "Geting All Outlet Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/outlet/{outletId}": {
+      "get": {
+        "tags": [
+          "Outlets"
+        ],
+        "summary": "Get Outlet By ID",
+        "description": "Getting Outlet Data By ID",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "description": "ID for search outlet data",
+            "required": true,
+            "schema": {
+              "example": "O-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Outlets"
+        ],
+        "summary": "Update Outlet",
+        "description": "Updating Outlet Data",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "description": "ID for search outlet data",
+            "required": true,
+            "schema": {
+              "example": "O-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Sepatu Kilat Jawa Timur",
+                    "type": "string"
+                  },
+                  "address": {
+                    "example": "Jalan Sriwijaya no. 2",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "example": "089767987123",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Outlets"
+        ],
+        "summary": "Delete Outlet",
+        "description": "For Deleting Outlet Data",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "description": "ID for search outlet data",
+            "required": true,
+            "schema": {
+              "example": "O-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Post user",
+        "description": "For Creating New User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role_id": {
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "full_name": {
+                    "example": "Achmad Subaru",
+                    "type": "string"
+                  },
+                  "username": {
+                    "example": "Achmad_admin",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "achmadsubaru@gmail.com",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "kusukasubaru",
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "example": "dummy.jpg",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Users",
+        "description": "Geting All Users Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get User By ID",
+        "description": "Getting User Data By ID",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID for search user data",
+            "required": true,
+            "schema": {
+              "example": "U-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update User",
+        "description": "For Update User Data",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID for search user data",
+            "required": true,
+            "schema": {
+              "example": "U-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role_id": {
+                    "example": 2,
+                    "type": "integer"
+                  },
+                  "full_name": {
+                    "example": "Achmad Indah Subaru",
+                    "type": "string"
+                  },
+                  "username": {
+                    "example": "Achmad_staff",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "achmadsubarugantengbanget@gmail.com",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "kusukasubaru",
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "example": "dummy.jpg",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete User",
+        "description": "For Delete User Data",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID for search user data",
+            "required": true,
+            "schema": {
+              "example": "U-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/supplier": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "summary": "Post Suppier",
+        "description": "Adding new Supplier data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "supplier": {
+                    "example": "PT. Jaya Gemilang",
+                    "type": "string"
+                  },
+                  "address": {
+                    "example": "Jalan Raya Merdeka no. 23",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "example": "0897348324823",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Outlets",
+        "description": "Geting All Supplier Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/supplier/{supplierId}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "summary": "Get Supplier By ID",
+        "description": "Getting Supplier Data By ID",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "description": "ID for search supplier data",
+            "required": true,
+            "schema": {
+              "example": "S-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Suppliers"
+        ],
+        "summary": "Update Supplier",
+        "description": "Updating Supplier Data",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "description": "ID for search supplier data",
+            "required": true,
+            "schema": {
+              "example": "S-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "supplier": {
+                    "example": "PT. Hari Senin",
+                    "type": "string"
+                  },
+                  "address": {
+                    "example": "Jalan Sriwijaya Utara no. 2",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "example": "089767987455",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "summary": "Delete Supplier",
+        "description": "For Deleting Supplier Data",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "description": "ID for search supplier data",
+            "required": true,
+            "schema": {
+              "example": "S-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal serve error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/category": {
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Post Category",
+        "description": "Adding new Category data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Boots",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Categories",
+        "description": "Geting All Categories Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/category/{categoryId}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get Category By ID",
+        "description": "Getting Category Data By ID",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID for search category data",
+            "required": true,
+            "schema": {
+              "example": "C-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Update Category",
+        "description": "Updating Category Data",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID for search category data",
+            "required": true,
+            "schema": {
+              "example": "C-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Sandal",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete Category",
+        "description": "For Deleting Category Data",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID for search category data",
+            "required": true,
+            "schema": {
+              "example": "C-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal serve error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/role": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Get All Roles",
+        "description": "Geting All Roles Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/role/{roleId}": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Get Role By ID",
+        "description": "Getting Role Data By ID",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "description": "ID for search role data",
+            "required": true,
+            "schema": {
+              "example": 2,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/transaction-detail": {
+      "post": {
+        "tags": [
+          "Transaction Detail"
+        ],
+        "summary": "Post Transaction Detail",
+        "description": "Adding new transaction detail data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "header_id": {
+                    "example": "TH-0003",
+                    "type": "string"
+                  },
+                  "item_id": {
+                    "example": "I-0003",
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "example": 10,
+                    "type": "integer"
+                  },
+                  "unit_price": {
+                    "example": 1000000,
+                    "type": "integer"
+                  },
+                  "total_price": {
+                    "example": 10000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Transaction Detail"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Transaction Detail",
+        "description": "Geting All Transaction Detail Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/transaction-detail/{transactionDetailId}": {
+      "get": {
+        "tags": [
+          "Transaction Detail"
+        ],
+        "summary": "Get Transaction Detail By ID",
+        "description": "Getting Transaction Detail Data By ID",
+        "parameters": [
+          {
+            "name": "transactionDetailId",
+            "in": "path",
+            "description": "ID for search transaction detail data",
+            "required": true,
+            "schema": {
+              "example": "TD-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Transaction Detail"
+        ],
+        "summary": "Update Transaction Detail",
+        "description": "Updating Transaction Detail Data",
+        "parameters": [
+          {
+            "name": "transactionDetailId",
+            "in": "path",
+            "description": "ID for search transaction detail data",
+            "required": true,
+            "schema": {
+              "example": "TD-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "header_id": {
+                    "example": "TH-0003",
+                    "type": "string"
+                  },
+                  "item_id": {
+                    "example": "I-0002",
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "example": 4,
+                    "type": "integer"
+                  },
+                  "unit_price": {
+                    "example": 1500000,
+                    "type": "integer"
+                  },
+                  "total_price": {
+                    "example": 15000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Transaction Detail"
+        ],
+        "summary": "Delete Transaction Detail",
+        "description": "For Deleting Transaction Detail Data",
+        "parameters": [
+          {
+            "name": "transactionDetailId",
+            "in": "path",
+            "description": "ID for search transaction detail data",
+            "required": true,
+            "schema": {
+              "example": "TD-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal serve error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/transaction-header": {
+      "post": {
+        "tags": [
+          "Transaction Header"
+        ],
+        "summary": "Post Transaction Header",
+        "description": "Adding new transaction header data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "example": "U-0002",
+                    "type": "string"
+                  },
+                  "outlet_id": {
+                    "example": "O-0003",
+                    "type": "string"
+                  },
+                  "supplier_id": {
+                    "example": null,
+                    "type": "string"
+                  },
+                  "item_id": {
+                    "example": "I-0001",
+                    "type": "string"
+                  },
+                  "transaction_date": {
+                    "example": "2023-12-04",
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "information": {
+                    "example": "Barang Keluar",
+                    "type": "string"
+                  },
+                  "total_amount": {
+                    "example": 14000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Transaction Header"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Transaction Header",
+        "description": "Geting All Transaction Header Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/transaction-header/{transactionHeaderId}": {
+      "get": {
+        "tags": [
+          "Transaction Header"
+        ],
+        "summary": "Get Transaction Header By ID",
+        "description": "Getting Transaction Header Data By ID",
+        "parameters": [
+          {
+            "name": "transactionHeaderId",
+            "in": "path",
+            "description": "ID for search transaction header data",
+            "required": true,
+            "schema": {
+              "example": "TH-0005",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Transaction Header"
+        ],
+        "summary": "Update Transaction Header",
+        "description": "Updating Transaction Header Data",
+        "parameters": [
+          {
+            "name": "transactionHeaderId",
+            "in": "path",
+            "description": "ID for search transaction header data",
+            "required": true,
+            "schema": {
+              "example": "TH-0005",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "example": "U-0002",
+                    "type": "string"
+                  },
+                  "outlet_id": {
+                    "example": null,
+                    "type": "string"
+                  },
+                  "supplier_id": {
+                    "example": "S-0002",
+                    "type": "string"
+                  },
+                  "item_id": {
+                    "example": "I-0001",
+                    "type": "string"
+                  },
+                  "transaction_date": {
+                    "example": "2023-12-05",
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "information": {
+                    "example": "Barang Masuk",
+                    "type": "string"
+                  },
+                  "total_amount": {
+                    "example": 13000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Transaction Header"
+        ],
+        "summary": "Delete Transaction Header",
+        "description": "For Deleting Transaction Header Data",
+        "parameters": [
+          {
+            "name": "transactionHeaderId",
+            "in": "path",
+            "description": "ID for search transaction header data",
+            "required": true,
+            "schema": {
+              "example": "TH-0005",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal serve error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/item": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Post Item",
+        "description": "Adding new item data",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Converse 90s",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "Anywhere Shoes",
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "example": "C-0002",
+                    "type": "string"
+                  },
+                  "price": {
+                    "example": 900000,
+                    "type": "string"
+                  },
+                  "stock": {
+                    "example": 140,
+                    "type": "integer"
+                  },
+                  "image_url": {
+                    "example": "dummy.jpg",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page where user are",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size data showed",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "summary": "Get All Items",
+        "description": "Geting All Item Data",
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/item/{itemId}": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Get Item By ID",
+        "description": "Getting Item Data By ID",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ID for search item data",
+            "required": true,
+            "schema": {
+              "example": "I-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Update Item",
+        "description": "Updating Item Data",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ID for search item data",
+            "required": true,
+            "schema": {
+              "example": "I-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "Reebok C85 Classic",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "White clear shoes",
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "example": "C-0002",
+                    "type": "string"
+                  },
+                  "price": {
+                    "example": 950000,
+                    "type": "string"
+                  },
+                  "stock": {
+                    "example": 130,
+                    "type": "integer"
+                  },
+                  "image_url": {
+                    "example": "dummy.jpg",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Delete Item",
+        "description": "For Deleting Item Data",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ID for search Item data",
+            "required": true,
+            "schema": {
+              "example": "I-0004",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal serve error"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    }
+  }
+}

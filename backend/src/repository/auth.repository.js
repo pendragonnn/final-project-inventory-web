@@ -21,7 +21,7 @@ const createUser = async (userData, hashedPassword) => {
 
     const user = await User.create({
       id: newId,
-      role_id: "R-0001",
+      role_id: "1",
       full_name: userData.full_name,
       username: userData.username,
       email: userData.email,
