@@ -38,6 +38,12 @@ module.exports = {
           key: "id",
         },
       },
+      quantity: {
+        type: Sequelize.INTEGER,
+      },
+      unit_price: {
+        type: Sequelize.INTEGER,
+      },
       supplier_id: {
         type: Sequelize.STRING,
         references: {

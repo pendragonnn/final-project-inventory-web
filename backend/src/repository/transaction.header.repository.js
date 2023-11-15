@@ -2,12 +2,12 @@ const models = require("../../models")
 const TransactionsHeaders = models.TransactionHeader
 
 const findsTransactionHeader = async (page, size) => {
-  const offset = (page-1) * size
+  const offset = (page - 1) * size
   const transactionHeadersAll = await TransactionsHeaders.findAll()
   const dataLength = transactionHeadersAll.length
   const transactionHeaders = await TransactionsHeaders.findAll({
     offset: offset,
-    limit: size
+    limit: size,
   })
   return { transactionHeaders, dataLength }
 }
@@ -76,9 +76,12 @@ const createTransactionHeader = async (transactionHeaderData) => {
       outlet_id: transactionHeaderData.outlet_id,
       supplier_id: transactionHeaderData.supplier_id,
       item_id: transactionHeaderData.item_id,
+      quantity: transactionHeaderData.quantity,
+      unit_price: transactionHeaderData.unit_price,
       transaction_date: transactionHeaderData.transaction_date,
       information: transactionHeaderData.information,
-      total_amount: transactionHeaderData.total_amount,
+      total_amount:
+        transactionHeaderData.unit_price * transactionHeaderData.quantity,
     })
 
     return transactionHeader
