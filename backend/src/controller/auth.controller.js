@@ -14,9 +14,11 @@ const userLogin = async (req, res, next) => {
   try {
     const userData = req.body;
     const result = await authService.login(userData);
-    return res
-      .status(200)
-      .json({ message: "Login Successfull !", token: result });
+    return res.status(200).json({
+      message: "Login Successfull !",
+      token: result.token,
+      userId: result.id,
+    });
   } catch (error) {
     next(error);
   }

@@ -1,6 +1,7 @@
+const Auth = require("../repository/auth.repository");
 const jwtUtil = require("../util/jwt.util");
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const authHeader =
     req.headers["authorization"] || req.headers["Authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -17,8 +18,14 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const decodedToken = jwtUtil.decodeToken(token);
-    req.email = decodedToken.email;
 
+    const user = await Auth.findUserById(decodedToken.id);
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid user" });
+    }
+
+    req.user = user;
     // if (decodedToken.role != "admin") {
     //   return res.status(401).json({ message: "Unauthorized access" });
     // }

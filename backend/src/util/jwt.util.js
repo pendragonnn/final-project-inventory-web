@@ -4,15 +4,21 @@ dotenv.config();
 
 const blacklistedTokens = new Set();
 
-const encodeToken = (user) => {
+const encodeToken = ({ user }) => {
   const token = jwt.sign(
-    { email: user.email /* role: user.role */ },
+    {
+      email: user.email,
+      id: user.id,
+      /* role: user.role */
+    },
     process.env.SECRET_KEY,
     {
       expiresIn: "24h",
     }
   );
-  return token;
+
+  id = user.id;
+  return { token, id };
 };
 
 const decodeToken = (token) => {

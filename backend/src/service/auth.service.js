@@ -31,7 +31,7 @@ const login = async (userData) => {
     throw error;
   }
 
-  const result = jwtUtil.encodeToken(userData);
+  const result = jwtUtil.encodeToken({ user });
   return result;
 };
 
