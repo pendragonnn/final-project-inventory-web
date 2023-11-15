@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "category_id",
       })
       Item.hasMany(models.TransactionHeader, {
-        foreignKey: 'item_id' 
+        foreignKey: "item_id",
       })
     }
   }
@@ -19,10 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       image_url: DataTypes.STRING,
-  }, {
-    sequelize,
-    modelName: 'Item',
-  });
-  return Item;
-};
-
+    },
+    {
+      sequelize,
+      modelName: "Item",
+    }
+  )
+  return Item
+}
