@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const uploadDir = path.join(__dirname, '../upload');
 
-// Membuat direktori jika belum ada
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }

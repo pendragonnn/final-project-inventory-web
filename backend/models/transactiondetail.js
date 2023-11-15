@@ -2,11 +2,6 @@
 const { Model } = require("sequelize")
 module.exports = (sequelize, DataTypes) => {
   class TransactionDetail extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       TransactionDetail.belongsTo(models.TransactionHeader, {
         foreignKey: "header_id",
@@ -18,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   TransactionDetail.init(
     {
-      // id: DataTypes.STRING,
       header_id: DataTypes.STRING,
       item_id: DataTypes.STRING,
       quantity: DataTypes.INTEGER,

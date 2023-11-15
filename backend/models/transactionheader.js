@@ -2,11 +2,6 @@
 const { Model } = require("sequelize")
 module.exports = (sequelize, DataTypes) => {
   class TransactionHeader extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       TransactionHeader.belongsTo(models.Supplier, {
         foreignKey: "supplier_id",
@@ -20,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       TransactionHeader.hasMany(models.TransactionDetail, {
         foreignKey: "header_id",
       })
-      TransactionHeader.hasMany(models.Item, {
+      TransactionHeader.belongsTo(models.Item, {
         foreignKey: "item_id",
       })
     }

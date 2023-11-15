@@ -8,8 +8,8 @@ const {
   deleteOutlet,
 } = require("../repository/outlet.repository");
 
-const getAllOutlets = async () => {
-  const outlets = await findOutlets();
+const getAllOutlets = async (page, size) => {
+  const outlets = await findOutlets(page, size);
   return outlets;
 };
 
@@ -17,7 +17,7 @@ const getOutletById = async (id) => {
   const outlet = await findOutletById(id);
 
   if (!outlet) {
-    throw Error("Outlet not found");
+    throw Error("Outlet tidak ditemukan");
   }
   return outlet;
 };
@@ -43,10 +43,10 @@ const editOutletById = async (id, newOutlet) => {
     const outletName = await findOutletByName(newOutlet.name);
     const outletPhone = await findOutletByPhone(newOutlet.phone);
 
-    if (outletName) {
-      throw new Error("Name sudah Terdaftar");
+    if(outletName) {
+      throw new Error("Nama sudah Terdaftar");
     }
-    if (outletPhone) {
+    if(outletPhone) {
       throw new Error("Nomor telepon sudah Terdaftar");
     }
 
@@ -55,7 +55,6 @@ const editOutletById = async (id, newOutlet) => {
     const outlet = await editOutlet(id, newOutlet);
     return outlet;
   } catch (err) {
-    console.error(err); // Tambahkan log untuk melihat kesalahan
     return null;
   }
 };

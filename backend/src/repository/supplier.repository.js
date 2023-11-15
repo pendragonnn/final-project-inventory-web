@@ -1,10 +1,15 @@
 const models = require("../../models");
 const Suppliers = models.Supplier;
 
-const findSuppliers = async () => {
-  const suppliers = await Suppliers.findAll();
-
-  return suppliers;
+const findSuppliers = async (page, size) => {
+  const offset = (page-1) * size
+  const suppliersAll = await Suppliers.findAll()
+  const dataLength = suppliersAll.length
+  const suppliers = await Suppliers.findAll({
+    offset: offset,
+    limit: size
+  })
+  return { suppliers, dataLength }
 };
 
 const findSupplierById = async (id) => {
@@ -38,13 +43,10 @@ const findSupplierByPhone = async (phone) => {
 
 const createSupplier = async (supplierData) => {
   try {
-    // Mengambil semua ID yang sudah ada
     const existingIds = await Suppliers.findAll({ attributes: ["id"] });
 
-    // Membuat ID baru dengan format "O-XXXX"
     const newId = generateNewId(existingIds.map((supplier) => supplier.id));
 
-    // Menambahkan outlet baru
     const supplier = await Suppliers.create({
       id: newId,
       supplier: supplierData.supplier,
@@ -54,12 +56,10 @@ const createSupplier = async (supplierData) => {
 
     return supplier;
   } catch (error) {
-    console.error("Gagal membuat supplier:", error);
     throw error;
   }
 };
 
-// Fungsi untuk membuat ID baru dengan format "O-XXXX"
 function generateNewId(existingIds) {
   const maxNumber = existingIds.reduce((max, id) => {
     const currentNumber = parseInt(id.split("-")[1], 10);
@@ -67,7 +67,7 @@ function generateNewId(existingIds) {
   }, 0);
 
   const newNumber = maxNumber + 1;
-  const newId = `O-${String(newNumber).padStart(4, "0")}`;
+  const newId = `S-${String(newNumber).padStart(4, "0")}`;
 
   return newId;
 }
