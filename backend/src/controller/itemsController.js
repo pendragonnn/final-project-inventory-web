@@ -9,7 +9,7 @@ const itemsController = {
       if (items === null) return res.send("data is empty")
 
       res.status(200).json({
-        items: items.rows,
+        items: items,
         totalItems: items.count,
         currentPage: page,
         totalPages: Math.ceil(items.count / 10),
@@ -37,7 +37,7 @@ const itemsController = {
     }
   },
   createItems: async function (req, res) {
-    const { name, description, category_id, price, stock, supplier_id } =
+    const { name, description, category_id, price, stock,  image_url} =
       req.body
     try {
       const newItem = await repository.createItems(
@@ -46,8 +46,8 @@ const itemsController = {
         category_id,
         price,
         stock,
-        imageUrl,
-        supplier_id
+        image_url,
+     
       )
 
       res.status(201).json({
@@ -59,81 +59,72 @@ const itemsController = {
       res.status(500).json({ message: "create data item fail" })
     }
   },
-
-  updateItems: async function (req, res) {
-    const id = req.params.id
-    const { name, description, category_id, price, stock, supplier_id } =
-      req.body
-    const image_url = req.body.image_url
+  updateItem: async function (req, res) {
+    const id = req.params.id;
+    const updatedData = req.body;
 
     try {
-      await repository.updateItems(
-        id,
-        name,
-        description,
-        category_id,
-        price,
-        stock,
-        image_url,
-        supplier_id
-      )
-      res.status(200).json({ massage: "update items success" })
+      const updatedItem = await repository.updateItem(id, updatedData);
+
+      res.status(200).json({
+        data: updatedItem,
+        message: 'Update data item success',
+      });
     } catch (error) {
-      console.log(error)
-      res.status(500).json({ massage: "update data fail" })
+      console.error(error);
+      res.status(500).json({ message: 'Update data item fail' });
     }
   },
-  // softDeleteItems: async function (req, res) {
-  //   const id = req.params.id
+  deleteItem: async function (req, res) {
+    const id = req.params.id;
 
-  //   try {
-  //     const deletedItem = await repository.softDeleteItem(id)
-  //     res
-  //       .status(200)
-  //       .json({ message: "Soft delete item berhasil", data: deletedItem })
-  //   } catch (error) {
-  //     console.log(error)
-  //     res.status(404).json({ message: "Soft delete data gagal" })
-  //   }
-  // },
+    try {
+      const result = await itemService.deleteItem(id);
 
+      res.status(200).json({
+        message: result.message,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Failed to delete item" });
+    }
+  },
   uploadImage: async function (req, res) {
-    const file = req.file
+    const file = req.file;
     try {
       if (!file) {
         return res.status(400).send({
           status: false,
           message: "No file is selected",
-        })
+        });
       }
+  
+      const image_url = `/upload/${file.filename}`;
+      const { name, description, category_id, price, stock, } =
+        req.body;
+  
 
-      const urlImage = `../upload/${file.filename}`
-      const { name, description, category_id, price, stock, supplier_id } =
-        req.body
-
-      // Lakukan validasi atau pemeriksaan apakah category_id sesuai dengan yang diinginkan
-
-      const items = await repository.createItems(
+      const newItem = await repository.createItems(
         name,
         description,
-        category_id,
+        category_id, 
         price,
         stock,
-        urlImage,
-        supplier_id
-      )
-
-      if (!items) {
-        return res.status(404).json({ message: "Film not found" })
+        image_url
+      );
+  
+      if (!newItem) {
+        return res.status(404).json({ message: "Item not found" });
       }
-
-      await items.save()
-      res.json({ message: "Upload image success" })
+  
+      await newItem.save();
+      res.json({ message: "Upload image success" });
     } catch (error) {
-      console.error(error)
-      res.status(500).json({ message: "Upload image fail" })
+      console.error(error);
+      res.status(500).json({ message: "Upload image fail" });
     }
   },
+
 }
 
 module.exports = itemsController
