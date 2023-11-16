@@ -5,6 +5,14 @@
     "description": "Inventory Web API Documentation",
     "version": "1.0.0"
   },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
   "server": [
     {
       "url": "http://localhost:5000",
@@ -63,24 +71,24 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "example": "1000",
+                  "role_id": {
+                    "example": 1,
                     "type": "integer"
                   },
-                  "email": {
-                    "example": "wisnuandika104@gmail.com",
+                  "full_name": {
+                    "example": "jajang nurahman",
                     "type": "string"
                   },
-                  "gender": {
-                    "example": "Male",
+                  "email": {
+                    "example": "jajangnurahman@gmail.com",
                     "type": "string"
                   },
                   "password": {
-                    "example": "infolokerboskumantab",
+                    "example": "jajangdibandung",
                     "type": "string"
                   },
-                  "role": {
-                    "example": "Student",
+                  "image_url": {
+                    "example": "dummy.jpg",
                     "type": "string"
                   }
                 }
@@ -124,11 +132,11 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "example": "wisnuandika104@gmail.com",
+                    "example": "jajangnurahman@gmail.com",
                     "type": "string"
                   },
                   "password": {
-                    "example": "infolokerboskumantab",
+                    "example": "jajangdibandung",
                     "type": "string"
                   }
                 }
@@ -159,7 +167,12 @@
       }
     },
     "/logout": {
-      "get": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Authentication and Authorization"
         ],
@@ -189,6 +202,11 @@
     },
     "/outlet": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Outlets"
         ],
@@ -239,6 +257,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Outlets"
         ],
@@ -287,6 +310,11 @@
     },
     "/outlet/{outletId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Outlets"
         ],
@@ -323,6 +351,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Outlets"
         ],
@@ -385,6 +418,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Outlets"
         ],
@@ -426,6 +464,11 @@
     },
     "/user": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Users"
         ],
@@ -488,6 +531,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Users"
         ],
@@ -536,6 +584,11 @@
     },
     "/user/{userId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Users"
         ],
@@ -687,6 +740,11 @@
     },
     "/supplier": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Suppliers"
         ],
@@ -737,6 +795,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Suppliers"
         ],
@@ -785,6 +848,11 @@
     },
     "/supplier/{supplierId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Suppliers"
         ],
@@ -821,6 +889,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Suppliers"
         ],
@@ -883,6 +956,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Suppliers"
         ],
@@ -924,6 +1002,11 @@
     },
     "/category": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Categories"
         ],
@@ -966,6 +1049,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Categories"
         ],
@@ -1014,6 +1102,11 @@
     },
     "/category/{categoryId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Categories"
         ],
@@ -1050,6 +1143,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Categories"
         ],
@@ -1104,6 +1202,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Categories"
         ],
@@ -1145,6 +1248,11 @@
     },
     "/role": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Roles"
         ],
@@ -1171,6 +1279,11 @@
     },
     "/role/{roleId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Roles"
         ],
@@ -1209,6 +1322,11 @@
     },
     "/transaction-detail": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Detail"
         ],
@@ -1267,6 +1385,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Detail"
         ],
@@ -1315,6 +1438,11 @@
     },
     "/transaction-detail/{transactionDetailId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Detail"
         ],
@@ -1351,6 +1479,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Detail"
         ],
@@ -1421,6 +1554,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Detail"
         ],
@@ -1462,6 +1600,11 @@
     },
     "/transaction-header": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Header"
         ],
@@ -1529,6 +1672,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Header"
         ],
@@ -1577,6 +1725,11 @@
     },
     "/transaction-header/{transactionHeaderId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Header"
         ],
@@ -1613,6 +1766,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Header"
         ],
@@ -1692,6 +1850,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Transaction Header"
         ],
@@ -1733,6 +1896,11 @@
     },
     "/item": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Items"
         ],
@@ -1795,6 +1963,11 @@
         }
       },
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Items"
         ],
@@ -1843,6 +2016,11 @@
     },
     "/item/{itemId}": {
       "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Items"
         ],
@@ -1879,6 +2057,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Items"
         ],
@@ -1953,6 +2136,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Items"
         ],

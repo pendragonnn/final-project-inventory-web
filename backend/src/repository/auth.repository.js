@@ -8,7 +8,7 @@ const generateNewId = (existingIds) => {
   }, 0)
 
   const newNumber = maxNumber + 1
-  const newId = `O-${String(newNumber).padStart(4, "0")}`
+  const newId = `U-${String(newNumber).padStart(4, "0")}`
 
   return newId
 }
