@@ -5,28 +5,29 @@ const {
   createItem,
   editItem,
   deleteItem,
-  updateItemPhotos
-}
- = require("../repository/item.repository")
+  updateItemPhotos,
+  updateStock,
+} = require("../repository/item.repository")
 
-const getAllItems = async(page, size) => {
+const getAllItems = async (page, size) => {
   const items = await findItems(page, size)
   return items
 }
 
-const getItemById = async(id) => {
+const getItemById = async (id) => {
   const item = await findItemById(id)
 
-  if(!item) {
+  if (!item) {
     throw Error("Item tidak ditemukan")
   }
+
   return item
 }
 
-const insertItem = async(newItem) => {
+const insertItem = async (newItem) => {
   const itemName = await findItemByName(newItem.name)
 
-  if(itemName) {
+  if (itemName) {
     throw new Error("Data sudah terdaftar")
   }
 
@@ -35,7 +36,7 @@ const insertItem = async(newItem) => {
   return item
 }
 
-const editItemById = async(id, newItem) => {
+const editItemById = async (id, newItem) => {
   await findItemByName(newItem.name)
 
   await getItemById(id)
@@ -45,19 +46,30 @@ const editItemById = async(id, newItem) => {
   return item
 }
 
-const deleteItemById = async(id) => {
+const deleteItemById = async (id) => {
   await getItemById(id)
-
   await deleteItem(id)
 }
 
 const updateItemPhoto = async (id, image_url) => {
   try {
-    return await updateItemPhotos(id, image_url);
+    return await updateItemPhotos(id, image_url)
   } catch (error) {
-    throw error;
+    throw error
   }
-};
+}
+
+const decreaseStock = async (minus, id) => {
+  const item = await getItemById(id)
+  const newStock = item.stock - minus
+  await updateStock(id, newStock)
+}
+
+const increaseStock = async (plus, id) => {
+  const item = await getItemById(id)
+  const newStock = item.stock + plus
+  await updateStock(id, newStock)
+}
 
 module.exports = {
   getAllItems,
@@ -65,5 +77,7 @@ module.exports = {
   insertItem,
   editItemById,
   deleteItemById,
-  updateItemPhoto
+  updateItemPhoto,
+  decreaseStock,
+  increaseStock,
 }

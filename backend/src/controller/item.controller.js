@@ -4,42 +4,42 @@ const {
   insertItem,
   editItemById,
   deleteItemById,
-  updateItemPhoto
+  updateItemPhoto,
 } = require("../service/item.service")
-const fs = require('fs')
+const fs = require("fs")
 
-const allItems = async(req, res) => {
+const allItems = async (req, res) => {
   const page = req.query.page || 1
   const size = req.query.size || 10
   try {
     const { items, dataLength } = await getAllItems(page, size)
-    res.status(200).json({ 
+    res.status(200).json({
       data: items,
       totalItems: items.length,
       currentPage: parseInt(page),
-      totalPages: Math.ceil(dataLength / size)
+      totalPages: Math.ceil(dataLength / size),
     })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 }
 
-const itemById = async(req, res) => {
-  try{
+const itemById = async (req, res) => {
+  try {
     const itemId = req.params.id
     const item = await getItemById(itemId)
 
-    if(!item) {
-      return res.status(404).json({ message: "Item tidak ditemukan"})
+    if (!item) {
+      return res.status(404).json({ message: "Item tidak ditemukan" })
     }
-    
-    res.status(200).json({ data: item });
+
+    res.status(200).json({ data: item })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
 }
 
-const postItem = async(req, res) => {
+const postItem = async (req, res) => {
   try {
     const newItemData = req.body
 
@@ -47,73 +47,73 @@ const postItem = async(req, res) => {
 
     res.json({
       data: item,
-      message: "Item berhasil ditambahkan"
+      message: "Item berhasil ditambahkan",
     })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
 }
 
-const updateItem = async(req, res) => {
+const updateItem = async (req, res) => {
   const itemId = req.params.id
   const itemData = req.body
 
-  if(!itemData) {
-    return res.status(400).send("Data harus diisi semua");
-  } 
+  if (!itemData) {
+    return res.status(400).send("Data harus diisi semua")
+  }
 
   try {
     const item = await editItemById(itemId, itemData)
-    if(!item) {
+    if (!item) {
       return res
         .status(400)
-        .json({ Error: "Data sudah ada atau item tidak ditemukan"})
+        .json({ Error: "Data sudah ada atau item tidak ditemukan" })
     }
 
     res.status(200).json({
       data: item,
       message: "Item berhasil diupdate!",
-    });
+    })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
 }
 
-const removeItem = async(req, res) => {
+const removeItem = async (req, res) => {
   try {
     const itemId = req.params.id
 
     await deleteItemById(itemId)
-    res.status(200).json({ message: "Data berhasil dihapus" });
+    res.status(200).json({ message: "Data berhasil dihapus" })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
 }
 
 const uploadItemPhoto = async (req, res) => {
   try {
-    const id = req.params.id;
-    const item = await getItemById(id);
+    const id = req.params.id
+    const item = await getItemById(id)
 
     if (!item) {
-      return res.status(404).json({ message: "Item not found" });
+      return res.status(404).json({ message: "Item not found" })
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+      return res.status(400).json({ message: "No file uploaded" })
     }
 
-    const image_url = req.file.path;
+    const image_url = req.file.path
 
-    const updatedUser = await updateItemPhoto(id, image_url);
+    const updatedUser = await updateItemPhoto(id, image_url)
 
     res
       .status(200)
-      .json({ message: "User photo updated successfully", data: updatedUser });
+      .json({ message: "User photo updated successfully", data: updatedUser })
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-};
+}
 
 module.exports = {
   allItems,
@@ -121,5 +121,5 @@ module.exports = {
   postItem,
   updateItem,
   removeItem,
-  uploadItemPhoto
+  uploadItemPhoto,
 }

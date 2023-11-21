@@ -10,7 +10,7 @@ const itemRouter = require("./item.route")
 const categoryRoutes = require("./category.route")
 const roleRoutes = require("./role.route")
 
-router.use(authMiddleware)
+// router.use(authMiddleware)
 router.use("/transaction-header", transactionheaderRoutes)
 router.use("/transaction-detail", transactiondetailRoutes)
 router.use("/item", itemRouter)

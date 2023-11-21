@@ -15,9 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       TransactionHeader.hasMany(models.TransactionDetail, {
         foreignKey: "header_id",
       })
-      TransactionHeader.belongsTo(models.Item, {
-        foreignKey: "item_id",
-      })
     }
   }
   TransactionHeader.init(
@@ -25,12 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.STRING,
       outlet_id: DataTypes.STRING,
       supplier_id: DataTypes.STRING,
-      item_id: DataTypes.STRING,
-      quantity: DataTypes.INTEGER,
-      unit_price: DataTypes.INTEGER,
       information: DataTypes.STRING,
       transaction_date: DataTypes.DATE,
-      total_amount: DataTypes.INTEGER,
     },
     {
       sequelize,
