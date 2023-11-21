@@ -1,9 +1,9 @@
 const {
   findsTransactionHeader,
   findTransactionHeadertById,
-  findTransactionHeadertByUserId,
-  findTransactionHeadertByOutletId,
-  findTransactionHeadertBySupplierId,
+  // findTransactionHeadertByUserId,
+  // findTransactionHeadertByOutletId,
+  // findTransactionHeadertBySupplierId,
   createTransactionHeader,
   deleteTransactionHeader,
   editTransactionHeader,
@@ -20,13 +20,21 @@ const getTransactionHeaderById = async (id) => {
   if (!transactionHeader) {
     throw Error("Header transaksi tidak ditemukan")
   }
+
   return transactionHeader
 }
 
-const insertTransactionHeader = async (newTransactionHeader) => {
-  const transactionheader = await createTransactionHeader(newTransactionHeader)
+const insertTransactionHeader = async (newTransactionHeaderData) => {
+  try {
+    // Memastikan bahwa fungsi createTransactionHeader mengembalikan header yang dibuat
+    const transactionHeader = await createTransactionHeader(
+      newTransactionHeaderData
+    )
 
-  return transactionheader
+    return transactionHeader // Pastikan untuk mengembalikan header yang dibuat
+  } catch (error) {
+    throw error
+  }
 }
 
 const editTransactionHeaderById = async (id, newTransactionHeader) => {
@@ -46,7 +54,6 @@ const editTransactionHeaderById = async (id, newTransactionHeader) => {
 const deleteTransactionHeaderById = async (id) => {
   try {
     await getTransactionHeaderById(id)
-
     await deleteTransactionHeader(id)
   } catch (err) {
     throw err
