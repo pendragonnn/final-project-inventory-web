@@ -1,4 +1,5 @@
 const authService = require("../service/auth.service");
+const authRepository = require("../repository/auth.repository");
 
 const userRegister = async (req, res, next) => {
   try {
@@ -35,4 +36,13 @@ const userLogout = async (req, res, next) => {
   }
 };
 
-module.exports = { userRegister, userLogin, userLogout };
+const userDetails = async (req, res, next) => {
+  try {
+    const result = await authRepository.findUserWithRole();
+    return res.status(200).json({ result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { userRegister, userLogin, userLogout, userDetails };
