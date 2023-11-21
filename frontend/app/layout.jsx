@@ -6,12 +6,15 @@ import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+
 export default function RootLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
