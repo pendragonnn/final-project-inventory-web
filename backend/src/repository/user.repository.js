@@ -1,38 +1,38 @@
 const models = require("../../models");
 const User = models.User;
 
-const findUsers = async(page, size) => {
-  const offset = (page-1) * size
-  const usersAll = await User.findAll()
-  const dataLength = usersAll.length
+const findUsers = async (page, size) => {
+  const offset = (page - 1) * size;
+  const usersAll = await User.findAll();
+  const dataLength = usersAll.length;
   const users = await User.findAll({
     offset: offset,
-    limit: size
-  })
-  return { users, dataLength }
-}
+    limit: size,
+  });
+  return { users, dataLength };
+};
 
-const findUserById = async(id) => {
+const findUserById = async (id) => {
   const user = await User.findOne({
     where: {
       id,
-    }
-  })
+    },
+  });
 
-  return user
-}
+  return user;
+};
 
-const findUserByEmail = async(email) => {
+const findUserByEmail = async (email) => {
   const user = await User.findOne({
     where: {
       email,
-    }
-  })
+    },
+  });
 
-  return user
-}
+  return user;
+};
 
-const createUser = async(userData) => {
+const createUser = async (userData) => {
   try {
     const existingIds = await User.findAll({ attributes: ["id"] });
 
@@ -50,9 +50,9 @@ const createUser = async(userData) => {
 
     return user;
   } catch (error) {
-    throw(error)
+    throw error;
   }
-}
+};
 
 function generateNewId(existingIds) {
   const maxNumber = existingIds.reduce((max, id) => {
@@ -66,7 +66,7 @@ function generateNewId(existingIds) {
   return newId;
 }
 
-const editUser = async(id, userData) => {
+const editUser = async (id, userData) => {
   const updatedUser = await User.update(
     {
       role_id: userData.role_id,
@@ -74,25 +74,25 @@ const editUser = async(id, userData) => {
       email: userData.email,
       username: userData.username,
       password: userData.password,
-      image_url: userData. image_url
+      image_url: userData.image_url,
     },
     {
-      where: {id},
-      returning: true 
-    },
-  )
+      where: { id },
+      returning: true,
+    }
+  );
 
-  return updatedUser
-}
+  return updatedUser;
+};
 
-const deleteUser = async(id) => {
+const deleteUser = async (id) => {
   const user = await User.destroy({
     where: {
       id,
-    }
-  })
-  return user
-}
+    },
+  });
+  return user;
+};
 
 const updateUserPhotos = async (id, image_url) => {
   try {
