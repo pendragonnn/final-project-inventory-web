@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -8,7 +8,6 @@ module.exports = {
         id: "U-0001",
         role_id: "1",
         full_name: "Deddy Coral",
-        username: "deddy_admin",
         email: "uhuy@gmail.com",
         password: "deddy123",
         image_url: "dummy.jpg",
@@ -19,7 +18,6 @@ module.exports = {
         id: "U-0002",
         role_id: "2",
         full_name: "Alana Cho",
-        username: "alana_staff",
         email: "uhuy@gmail.com",
         password: "alana123",
         image_url: "dummy.jpg",
@@ -30,17 +28,16 @@ module.exports = {
         id: "U-0003",
         role_id: "3",
         full_name: "Diandra Hakim",
-        username: "diandra_manager",
         email: "uhuy@gmail.com",
         password: "diandra123",
         image_url: "dummy.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-    ])
+    ]);
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete("Users", null, {})
+    return queryInterface.bulkDelete("Users", null, {});
   },
-}
+};

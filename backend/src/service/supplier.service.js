@@ -8,8 +8,8 @@ const {
   deleteSupplier,
 } = require("../repository/supplier.repository");
 
-const getAllSuppliers = async () => {
-  const supplier = await findSuppliers();
+const getAllSuppliers = async (page, size) => {
+  const supplier = await findSuppliers(page, size);
   return supplier;
 };
 
@@ -44,7 +44,7 @@ const editSupplierById = async (id, newSupplier) => {
     const supplierPhone = await findSupplierByPhone(newSupplier.phone);
 
     if (supplierName) {
-      throw new Error("Name sudah Terdaftar");
+      throw new Error("Nama sudah Terdaftar");
     }
     if (supplierPhone) {
       throw new Error("Nomor telepon sudah Terdaftar");
@@ -55,7 +55,6 @@ const editSupplierById = async (id, newSupplier) => {
     const supplier = await editSupplier(id, newSupplier);
     return supplier;
   } catch (err) {
-    console.error(err); // Tambahkan log untuk melihat kesalahan
     return null;
   }
 };

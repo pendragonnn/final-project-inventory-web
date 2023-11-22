@@ -29,15 +29,15 @@ module.exports = {
           key: "id",
         },
       },
-      item_id: {
-        type: Sequelize.STRING,
-        references: {
-          model: {
-            tableName: "Items",
-          },
-          key: "id",
-        },
-      },
+      // item_id: {
+      //   type: Sequelize.STRING,
+      //   references: {
+      //     model: {
+      //       tableName: "Items",
+      //     },
+      //     key: "id",
+      //   },
+      // },
       supplier_id: {
         type: Sequelize.STRING,
         references: {
@@ -52,9 +52,6 @@ module.exports = {
       },
       transaction_date: {
         type: Sequelize.DATE,
-      },
-      total_amount: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

@@ -1,8 +1,25 @@
 const models = require("../../models");
 const User = models.User;
 
-const getAllUser = async (req, res) => {
-  return await User.findAll();
+const findUsers = async (page, size) => {
+  const offset = (page - 1) * size;
+  const usersAll = await User.findAll();
+  const dataLength = usersAll.length;
+  const users = await User.findAll({
+    offset: offset,
+    limit: size,
+  });
+  return { users, dataLength };
+};
+
+const findUserById = async (id) => {
+  const user = await User.findOne({
+    where: {
+      id,
+    },
+  });
+
+  return user;
 };
 
 const findUserByEmail = async (email) => {
@@ -15,7 +32,7 @@ const findUserByEmail = async (email) => {
   return user;
 };
 
-const insertUser = async (userData) => {
+const createUser = async (userData) => {
   try {
     const existingIds = await User.findAll({ attributes: ["id"] });
 
@@ -33,7 +50,6 @@ const insertUser = async (userData) => {
 
     return user;
   } catch (error) {
-    console.error("Gagal membuat user", error);
     throw error;
   }
 };
@@ -45,32 +61,40 @@ function generateNewId(existingIds) {
   }, 0);
 
   const newNumber = maxNumber + 1;
-  const newId = `O-${String(newNumber).padStart(4, "0")}`;
+  const newId = `U-${String(newNumber).padStart(4, "0")}`;
 
   return newId;
 }
 
-const updateUserById = async (id, userData) => {
-  const user = await User.findByPk(id);
+const editUser = async (id, userData) => {
+  const updatedUser = await User.update(
+    {
+      role_id: userData.role_id,
+      full_name: userData.full_name,
+      email: userData.email,
+      username: userData.username,
+      password: userData.password,
+      image_url: userData.image_url,
+    },
+    {
+      where: { id },
+      returning: true,
+    }
+  );
 
-  if (!user) {
-    return null;
-  }
-  await User.update(userData, { where: { id } });
+  return updatedUser;
+};
+
+const deleteUser = async (id) => {
+  const user = await User.destroy({
+    where: {
+      id,
+    },
+  });
   return user;
 };
 
-const deleteUserById = async (id) => {
-  const user = await User.findByPk(id);
-
-  if (!user) {
-    return null;
-  }
-  await User.destroy({ where: { id } });
-  return user;
-};
-
-const updateUserPhoto = async (id, image_url) => {
+const updateUserPhotos = async (id, image_url) => {
   try {
     const updatedUser = await User.update(
       { image_url: image_url },
@@ -86,10 +110,11 @@ const updateUserPhoto = async (id, image_url) => {
 };
 
 module.exports = {
-  getAllUser,
+  findUsers,
+  findUserById,
   findUserByEmail,
-  insertUser,
-  updateUserById,
-  deleteUserById,
-  updateUserPhoto,
+  createUser,
+  editUser,
+  deleteUser,
+  updateUserPhotos,
 };

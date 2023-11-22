@@ -27,17 +27,6 @@ module.exports = {
           key:'id'
         }
       },
-      supplier_id:{
-        type: Sequelize.STRING,
-        allowNull: true, 
-        references: {
-          model: {
-            tableName: 'Suppliers'
-          },
-          key:'id'
-        }
-
-      },
       price: {
         type: Sequelize.INTEGER
       },
@@ -47,7 +36,6 @@ module.exports = {
       image_url: {
         type: Sequelize.STRING
       },
-     
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

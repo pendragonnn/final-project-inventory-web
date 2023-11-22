@@ -1,10 +1,15 @@
 const models = require("../../models");
 const Outlets = models.Outlet;
 
-const findOutlets = async () => {
-  const outlets = await Outlets.findAll();
-
-  return outlets;
+const findOutlets = async (page, size) => {
+  const offset = (page-1) * size
+  const outletsAll = await Outlets.findAll()
+  const dataLength = outletsAll.length
+  const outlets = await Outlets.findAll({
+    offset: offset,
+    limit: size
+  })
+  return { outlets, dataLength }
 };
 
 const findOutletById = async (id) => {
@@ -19,8 +24,9 @@ const findOutletById = async (id) => {
 const findOutletByName = async (name) => {
   const outlet = await Outlets.findOne({
     where: {
-      name,
+      name: name,
     },
+    returning: true
   });
 
   return outlet;
@@ -31,6 +37,7 @@ const findOutletByPhone = async (phone) => {
     where: {
       phone,
     },
+    returning: true
   });
 
   return outlet;
@@ -38,7 +45,6 @@ const findOutletByPhone = async (phone) => {
 
 const createOutlet = async (outletData) => {
   try {
-    // Mengambil semua ID yang sudah ada
     const existingIds = await Outlets.findAll({ attributes: ["id"] });
 
     const newId = generateNewId(existingIds.map((outlet) => outlet.id));
@@ -52,7 +58,6 @@ const createOutlet = async (outletData) => {
 
     return outlet;
   } catch (error) {
-    console.error("Gagal membuat outlet:", error);
     throw error;
   }
 };
