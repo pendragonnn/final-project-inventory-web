@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-const ModalAddOutlet = ({ name, test }) => {
+const ModalOutletAdd = ({ name, test }) => {
   const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,4 +115,4 @@ const ModalAddOutlet = ({ name, test }) => {
   );
 };
 
-export default ModalAddOutlet;
+export default ModalOutletAdd;
