@@ -10,6 +10,11 @@
   font-size: 0.5rem !important;
 }
 
+.swal-custom-delete {
+  width: 350px !important;
+  font-size: 0.8rem !important;
+}
+
 @layer base {
   body {
     @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;

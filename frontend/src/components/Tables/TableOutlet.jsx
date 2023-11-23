@@ -52,7 +52,7 @@ const TableOutlets = () => {
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
-            customClass: "swal-custom",
+            customClass: "swal-custom-delete",
           });
         }
       } catch (e) {
