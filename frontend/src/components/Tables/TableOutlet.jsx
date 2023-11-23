@@ -125,7 +125,7 @@ const TableOutlets = () => {
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{outlet.address}K</p>
+              <p className="text-black dark:text-white">{outlet.address}</p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">

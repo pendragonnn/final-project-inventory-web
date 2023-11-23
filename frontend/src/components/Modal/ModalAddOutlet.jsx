@@ -96,7 +96,7 @@ const ModalOutletAdd = ({ name, test }) => {
                     placeholder="Enter phone number"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    max={12}
+                    // max={12}
                     // min={11}
                   />
                 </div>
