@@ -18,7 +18,7 @@ const getTransactionHeaderById = async (id) => {
   const transactionHeader = await findTransactionHeadertById(id)
 
   if (!transactionHeader) {
-    throw Error("Header transaksi tidak ditemukan")
+    throw Error("Transaction Header Not Found")
   }
 
   return transactionHeader

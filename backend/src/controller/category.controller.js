@@ -28,7 +28,7 @@ const categoryById = async (req, res) => {
     const category = await getCategoryById(categoryId);
 
     if(!category) {
-      return res.status(404).json({ message: "Kategori tidak ditemukan"})
+      return res.status(404).json({ message: "Category Not Found"})
     }
 
     res.status(200).json({ data: category });
@@ -43,7 +43,7 @@ const postCategory = async (req, res) => {
 
     const category = await insertCategory(newCategoryData);
 
-    res.status(200).json({ data: category, message: "Kategori berhasil ditambahkan" });
+    res.status(200).json({ data: category, message: "Successful Adding Category" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -54,7 +54,7 @@ const updateCategory = async (req, res) => {
   const categoryData = req.body;
 
   if (!categoryData) {
-    return res.status(400).json({ message: "Data harus diisi semua" });
+    return res.status(400).json({ message: "Data Must Have Value" });
   }
 
   try {
@@ -62,7 +62,7 @@ const updateCategory = async (req, res) => {
 
     res.status(200).json({
       data: category,
-      message: "Kategori berhasil diupdate!",
+      message: "Successfull Update Category!",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -74,7 +74,7 @@ const removeCategory = async (req, res) => {
     const categoryId = req.params.id;
 
     await deleteCategoryById(categoryId);
-    res.status(200).json({ message: "Data berhasil dihapus" });
+    res.status(200).json({ message: "Successful Delete Category!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

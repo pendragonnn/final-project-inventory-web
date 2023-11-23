@@ -21,10 +21,10 @@ const findSupplierById = async (id) => {
   return supplier;
 };
 
-const findSupplierByName = async (supplier) => {
+const findSupplierByName = async (name) => {
   const suppliers = await Suppliers.findOne({
     where: {
-      supplier,
+      name,
     },
   });
 
@@ -49,7 +49,7 @@ const createSupplier = async (supplierData) => {
 
     const supplier = await Suppliers.create({
       id: newId,
-      supplier: supplierData.supplier,
+      name: supplierData.name,
       address: supplierData.address,
       phone: supplierData.phone,
     });
@@ -75,7 +75,7 @@ function generateNewId(existingIds) {
 const editSupplier = async (id, supplierData) => {
   const updatedSuppliers = await Suppliers.update(
     {
-      supplier: supplierData.supplier,
+      name: supplierData.name,
       address: supplierData.address,
       phone: supplierData.phone,
     },

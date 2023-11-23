@@ -18,7 +18,7 @@ const roleById = async (req, res) => {
     const role = await getRoleById(roleId);
 
     if(!role) {
-      return res.status(404).json({ message: "Role tidak ditemukan"})
+      return res.status(404).json({ message: "Role Not Found"})
     }
 
     res.status(200).json({ data: role });

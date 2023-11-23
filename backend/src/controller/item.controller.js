@@ -30,7 +30,7 @@ const itemById = async (req, res) => {
     const item = await getItemById(itemId)
 
     if (!item) {
-      return res.status(404).json({ message: "Item tidak ditemukan" })
+      return res.status(404).json({ message: "Item Not Found" })
     }
 
     res.status(200).json({ data: item })
@@ -47,7 +47,7 @@ const postItem = async (req, res) => {
 
     res.json({
       data: item,
-      message: "Item berhasil ditambahkan",
+      message: "Successful Adding Item",
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -59,7 +59,7 @@ const updateItem = async (req, res) => {
   const itemData = req.body
 
   if (!itemData) {
-    return res.status(400).send("Data harus diisi semua")
+    return res.status(400).send("Data Must Have Value")
   }
 
   try {
@@ -67,12 +67,12 @@ const updateItem = async (req, res) => {
     if (!item) {
       return res
         .status(400)
-        .json({ Error: "Data sudah ada atau item tidak ditemukan" })
+        .json({ Error: "Item Not Found or Already Added" })
     }
 
     res.status(200).json({
       data: item,
-      message: "Item berhasil diupdate!",
+      message: "Successfull Update Item!",
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -84,7 +84,7 @@ const removeItem = async (req, res) => {
     const itemId = req.params.id
 
     await deleteItemById(itemId)
-    res.status(200).json({ message: "Data berhasil dihapus" })
+    res.status(200).json({ message: "Successful Delete Item!" })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

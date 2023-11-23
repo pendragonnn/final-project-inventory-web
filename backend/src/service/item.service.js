@@ -18,7 +18,7 @@ const getItemById = async (id) => {
   const item = await findItemById(id)
 
   if (!item) {
-    throw Error("Item tidak ditemukan")
+    throw Error("Item Not Found")
   }
 
   return item
@@ -28,7 +28,7 @@ const insertItem = async (newItem) => {
   const itemName = await findItemByName(newItem.name)
 
   if (itemName) {
-    throw new Error("Data sudah terdaftar")
+    throw new Error("Item Already Added")
   }
 
   const item = await createItem(newItem)

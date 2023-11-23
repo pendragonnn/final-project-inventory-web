@@ -28,7 +28,7 @@ const outletById = async (req, res) => {
     const outlet = await getOutletById(outletId);
 
     if (!outlet) {
-      return res.status(404).json({ message: "Outlet tidak ditemukan" });
+      return res.status(404).json({ message: "Outlet Not Found" });
     }
 
     res.status(200).json({ data: outlet });
@@ -45,7 +45,7 @@ const postOutlet = async (req, res) => {
 
     res
       .status(200)
-      .json({ data: outlet, message: "Outlet berhasil ditambahkan" });
+      .json({ data: outlet, message: "Successful Adding Outlet!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -60,12 +60,12 @@ const updateOutlet = async (req, res) => {
     if (!outlet) {
       return res
         .status(400)
-        .json({ message: "Data sudah ada atau Outlet tidak ditemukan" });
+        .json({ message: "Outlet Not Found or Already Added" });
     }
 
     res.status(200).json({
       data: outlet,
-      message: "Outlet berhasil diupdate!",
+      message: "Successfull Update Outlet!",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -77,7 +77,7 @@ const removeOutlet = async (req, res) => {
     const outletId = req.params.id;
 
     await deleteOutletById(outletId);
-    res.status(200).json({ message: "Data berhasil dihapus" });
+    res.status(200).json({ message: "Successful Delete Outlet!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
