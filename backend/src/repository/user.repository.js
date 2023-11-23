@@ -42,7 +42,6 @@ const createUser = async (userData) => {
       id: newId,
       role_id: userData.role_id,
       full_name: userData.full_name,
-      username: userData.username,
       email: userData.email,
       password: userData.password,
       image_url: userData.image_url,
