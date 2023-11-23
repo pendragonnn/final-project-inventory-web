@@ -1,8 +1,11 @@
 const models = require("../../models")
 const TransactionsHeaders = models.TransactionHeader
+const TransactionDetail = models.TransactionDetail
+const Item = models.Item
 
 const findsTransactionHeader = async (page, size) => {
   const offset = (page - 1) * size
+  console.log("test")
   const transactionHeadersAll = await TransactionsHeaders.findAll()
   const dataLength = transactionHeadersAll.length
   const transactionHeaders = await TransactionsHeaders.findAll({
@@ -14,6 +17,16 @@ const findsTransactionHeader = async (page, size) => {
 
 const findTransactionHeadertById = async (id) => {
   const transactionHeader = await TransactionsHeaders.findOne({
+    include: [
+      {
+        model: TransactionDetail,
+        include: [
+          {
+            model: Item,
+          },
+        ],
+      },
+    ],
     where: {
       id,
     },
@@ -75,13 +88,8 @@ const createTransactionHeader = async (transactionHeaderData) => {
       user_id: transactionHeaderData.user_id,
       outlet_id: transactionHeaderData.outlet_id,
       supplier_id: transactionHeaderData.supplier_id,
-      item_id: transactionHeaderData.item_id,
-      quantity: transactionHeaderData.quantity,
-      unit_price: transactionHeaderData.unit_price,
       transaction_date: transactionHeaderData.transaction_date,
       information: transactionHeaderData.information,
-      total_amount:
-        transactionHeaderData.unit_price * transactionHeaderData.quantity,
     })
 
     return transactionHeader
@@ -90,15 +98,37 @@ const createTransactionHeader = async (transactionHeaderData) => {
   }
 }
 
+const createTransactionDetail = async (transsactionDetailData, header_id) => {
+  try {
+    const existingIds = await TransactionDetail.findAll({
+      attributes: ["id"],
+    })
+
+    const newId = generateNewId(
+      existingIds.map((transactionDetail) => transactionDetail.id)
+    )
+
+    const transactionDetail = await TransactionDetail.create({
+      id: newId,
+      header_id: header_id,
+      item_id: transsactionDetailData.item_id,
+      quantity: transsactionDetailData.quantity,
+    })
+
+    return transactionDetail
+  } catch (error) {
+    throw error
+  }
+}
+
 const editTransactionHeader = async (id, transactionHeaderData) => {
   const updatedTransactionHeader = await TransactionsHeaders.update(
     {
+      user_id: transactionHeaderData.user_id,
       outlet_id: transactionHeaderData.outlet_id,
       supplier_id: transactionHeaderData.supplier_id,
-      item_id: transactionHeaderData.item_id,
       transaction_date: transactionHeaderData.transaction_date,
       information: transactionHeaderData.information,
-      total_amount: transactionHeaderData.total_amount,
     },
     {
       where: {
@@ -129,4 +159,5 @@ module.exports = {
   createTransactionHeader,
   editTransactionHeader,
   deleteTransactionHeader,
+  createTransactionDetail,
 }

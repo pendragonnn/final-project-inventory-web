@@ -1,9 +1,23 @@
 const {
-  findTransactionHeadertById,
+  // findTransactionHeadertById,
+  createTransactionDetail,
 } = require("../repository/transaction.header.repository")
 
-const getTransactionDetailById = async (header_id) => {
-  const transactionDetail = await findTransactionHeadertById(header_id)
+const {
+  findsTransactionDetail,
+} = require("../repository/transaction.detail.repository")
+
+const {
+  findTransactionDetailtById,
+} = require("../repository/transaction.detail.repository")
+
+const getAllTransactionDetail = async (page, size) => {
+  const transactionDetail = await findsTransactionDetail(page, size)
+  return transactionDetail
+}
+
+const getTransactionDetailById = async (id) => {
+  const transactionDetail = await findTransactionDetailtById(id)
 
   if (!transactionDetail) {
     throw Error("transaction Detail tidak ditemukan")
@@ -11,6 +25,17 @@ const getTransactionDetailById = async (header_id) => {
   return transactionDetail
 }
 
+const insertTransactionDetail = async (newTransactionDetail, header_id) => {
+  const transactiondetail = await createTransactionDetail(
+    newTransactionDetail,
+    header_id
+  )
+
+  return transactiondetail
+}
+
 module.exports = {
   getTransactionDetailById,
+  insertTransactionDetail,
+  getAllTransactionDetail,
 }
