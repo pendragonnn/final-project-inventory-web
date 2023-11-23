@@ -1,10 +1,10 @@
 import React from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useRef } from "react";
 
-const ModalOutletAdd = ({ name, test }) => {
-  const router = useRouter();
+const ModalOutletAdd = ({ name, test, addToTable }) => {
+  const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -13,8 +13,7 @@ const ModalOutletAdd = ({ name, test }) => {
         address: e.target.address.value,
         phone: e.target.phone.value,
       });
-      console.log("res", res);
-      // router.push("/tablesOutlets");
+      console.log(res);
       Swal.fire({
         position: "bottom-end",
         icon: "success",
@@ -23,7 +22,8 @@ const ModalOutletAdd = ({ name, test }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        window.location.reload();
+        addToTable(res.data.data);
+        modalCheckbox.current.checked = false;
       });
     } catch (e) {
       Swal.fire({
@@ -42,7 +42,12 @@ const ModalOutletAdd = ({ name, test }) => {
       <label htmlFor={test} className="cursor-pointer">
         {name}
       </label>
-      <input type="checkbox" id={test} className="modal-toggle" />
+      <input
+        type="checkbox"
+        id={test}
+        ref={modalCheckbox}
+        className="modal-toggle"
+      />
       <div className="modal" role="dialog">
         <div className="modal-box bg-white dark:bg-boxdark">
           <label
@@ -96,7 +101,7 @@ const ModalOutletAdd = ({ name, test }) => {
                     placeholder="Enter phone number"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    max={12}
+                    // max={12}
                     // min={11}
                   />
                 </div>

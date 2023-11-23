@@ -3,6 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 
 const SignUp = () => {
+  const handleSubmit = async () => {
+    try {
+    } catch (e) {
+      window.alert("e.message");
+    }
+  };
+
   return (
     <>
       <div className=" flex h-screen justify-center items-center">
@@ -21,7 +28,7 @@ const SignUp = () => {
             Enter your details to create a new account !
           </p>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="mb-2.5 block font-medium text-black dark:text-white">
                 Name

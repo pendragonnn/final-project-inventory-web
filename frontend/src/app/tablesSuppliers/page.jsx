@@ -1,6 +1,7 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 
 import TablesSupplier from "@/components/Tables/TableSuppliers";
+import SidebarLayout from "../sidebar-layout";
 export const metadata = {
   title: "Tables Page | Next.js E-commerce Dashboard Template",
   description: "This is Tables page for TailAdmin Next.js",
@@ -8,13 +9,13 @@ export const metadata = {
 };
 const TablesPage = () => {
   return (
-    <>
+    <SidebarLayout>
       <Breadcrumb pageName="Tables" />
 
       <div className="flex flex-col gap-10">
         <TablesSupplier />
       </div>
-    </>
+    </SidebarLayout>
   );
 };
 export default TablesPage;

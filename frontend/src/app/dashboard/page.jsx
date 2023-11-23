@@ -1,20 +1,23 @@
 "use client";
 import React from "react";
-import ChartOne from "../Charts/ChartOne";
-import ChartThree from "../Charts/ChartThree";
-import ChartTwo from "../Charts/ChartTwo";
-import ChatCard from "../Chat/ChatCard";
-import TableOne from "../Tables/TableOne";
-import CardDataStats from "../CardDataStats";
+import ChartOne from "@/components/Charts/ChartOne";
+import ChartThree from "@/components/Charts/ChartThree";
+import ChartTwo from "@/components/Charts/ChartTwo";
+import ChatCard from "@/components/Chat/ChatCard";
+import TableOne from "@/components/Tables/TableOne";
+import CardDataStats from "@/components/CardDataStats";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 // import Map from "../Maps/TestMap";
 // without this the component renders on server and throws an error
 import dynamic from "next/dynamic";
-const MapOne = dynamic(() => import("../Maps/MapOne"), {
+import { useState } from "react";
+const MapOne = dynamic(() => import("@/components/Maps/MapOne"), {
   ssr: false,
 });
+
 const Dashboard = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <>
       <div className="flex h-screen overflow-hidden">
