@@ -1,10 +1,10 @@
 import React from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useRef } from "react";
 import axios from "axios";
 
-const ModalUserAdd = ({ name, test }) => {
-  const router = useRouter();
+const ModalUserAdd = ({ name, test , addToTable}) => {
+  const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -25,7 +25,8 @@ const ModalUserAdd = ({ name, test }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        window.location.reload();
+        addToTable(res.data.data);
+        modalCheckbox.current.checked = false;
       });
     } catch (e) {
       Swal.fire({
@@ -44,7 +45,12 @@ const ModalUserAdd = ({ name, test }) => {
       <label htmlFor={test} className="cursor-pointer">
         {name}
       </label>
-      <input type="checkbox" id={test} className="modal-toggle" />
+      <input
+        type="checkbox"
+        id={test}
+        ref={modalCheckbox}
+        className="modal-toggle"
+      />
       <div className="modal" role="dialog">
         <div className="modal-box bg-white dark:bg-boxdark">
           <label

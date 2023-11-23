@@ -1,5 +1,5 @@
 "use client";
-import ModalUserAdd from "../Modal/ModalAddUser";
+import ModalUserAdd from "../Modal/user/ModalAddUser";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +16,14 @@ const TableUser = () => {
 
     fetchData();
   }, []);
+
+  const handleAdd = (newOutlet) => {
+    const newData = [...data, newOutlet];
+    setData(newData);
+    // const temp = data
+    // data[1] = newOutlet
+    // setData([...temp]);
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -78,7 +86,11 @@ const TableUser = () => {
                 />
               </svg>
             </span>
-            <ModalUserAdd name={"Add User"} test={"add out"} />
+            <ModalUserAdd 
+            name={"Add User"}
+            test={"add"}
+            addToTable={handleAdd} 
+            />
           </a>
         </div>
       </div>
