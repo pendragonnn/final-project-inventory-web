@@ -20,7 +20,7 @@ const getTransactionDetailById = async (id) => {
   const transactionDetail = await findTransactionDetailtById(id)
 
   if (!transactionDetail) {
-    throw Error("transaction Detail tidak ditemukan")
+    throw Error("Transaction Detail Not Found")
   }
   return transactionDetail
 }

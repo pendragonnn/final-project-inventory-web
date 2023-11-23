@@ -17,20 +17,20 @@ const getSupplierById = async (id) => {
   const supplier = await findSupplierById(id);
 
   if (!supplier) {
-    throw Error("Supplier not found");
+    throw Error("Supplier Not Found");
   }
   return supplier;
 };
 
 const insertSupplier = async (newSupplier) => {
-  const supplierName = await findSupplierByName(newSupplier.supplier);
+  const supplierName = await findSupplierByName(newSupplier.name);
   const supplierPhone = await findSupplierByPhone(newSupplier.phone);
 
   if (supplierName) {
-    throw new Error("Name sudah Terdaftar");
+    throw new Error("Supplier Name Already Added");
   }
   if (supplierPhone) {
-    throw new Error("Nomor telepon sudah Terdaftar");
+    throw new Error("Supplier Phone Already Added");
   }
 
   const supplier = await createSupplier(newSupplier);
@@ -40,14 +40,14 @@ const insertSupplier = async (newSupplier) => {
 
 const editSupplierById = async (id, newSupplier) => {
   try {
-    const supplierName = await findSupplierByName(newSupplier.supplier);
+    const supplierName = await findSupplierByName(newSupplier.name);
     const supplierPhone = await findSupplierByPhone(newSupplier.phone);
 
     if (supplierName) {
-      throw new Error("Nama sudah Terdaftar");
+      throw new Error("Supplier Name Already Added");
     }
     if (supplierPhone) {
-      throw new Error("Nomor telepon sudah Terdaftar");
+      throw new Error("Supplier Phone Already Added");
     }
 
     await getSupplierById(id);

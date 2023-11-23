@@ -28,7 +28,7 @@ const supplierById = async (req, res) => {
     const supplier = await getSupplierById(supplierId);
 
     if(!supplier) {
-      return res.status(404).json({ message: "Supplier tidak ditemukan"})
+      return res.status(404).json({ message: "Supplier Not Found"})
     }
 
     res.status(200).json({ data: supplier });
@@ -43,7 +43,7 @@ const postSupplier = async (req, res) => {
 
     const supplier = await insertSupplier(newSupplierData);
 
-    res.status(200).json({ data: supplier, message: "Supplier berhasil ditambahkan" });
+    res.status(200).json({ data: supplier, message: "Successful Adding Supplier" });
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -54,7 +54,7 @@ const updateSupplier = async (req, res) => {
   const supplierData = req.body;
 
   if (!supplierData) {
-    return res.status(400).send("Data harus diisi semua");
+    return res.status(400).send("Data Must Have Value");
   }
 
   try {
@@ -62,12 +62,12 @@ const updateSupplier = async (req, res) => {
     if (!supplier) {
       return res
         .status(400)
-        .json({ message: "Data sudah ada atau Supplier tidak ditemukan" });
+        .json({ message: "Supplier Not Found or Already Added" });
     }
 
     res.status(200).json({
       data: supplier,
-      message: "Supplier berhasil diupdate!",
+      message: "Successfull Update Supplier!",
     });
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -79,7 +79,7 @@ const removeSupplier = async (req, res) => {
     const supplierId = req.params.id;
 
     await deleteSupplierById(supplierId);
-    res.status(200).json({ message: "Data berhasil dihapus" });
+    res.status(200).json({ message: "Successful Delete Supplier!" });
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

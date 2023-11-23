@@ -17,7 +17,7 @@ const getOutletById = async (id) => {
   const outlet = await findOutletById(id);
 
   if (!outlet) {
-    throw Error("Outlet tidak ditemukan");
+    throw Error("Outlet Not Found");
   }
   return outlet;
 };
@@ -27,10 +27,10 @@ const insertOutlet = async (newOutlet) => {
   const outletPhone = await findOutletByPhone(newOutlet.phone);
 
   if (outletName) {
-    throw new Error("Name sudah Terdaftar");
+    throw new Error("Outlet Name Already Added");
   }
   if (outletPhone) {
-    throw new Error("Nomor telepon sudah Terdaftar");
+    throw new Error("Outlet Phone Already Added");
   }
 
   const outlet = await createOutlet(newOutlet);
@@ -44,10 +44,10 @@ const editOutletById = async (id, newOutlet) => {
     const outletPhone = await findOutletByPhone(newOutlet.phone);
 
     if(outletName) {
-      throw new Error("Nama sudah Terdaftar");
+      throw new Error("Outlet Name Already Added");
     }
     if(outletPhone) {
-      throw new Error("Nomor telepon sudah Terdaftar");
+      throw new Error("Outlet Phone Already Added");
     }
 
     await getOutletById(id);
