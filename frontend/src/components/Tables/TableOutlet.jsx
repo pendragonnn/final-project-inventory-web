@@ -1,11 +1,14 @@
 "use client";
-import ModalAddOutlet from "../Modal/ModalAddOutlet";
+import ModalAddOutlet from "../Modal/Outlet/ModalAddOutlet";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet";
 
 const TableOutlets = () => {
   const [data, setData] = useState([]);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [update, setUpdate] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,6 +18,20 @@ const TableOutlets = () => {
 
     fetchData();
   }, []);
+
+  const handleAdd = (newOutlet) => {
+    const newData = [...data, newOutlet];
+    setData(newData);
+    // const temp = data
+    // data[1] = newOutlet
+    // setData([...temp]);
+  };
+
+  const handleEdit = async (id) => {
+    const res = await axios.get(`http://localhost:8000/outlet/${id}`);
+    setUpdate(res.data.data);
+    setIsModalEditOpen(true);
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -31,9 +48,11 @@ const TableOutlets = () => {
           await axios.delete(`http://localhost:8000/outlet/${id}`);
           setData((prevData) => prevData.filter((outlet) => outlet.id !== id));
           Swal.fire({
+            position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
+            customClass: "swal-custom",
           });
         }
       } catch (e) {
@@ -77,7 +96,11 @@ const TableOutlets = () => {
                 />
               </svg>
             </span>
-            <ModalAddOutlet name={"Add Outlet"} test={"add out"} />
+            <ModalAddOutlet
+              name={"Add Outlet"}
+              test={"add"}
+              addToTable={handleAdd}
+            />
           </a>
         </div>
       </div>
@@ -135,7 +158,7 @@ const TableOutlets = () => {
             <div className="flex gap-2 items-center justify-center p-2.5 xl:p-5">
               <button
                 className="hover:text-primary"
-                onClick={() => handleEdit(outlet)}
+                onClick={() => handleEdit(outlet.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -151,6 +174,9 @@ const TableOutlets = () => {
                     d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
+                {isModalEditOpen && (
+                  <ModalEditOutlet data={update} test={"edit"} />
+                )}
               </button>
               <button
                 className="hover:text-primary"

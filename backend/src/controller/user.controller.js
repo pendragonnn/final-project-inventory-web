@@ -30,7 +30,7 @@ const userById = async (req, res) => {
     const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User tidak ditemukan" });
+      return res.status(404).json({ message: "User Not Found" });
     }
     res.status(200).json({ data: user });
   } catch (error) {
@@ -44,7 +44,7 @@ const postUser = async (req, res) => {
 
     const user = await insertUser(newUserData);
 
-    res.status(200).json({ data: user, message: "User berhasil ditambahkan" });
+    res.status(200).json({ data: user, message: "Successful Adding User" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -55,7 +55,7 @@ const updateUser = async (req, res) => {
   const userData = req.body;
 
   if(!userData) {
-    return res.status(400).json({ message: "Data harus diisi semua" })
+    return res.status(400).json({ message: "Data Must Have Value" })
   }
 
   try {
@@ -64,12 +64,12 @@ const updateUser = async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .json({ message: "Data sudah ada atau User tidak ditemukan" });
+      .json({ message: "User Not Found or Already Added" });
   }
   
   res.status(200).json({ 
     data: user, 
-    message: " User berhasil diupdate!" });
+    message: "Successfull Update User!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -81,7 +81,7 @@ const removeUser = async (req, res) => {
 
     await deleteUserById(userId);
 
-    res.status(200).json({ message: "Data berhasil dihapus" });
+    res.status(200).json({ message: "Successful Delete User!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

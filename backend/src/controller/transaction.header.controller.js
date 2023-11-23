@@ -47,7 +47,7 @@ const transactionHeaderById = async (req, res) => {
     if (!transactionHeader) {
       return res
         .status(404)
-        .json({ message: "Header transaksi tidak ditemukan" })
+        .json({ message: "Transaction Header Not Found" })
     }
 
     res.status(200).json({ data: transactionHeader })
@@ -64,7 +64,7 @@ const postTransactionHeader = async (req, res) => {
     for (let i of detail) {
       const item = await getItemById(i.item_id)
       if (i.quantity > item.stock) {
-        res.send("Quantity tidak boleh melebihi stok")
+        res.send("Quantity must not exceed stock")
         throw error()
       }
     }
@@ -95,7 +95,7 @@ const postTransactionHeader = async (req, res) => {
         ...transactionHeader.dataValues,
         Detail: allTransactionDetail,
       },
-      message: "Header transaksi berhasil ditambahkan",
+      message: "Successful Adding Transaction Header",
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -107,7 +107,7 @@ const updateTransactionHeader = async (req, res) => {
   const transactionHeaderData = req.body
 
   if (!transactionHeaderData) {
-    return res.status(400).send("Data harus diisi semua")
+    return res.status(400).send("Data Musth Have Value")
   }
 
   try {
@@ -117,13 +117,13 @@ const updateTransactionHeader = async (req, res) => {
     )
     if (!transactionHeader) {
       return res.status(400).json({
-        message: "Data sudah ada atau Transaction Header tidak ditemukan",
+        message: "Transaction Header Not Found or Already Added",
       })
     }
 
     res.status(200).json({
       data: transactionHeader,
-      message: "Transaction Header berhasil diupdate!",
+      message: "Successfull Update Transaction Header!",
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -135,7 +135,7 @@ const removeTransactionHeader = async (req, res) => {
     const transactionHeaderId = req.params.id
 
     await deleteTransactionHeaderById(transactionHeaderId)
-    res.status(200).json({ message: "Data berhasil dihapus" })
+    res.status(200).json({ message: "Successful Delete Transaction Header!" })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

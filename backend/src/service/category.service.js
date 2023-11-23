@@ -16,7 +16,7 @@ const getCategoryById = async (id) => {
   const category = await findCategoryById(id);
 
   if (!category) {
-    throw Error("Kategori tidak ditemukan");
+    throw Error("Category Not Found");
   }
   return category;
 };
@@ -25,7 +25,7 @@ const insertCategory = async (newCategory) => {
   const categoryName = await findCategoryByName(newCategory.name);
 
   if (categoryName) {
-    throw new Error("Kategori sudah Terdaftar");
+    throw new Error("Category Already Added");
   }
 
   const category = await createCategory(newCategory);

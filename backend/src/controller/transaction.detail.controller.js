@@ -33,7 +33,7 @@ const transactionDetailById = async (req, res) => {
     if (!transactionDetail) {
       return res
         .status(404)
-        .json({ message: "Detail transaksi tidak ditemukan" })
+        .json({ message: "Transaction Detail Not Found" })
     }
 
     res.status(200).json({ data: transactionDetail })

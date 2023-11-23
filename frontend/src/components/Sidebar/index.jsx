@@ -271,6 +271,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </Link>
               </li>
 
+              {/* {role == "admin" && ( */}
               <li>
                 <Link
                   href="/tablesOutlets"
@@ -307,6 +308,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   Outlets
                 </Link>
               </li>
+              {/* )} */}
 
               <li>
                 <Link

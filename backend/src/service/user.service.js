@@ -17,7 +17,7 @@ const getUserById = async (id) => {
   const user = await findUserById(id);
 
   if(!user) {
-    throw Error("User tidak ditemukan")
+    throw Error("User Not Found")
   }
   return user 
 };
@@ -27,7 +27,7 @@ const insertUser = async (userData) => {
   const userEmail = await findUserByEmail(userData.email);
 
   if (userEmail) {
-    throw new Error("Email sudah Terdaftar");
+    throw new Error("User Email Already Added");
   }
  
   const user = await createUser(userData);
@@ -40,7 +40,7 @@ const editUserById = async (id, newUser) => {
     const userEmail = await findUserByEmail(newUser.email)
     
     if(userEmail) {
-      throw new Error("Email sudah terdaftar")
+      throw new Error("User Email Already Added")
     }
     
     await findUserById(id)

@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const authMiddleware = require("../middleware/auth.middleware")
+// const authMiddleware = require("../middleware/auth.middleware")
 const transactionheaderRoutes = require("./transaction.header.route")
 const transactiondetailRoutes = require("./transaction.detail.route")
 const suppliersRoutes = require("../route/supplier.route")

@@ -49,12 +49,12 @@
       "description": "CRUD API Operation for item data"
     },
     {
-      "name": "Transaction Detail",
-      "description": "CRUD API Operation for transaction detail data"
-    },
-    {
       "name": "Transaction Header",
       "description": "CRUD API Operaion for transaction header data"
+    },
+    {
+      "name": "Transaction Detail",
+      "description": "CRUD API Operation for transaction detail data"
     }
   ],
   "paths": {
@@ -380,15 +380,15 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "example": "Sepatu Kilat Jawa Timur",
+                    "example": "Sinar Jaya Sepatu Indah",
                     "type": "string"
                   },
                   "address": {
-                    "example": "Jalan Sriwijaya no. 2",
+                    "example": "Jalan Kapani Jagung No. 13",
                     "type": "string"
                   },
                   "phone": {
-                    "example": "089767987123",
+                    "example": "089734567891",
                     "type": "string"
                   }
                 }
@@ -486,10 +486,6 @@
                   },
                   "full_name": {
                     "example": "Achmad Subaru",
-                    "type": "string"
-                  },
-                  "username": {
-                    "example": "Achmad_admin",
                     "type": "string"
                   },
                   "email": {
@@ -628,6 +624,11 @@
         "tags": [
           "Users"
         ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update User",
         "description": "For Update User Data",
         "parameters": [
@@ -654,10 +655,6 @@
                   },
                   "full_name": {
                     "example": "Achmad Indah Subaru",
-                    "type": "string"
-                  },
-                  "username": {
-                    "example": "Achmad_staff",
                     "type": "string"
                   },
                   "email": {
@@ -701,6 +698,11 @@
       "delete": {
         "tags": [
           "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
         ],
         "summary": "Delete User",
         "description": "For Delete User Data",
@@ -756,7 +758,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "supplier": {
+                  "name": {
                     "example": "PT. Jaya Gemilang",
                     "type": "string"
                   },
@@ -917,7 +919,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "supplier": {
+                  "name": {
                     "example": "PT. Hari Senin",
                     "type": "string"
                   },
@@ -1321,69 +1323,6 @@
       }
     },
     "/transaction-detail": {
-      "post": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "tags": [
-          "Transaction Detail"
-        ],
-        "summary": "Post Transaction Detail",
-        "description": "Adding new transaction detail data",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "header_id": {
-                    "example": "TH-0003",
-                    "type": "string"
-                  },
-                  "item_id": {
-                    "example": "I-0003",
-                    "type": "string"
-                  },
-                  "quantity": {
-                    "example": 10,
-                    "type": "integer"
-                  },
-                  "unit_price": {
-                    "example": 1000000,
-                    "type": "integer"
-                  },
-                  "total_price": {
-                    "example": 10000000,
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "success"
-          },
-          "400": {
-            "description": "bad request"
-          },
-          "404": {
-            "description": "not found"
-          },
-          "500": {
-            "description": "internal server error"
-          },
-          "403": {
-            "description": "forbidden"
-          },
-          "401": {
-            "description": "unauthorized"
-          }
-        }
-      },
       "get": {
         "security": [
           {
@@ -1469,125 +1408,6 @@
           },
           "500": {
             "description": "internal server error"
-          },
-          "403": {
-            "description": "forbidden"
-          },
-          "401": {
-            "description": "unauthorized"
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "tags": [
-          "Transaction Detail"
-        ],
-        "summary": "Update Transaction Detail",
-        "description": "Updating Transaction Detail Data",
-        "parameters": [
-          {
-            "name": "transactionDetailId",
-            "in": "path",
-            "description": "ID for search transaction detail data",
-            "required": true,
-            "schema": {
-              "example": "TD-0004",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "header_id": {
-                    "example": "TH-0003",
-                    "type": "string"
-                  },
-                  "item_id": {
-                    "example": "I-0002",
-                    "type": "string"
-                  },
-                  "quantity": {
-                    "example": 4,
-                    "type": "integer"
-                  },
-                  "unit_price": {
-                    "example": 1500000,
-                    "type": "integer"
-                  },
-                  "total_price": {
-                    "example": 15000000,
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "success"
-          },
-          "400": {
-            "description": "bad request"
-          },
-          "404": {
-            "description": "not found"
-          },
-          "500": {
-            "description": "internal server error"
-          },
-          "403": {
-            "description": "forbidden"
-          },
-          "401": {
-            "description": "unauthorized"
-          }
-        }
-      },
-      "delete": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "tags": [
-          "Transaction Detail"
-        ],
-        "summary": "Delete Transaction Detail",
-        "description": "For Deleting Transaction Detail Data",
-        "parameters": [
-          {
-            "name": "transactionDetailId",
-            "in": "path",
-            "description": "ID for search transaction detail data",
-            "required": true,
-            "schema": {
-              "example": "TD-0004",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "success"
-          },
-          "400": {
-            "description": "bad request"
-          },
-          "404": {
-            "description": "not found"
-          },
-          "500": {
-            "description": "internal serve error"
           },
           "403": {
             "description": "forbidden"
