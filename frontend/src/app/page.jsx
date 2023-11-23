@@ -1,4 +1,4 @@
-import Dashboard from "@/components/Dashboard/Dashboard";
+import SignIn from "./auth/signin/page";
 export const metadata = {
   title: "TailAdmin | Next.js E-commerce Dashboard Template",
   description: "This is Home Blog page for TailAdmin Next.js",
@@ -7,7 +7,7 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <Dashboard />
+      <SignIn />
     </>
   );
 }
