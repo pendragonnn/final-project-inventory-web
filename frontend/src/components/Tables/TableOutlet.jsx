@@ -7,7 +7,7 @@ import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet";
 
 const TableOutlets = () => {
   const [data, setData] = useState([]);
-  const [update, setUpdate] = useState([]);
+  const [update, setUpdate] = useState({});
   const [editOutletId, setEditOutletId] = useState(null);
 
   useEffect(() => {

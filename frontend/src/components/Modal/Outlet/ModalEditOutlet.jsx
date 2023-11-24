@@ -41,9 +41,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
 
   return (
     <>
-      <label htmlFor={test} className="cursor-pointer">
-        i
-      </label>
+      <label htmlFor={test} className="cursor-pointer"></label>
       <input
         type="checkbox"
         ref={modalCheckbox}
