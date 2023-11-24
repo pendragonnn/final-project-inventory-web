@@ -248,7 +248,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </li>
               )}
 
-              {isTokenExist && isRoleExist == 2 && (
+              {isTokenExist && isRoleExist == 1 && (
                 <>
                   <li>
                     <Link
