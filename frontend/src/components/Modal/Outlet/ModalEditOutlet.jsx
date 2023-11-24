@@ -1,6 +1,7 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import Outlet from "@/data/outlet/index";
 import { useRef } from "react";
 
 const ModalEditOutlet = ({ data, test, addToTable }) => {
@@ -8,7 +9,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`http://localhost:8000/outlet/${data.id}`, {
+      const res = await Outlet.updateOutlet(data.id, {
         name: e.target.name.value,
         address: e.target.address.value,
         phone: e.target.phone.value,
@@ -36,8 +37,6 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
       });
     }
   };
-
-  console.log(data);
 
   return (
     <>
