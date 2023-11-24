@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
@@ -18,6 +18,7 @@ const SignIn = () => {
         email: e.target.email.value,
         password: e.target.password.value,
       });
+
       Swal.fire({
         position: "bottom-end",
         icon: "success",
@@ -31,11 +32,11 @@ const SignIn = () => {
       Cookies.set("role", res.data.role, { expires: 7 });
 
       router.push("/dashboard");
-    } catch (e) {
+    } catch (error) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: error.message,
         showConfirmButton: false,
         timer: 3000,
         customClass: "swal-custom-auth-error",

@@ -1,11 +1,31 @@
 const models = require("../../models");
 const User = models.User;
+const bcrypt = require("bcrypt");
+const { findUserWithRole } = require("./auth.repository");
+const Role = models.Role;
 
 const findUsers = async (page, size) => {
   const offset = (page - 1) * size;
-  const usersAll = await User.findAll();
+  const usersAll = await User.findAll(
+    {
+      include: [
+        {
+          model: Role,
+          attributes: ["name"],
+        },
+      ],
+    }
+  );
   const dataLength = usersAll.length;
   const users = await User.findAll({
+
+    include: [
+      {
+        model: Role,
+        attributes: ["name"],
+      },
+    ],
+
     offset: offset,
     limit: size,
   });
@@ -35,7 +55,7 @@ const findUserByEmail = async (email) => {
 const createUser = async (userData) => {
   try {
     const existingIds = await User.findAll({ attributes: ["id"] });
-
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newId = generateNewId(existingIds.map((user) => user.id));
 
     const user = await User.create({
@@ -43,7 +63,7 @@ const createUser = async (userData) => {
       role_id: userData.role_id,
       full_name: userData.full_name,
       email: userData.email,
-      password: userData.password,
+      password: hashedPassword,
       image_url: userData.image_url,
     });
 
@@ -72,7 +92,7 @@ const editUser = async (id, userData) => {
       full_name: userData.full_name,
       email: userData.email,
       username: userData.username,
-      password: userData.password,
+      password: hashedPassword,
       image_url: userData.image_url,
     },
     {
@@ -106,7 +126,23 @@ const updateUserPhotos = async (id, image_url) => {
   } catch (error) {
     throw error;
   }
+
+  
 };
+
+// const findUserWithRole = async () => {
+//   const user = await User.findAll({
+//     include: [
+//       {
+//         model: Role,
+//         attributes: ["name"],
+//       },
+//     ],
+//   });
+
+//   return user;
+// };
+
 
 module.exports = {
   findUsers,
@@ -116,4 +152,5 @@ module.exports = {
   editUser,
   deleteUser,
   updateUserPhotos,
+  // findUserWithRole,
 };
