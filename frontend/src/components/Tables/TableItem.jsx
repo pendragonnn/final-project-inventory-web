@@ -8,7 +8,7 @@ const TablesItem = () => {
   const [data, setData] = useState([]);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [update, setUpdate] = useState([]);
-  const [categoryName, setCategoryName] = useState('');
+ 
   useEffect(() => {
     const fetchData = async () => {
       const res = await axios.get("http://localhost:8000/item");
@@ -117,7 +117,7 @@ const TablesItem = () => {
       <div className="flex flex-col">
       <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
         <div className="col-span-2 flex items-center">
-          <p className="font-medium">Product Name</p>
+          <p className="font-medium">Name</p>
         </div>
         <div className="col-span-2 hidden items-center sm:flex">
           <p className="font-medium">Category</p>
