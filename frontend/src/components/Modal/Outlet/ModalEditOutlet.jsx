@@ -1,12 +1,14 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { useRef } from "react";
 
-const ModalEditOutlet = ({ data, test }) => {
+const ModalEditOutlet = ({ data, test, addToTable }) => {
+  const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`http://localhost:8000/outlet/${id}`, {
+      const res = await axios.put(`http://localhost:8000/outlet/${data.id}`, {
         name: e.target.name.value,
         address: e.target.address.value,
         phone: e.target.phone.value,
@@ -20,7 +22,8 @@ const ModalEditOutlet = ({ data, test }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        window.location.reload();
+        addToTable(res.data.data);
+        modalCheckbox.current.checked = false;
       });
     } catch (e) {
       Swal.fire({
@@ -38,8 +41,15 @@ const ModalEditOutlet = ({ data, test }) => {
 
   return (
     <>
-      <label htmlFor={test} className="cursor-pointer"></label>
-      <input type="checkbox" id={test} className="modal-toggle" />
+      <label htmlFor={test} className="cursor-pointer">
+        i
+      </label>
+      <input
+        type="checkbox"
+        ref={modalCheckbox}
+        id={test}
+        className="modal-toggle"
+      />
       <div className="modal" role="dialog">
         <div className="modal-box bg-white dark:bg-boxdark">
           <label
@@ -64,7 +74,7 @@ const ModalEditOutlet = ({ data, test }) => {
                   <input
                     type="text"
                     name="name"
-                    value={data.name}
+                    defaultValue={data.name}
                     placeholder="Enter full name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -78,7 +88,7 @@ const ModalEditOutlet = ({ data, test }) => {
                   <input
                     type="text"
                     name="address"
-                    value={data.address}
+                    defaultValue={data.address}
                     placeholder="Enter address"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -92,7 +102,7 @@ const ModalEditOutlet = ({ data, test }) => {
                   <input
                     type="number"
                     name="phone"
-                    value={data.phone}
+                    defaultValue={data.phone}
                     placeholder="Enter phone number"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
