@@ -1,22 +1,19 @@
-import React from "react";
+import React, { useRef } from "react";
 import Swal from "sweetalert2";
-import { useRef } from "react";
 import axios from "axios";
 
-const ModalUserAdd = ({ name, test , addToTable}) => {
+const ModalUserAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:8000/user", {
-        role_id : e.target.role_id.value,
+        role_id: e.target.role_id.value,
         full_name: e.target.full_name.value,
         email: e.target.email.value,
         password: e.target.password.value,
-
       });
-      console.log("res", res);
-      // router.push("/tablesOutlets");
+      console.log(res);
       Swal.fire({
         position: "bottom-end",
         icon: "success",
@@ -55,7 +52,7 @@ const ModalUserAdd = ({ name, test , addToTable}) => {
         <div className="modal-box bg-white dark:bg-boxdark">
           <label
             htmlFor={test}
-            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
+            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right  text-xl text-[#6A718A] hover:text-primary"
           >
             x
           </label>
@@ -68,20 +65,26 @@ const ModalUserAdd = ({ name, test , addToTable}) => {
 
             <form action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
-
-              <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
+                <div className="mb-4.5">
+                  <label className="block text-black dark:text-white">
                     Role
                   </label>
-                  <input
-                    type="number"
+
+                  <label
+                    for="countries"
+                    class="block  text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Select an option
+                  </label>
+                  <select
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     name="role_id"
-                    placeholder="Enter role"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                    max={4}
-                    // min={11}
-                  />
+                  >
+                    <option selected>Choose a role</option>
+                    <option value="1">Admin</option>
+                    <option value="2">Staff</option>
+                    <option value="3">Manager</option>
+                  </select>
                 </div>
 
                 <div className="mb-4.5">
@@ -124,9 +127,16 @@ const ModalUserAdd = ({ name, test , addToTable}) => {
                 </div>
 
                 <input
+                  type="file"
+                  name="image_url"
+                  accept="image/*"
+                  className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                />
+
+                <input
                   type="submit"
                   value={"Add"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>

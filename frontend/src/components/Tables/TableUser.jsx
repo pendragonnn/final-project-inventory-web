@@ -17,11 +17,11 @@ const TableUser = () => {
     fetchData();
   }, []);
 
-  const handleAdd = (newOutlet) => {
-    const newData = [...data, newOutlet];
+  const handleAdd = (newUser) => {
+    const newData = [...data, newUser];
     setData(newData);
     // const temp = data
-    // data[1] = newOutlet
+    // data[1] = newUser
     // setData([...temp]);
   };
 
@@ -99,7 +99,7 @@ const TableUser = () => {
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Role
+              Role Name
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
@@ -110,11 +110,6 @@ const TableUser = () => {
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Email
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Password
             </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
@@ -138,7 +133,8 @@ const TableUser = () => {
                 {/* <Image src={brand.logo} alt="Brand" width={48} height={48} /> */}
               </div>
               <p className="hidden text-black dark:text-white sm:block">
-                {user.role_id}
+                {user?.Role?.name}
+                {/* {user.role_id} */}
               </p>
             </div>
 
@@ -148,10 +144,6 @@ const TableUser = () => {
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
               <p className="text-meta-3">{user.email}</p>
-            </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{user.password}</p>
             </div>
 
             <div className="flex gap-2 items-center justify-center p-2.5 xl:p-5">
