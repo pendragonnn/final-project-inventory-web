@@ -1,17 +1,24 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import Item from "@/data/item/index"
+import item from "@/data/item/index";
 
 const ModalItemAdd = ({ name, test, addToTable }) => {
-  const modalCheckbox = useRef(null);
+  const {modalCheckbox,  fileInputRef} = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/item", {
+      const res = await Item.addItem({
         name: e.target.name.value,
-        address: e.target.address.value,
-        phone: e.target.phone.value,
+        description: e.target.description.value,
+        category_id: e.target.category_id.value,
+        price: e.target.price.value,
+        stock: e.target.stock.value,
+        image_url: e.target.image_url.value,
       });
       Swal.fire({
         position: "bottom-end",
@@ -25,6 +32,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
+      console.error(e.response);
       Swal.fire({
         position: "bottom-end",
         icon: "error",
@@ -35,6 +43,20 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (item?.image_url) {
+      const file = new File([], item.image_url, { type: 'image/*' });
+      setSelectedImage(URL.createObjectURL(file));
+      fileInputRef.current.value = '';
+    }
+  }, [item]);
+
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    setSelectedImage(URL.createObjectURL(file));
+  }
+
 
   return (
     <>
@@ -71,7 +93,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                   <input
                     type="text"
                     name="name"
-                    placeholder="Enter full name"
+                    placeholder="Enter  name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />
@@ -79,12 +101,12 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Address
+                   description
                   </label>
                   <input
                     type="text"
-                    name="address"
-                    placeholder="Enter address"
+                    name="description"
+                    placeholder="Enter description"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />
@@ -92,17 +114,63 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Phone
-                  </label>
+                  Category               
+                     </label>
                   <input
-                    type="number"
-                    name="phone"
-                    placeholder="Enter phone number"
+                    type="text"
+                    name="category_id"
+                    placeholder="Enter Category  "
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                     // max={12}
                     // min={11}
                   />
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                Price             
+                     </label>
+                  <input
+                    type="number"
+                    name="price"
+                    placeholder="Enter price"
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required
+                    // max={12}
+                    // min={11}
+                  />
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                  Stock           
+                     </label>
+                  <input
+                    type="number"
+                    name="stock"
+                    placeholder="Enter Stock"
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required
+                    // max={12}
+                    // min={11}
+                  />
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+              Image            
+                     </label>
+                  <input
+                    type="file"
+                    name="image_url"
+                    placeholder="Enter Image"
+                    accept="image/*"
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    // max={12}
+                    // min={11}
+                  />
+                   {selectedImage && <img src={selectedImage} alt="Selected Image" />}
                 </div>
 
                 <input
