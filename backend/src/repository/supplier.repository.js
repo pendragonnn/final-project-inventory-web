@@ -2,14 +2,14 @@ const models = require("../../models");
 const Suppliers = models.Supplier;
 
 const findSuppliers = async (page, size) => {
-  const offset = (page-1) * size
-  const suppliersAll = await Suppliers.findAll()
-  const dataLength = suppliersAll.length
+  const offset = (page - 1) * size;
+  const suppliersAll = await Suppliers.findAll();
+  const dataLength = suppliersAll.length;
   const suppliers = await Suppliers.findAll({
     offset: offset,
-    limit: size
-  })
-  return { suppliers, dataLength }
+    limit: size,
+  });
+  return { suppliers, dataLength };
 };
 
 const findSupplierById = async (id) => {
@@ -22,13 +22,14 @@ const findSupplierById = async (id) => {
 };
 
 const findSupplierByName = async (name) => {
-  const suppliers = await Suppliers.findOne({
+  const supplier = await Suppliers.findOne({
     where: {
       name,
     },
+    returning: true,
   });
 
-  return suppliers;
+  return supplier;
 };
 
 const findSupplierByPhone = async (phone) => {
@@ -36,6 +37,7 @@ const findSupplierByPhone = async (phone) => {
     where: {
       phone,
     },
+    returning: true,
   });
 
   return supplier;
