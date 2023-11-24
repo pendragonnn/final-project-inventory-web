@@ -13,7 +13,6 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
         address: e.target.address.value,
         phone: e.target.phone.value,
       });
-      console.log(res);
       Swal.fire({
         position: "bottom-end",
         icon: "success",
