@@ -209,7 +209,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </Link>
               </li> */}
 
-              {isTokenExist && isRoleExist == 1 && (
+              {isTokenExist && isRoleExist == "1" && (
                 <li>
                   <Link
                     href="/tables"
@@ -285,7 +285,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   Items
                 </Link>
               </li>
-              {isTokenExist && isRoleExist == 2 && (
+              {isTokenExist && isRoleExist == "2" && (
                 <>
                   <li>
                     <Link
