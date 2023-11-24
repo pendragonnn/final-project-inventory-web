@@ -6,8 +6,39 @@
 
 /* Custom SWAL */
 .swal-custom {
+  width: 500px !important;
+  font-size: 1rem !important;
+  background-color: #1d2533 !important;
+  color: #fff;
+}
+
+.swal-custom-auth-success {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-top: 4px solid #00ffab !important;
+  border-left: 1px solid #14c38e !important;
+  border-right: 1px solid #14c38e !important;
+  border-bottom: 1px solid #14c38e !important;
   width: 350px !important;
   font-size: 0.5rem !important;
+  padding: 1rem !important;
+  color: #fff !important;
+}
+
+.swal-custom-auth-error {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-top: 4px solid #c70039 !important;
+  border-left: 1px solid #ff6969 !important;
+  border-right: 1px solid #ff6969 !important;
+  border-bottom: 1px solid #ff6969 !important;
+  width: 350px !important;
+  font-size: 0.5rem !important;
+  padding: 1rem !important;
+  color: #fff !important;
+}
+
+.swal-custom-delete {
+  width: 350px !important;
+  font-size: 0.8rem !important;
 }
 
 @layer base {

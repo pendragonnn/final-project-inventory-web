@@ -7,8 +7,8 @@ import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet";
 
 const TableOutlets = () => {
   const [data, setData] = useState([]);
-  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [update, setUpdate] = useState([]);
+  const [update, setUpdate] = useState(null);
+  const [editOutletId, setEditOutletId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,15 +22,22 @@ const TableOutlets = () => {
   const handleAdd = (newOutlet) => {
     const newData = [...data, newOutlet];
     setData(newData);
-    // const temp = data
-    // data[1] = newOutlet
-    // setData([...temp]);
+    const temp = data;
+    data[1] = newOutlet;
+    setData([...temp]);
+  };
+
+  const handleEditData = (updatedOutlet) => {
+    const updatedData = [...data, updatedOutlet];
+    data[0] = updatedOutlet;
+    setData([...updatedData]);
   };
 
   const handleEdit = async (id) => {
     const res = await axios.get(`http://localhost:8000/outlet/${id}`);
     setUpdate(res.data.data);
-    setIsModalEditOpen(true);
+    console.log(id);
+    setEditOutletId(id);
   };
 
   const handleDelete = async (id) => {
@@ -52,7 +59,7 @@ const TableOutlets = () => {
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
-            customClass: "swal-custom",
+            customClass: "swal-custom-delete",
           });
         }
       } catch (e) {
@@ -148,7 +155,7 @@ const TableOutlets = () => {
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{outlet.address}K</p>
+              <p className="text-black dark:text-white">{outlet.address}</p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
@@ -156,8 +163,9 @@ const TableOutlets = () => {
             </div>
 
             <div className="flex gap-2 items-center justify-center p-2.5 xl:p-5">
-              <button
-                className="hover:text-primary"
+              <label
+                htmlFor="edit"
+                className="hover:text-primary cursor-pointer"
                 onClick={() => handleEdit(outlet.id)}
               >
                 <svg
@@ -174,10 +182,8 @@ const TableOutlets = () => {
                     d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
-                {isModalEditOpen && (
-                  <ModalEditOutlet data={update} test={"edit"} />
-                )}
-              </button>
+              </label>
+
               <button
                 className="hover:text-primary"
                 onClick={() => handleDelete(outlet.id)}
@@ -200,6 +206,12 @@ const TableOutlets = () => {
             </div>
           </div>
         ))}
+
+        <ModalEditOutlet
+          data={update}
+          test={"edit"}
+          addToTable={handleEditData}
+        />
       </div>
     </div>
   );

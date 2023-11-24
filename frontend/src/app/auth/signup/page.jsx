@@ -1,16 +1,59 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const SignUp = () => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:8000/register", {
+        full_name: e.target.fullname.value,
+        email: e.target.email.value,
+        password: e.target.password.value,
+      });
+      Swal.fire({
+        position: "bottom-end",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom-auth-success",
+      }).then(() => {
+        router.push("/");
+      });
+    } catch (e) {
+      Swal.fire({
+        position: "bottom-end",
+        icon: "error",
+        title: e.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom-auth-error",
+      });
+    }
+  };
+
   return (
     <>
-      <div className=" flex h-screen justify-center items-center">
-        <div className="w-full xl:w-1/2 p-4 sm:p-12.5 xl:p-17.5 align-middle">
+      <div className=" flex h-screen justify-center items-center bg-sidebar">
+        <div className="w-1/2 xl:w-1/3 p-4 sm:p-12.5 xl:p-17.5 align-middle">
           <Image
             src={"/Logo.svg"}
-            width={50}
-            height={50}
+            width={75}
+            height={75}
             alt="logo"
             className="mb-5 mx-auto"
           />
@@ -21,16 +64,15 @@ const SignUp = () => {
             Enter your details to create a new account !
           </p>
 
-          <form>
+          <form action="#" onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="mb-2.5 block font-medium text-black dark:text-white">
-                Name
-              </label>
               <div className="relative">
                 <input
                   type="text"
+                  name="fullname"
                   placeholder="Enter your full name"
-                  className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  className="w-full rounded-lg text-white border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -58,14 +100,13 @@ const SignUp = () => {
             </div>
 
             <div className="mb-4">
-              <label className="mb-2.5 block font-medium text-black dark:text-white">
-                Email
-              </label>
               <div className="relative">
                 <input
                   type="email"
+                  name="email"
                   placeholder="Enter your email"
-                  className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  className="w-full rounded-lg text-white border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -89,14 +130,15 @@ const SignUp = () => {
             </div>
 
             <div className="mb-6">
-              <label className="mb-2.5 block font-medium text-black dark:text-white">
-                Password
-              </label>
               <div className="relative">
                 <input
                   type="password"
-                  placeholder="Enter your password"
-                  className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  name="password"
+                  placeholder="Enter your password "
+                  className="w-full rounded-lg text-white border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -123,15 +165,22 @@ const SignUp = () => {
               </div>
             </div>
             <div className="mb-6">
-              <label className="mb-2.5 block font-medium text-black dark:text-white">
-                Re-type Password
-              </label>
               <div className="relative">
                 <input
                   type="password"
-                  placeholder="Re-enter your password"
-                  className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  name="retypePassword"
+                  placeholder="Re-enter your password "
+                  className="w-full rounded-lg text-white border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  minLength={8}
+                  required
                 />
+
+                {password !== confirmPassword && (
+                  <p className="text-sm pt-1 text-danger">
+                    Password doesn't match !
+                  </p>
+                )}
 
                 <span className="absolute right-4 top-4">
                   <svg
@@ -161,14 +210,14 @@ const SignUp = () => {
               <input
                 type="submit"
                 value="Sign Up"
-                className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 bg-slate-50 text-black transition hover:bg-opacity-90"
+                className="w-full border border-white bg-white cursor-pointer rounded-lg p-4 bg-slate-50 text-black transition hover:bg-opacity-90"
               />
             </div>
 
             <div className="mt-6 text-center">
               <p>
                 Already have an account?{" "}
-                <Link href={"/signin"} className="text-primary underline">
+                <Link href={"/auth/signin"} className="text-white underline">
                   Log In
                 </Link>
               </p>

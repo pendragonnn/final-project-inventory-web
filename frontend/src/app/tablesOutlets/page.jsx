@@ -1,13 +1,22 @@
+"use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-
+import { useEffect } from "react";
 import TableOutlets from "@/components/Tables/TableOutlet";
 import SidebarLayout from "../sidebar-layout";
-export const metadata = {
-  title: "Tables Page | Next.js E-commerce Dashboard Template",
-  description: "This is Tables page for TailAdmin Next.js",
-  // other metadata
-};
+import { useRouter } from "next/navigation";
+
 const TablesPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    console.log(role);
+
+    if (role && role !== 2) {
+      router.push("/dashboard");
+    }
+  }, []);
+
   return (
     <SidebarLayout>
       <Breadcrumb pageName="Tables" />

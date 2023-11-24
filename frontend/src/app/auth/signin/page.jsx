@@ -1,31 +1,69 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post("http://localhost:8000/login", {
+        email: e.target.email.value,
+        password: e.target.password.value,
+      });
+      Swal.fire({
+        position: "bottom-end",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1000,
+        customClass: "swal-custom-auth-success",
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      router.push("/dashboard");
+    } catch (e) {
+      Swal.fire({
+        position: "bottom-end",
+        icon: "error",
+        title: e.message,
+        showConfirmButton: false,
+        timer: 3000,
+        customClass: "swal-custom-auth-error",
+      });
+    }
+  };
+
   return (
     <>
       <div className=" flex h-screen justify-center items-center bg-sidebar">
         <div className="w-1/2 xl:w-1/3  p-4 sm:p-12.5 xl:p-17.5 align-middle">
           <Image
             src={"/Logo.svg"}
-            width={50}
-            height={50}
+            width={75}
+            height={75}
             alt="logo"
             className="mb-5 mx-auto"
           />
-          <h2 className="mb-2 text-[12px] font-bold text-white text-center xl:text-title-md sm:text-title-xl2">
+          <h2 className="mb-2 text-[20px] font-bold text-white text-center xl:text-title-md md:text-title-xl2">
             Log in to your account
           </h2>
           <p className="mb-7 text-center text-white font-light">
             Welcome back! Please enter your details.
           </p>
 
-          <form>
+          <form action="#" onSubmit={handleSubmit}>
             <div className="mb-5 mt-5">
               <div className="relative">
                 <input
                   type="email"
+                  name="email"
                   placeholder="Enter your email"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 />
@@ -54,6 +92,7 @@ const SignIn = () => {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
                   placeholder="Enter your password"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 />
@@ -83,13 +122,11 @@ const SignIn = () => {
             </div>
 
             <div className="mb-5">
-              <Link href={"/dashboard"}>
-                <input
-                  type="submit"
-                  value="Log In"
-                  className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black font-bold transition hover:bg-opacity-90"
-                />
-              </Link>
+              <input
+                type="submit"
+                value="Log In"
+                className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black font-bold transition hover:bg-opacity-90"
+              />
             </div>
 
             <div className="mt-6 text-center text-white font-light">
