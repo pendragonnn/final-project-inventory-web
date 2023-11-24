@@ -143,7 +143,7 @@ const TableUser = () => {
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{user.full_name}K</p>
+              <p className="text-black dark:text-white">{user.full_name}</p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
