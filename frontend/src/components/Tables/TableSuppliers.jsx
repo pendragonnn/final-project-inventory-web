@@ -2,7 +2,8 @@
 import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import Supplier from "@/data/supplier/index";
+
 import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
 
 const TableSuppliers = () => {
@@ -12,7 +13,7 @@ const TableSuppliers = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get("http://localhost:8000/supplier");
+      const res = await Supplier.getSupplier();
       setData(res.data.data);
     };
 
@@ -34,7 +35,7 @@ const TableSuppliers = () => {
   };
 
   const handleEdit = async (id) => {
-    const res = await axios.get(`http://localhost:8000/supplier/${id}`);
+    const res = await Supplier.getSupplierByid(id);
     setUpdate(res.data.data);
     console.log(id);
     setEditSupplierId(id);
@@ -52,7 +53,7 @@ const TableSuppliers = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await axios.delete(`http://localhost:8000/supplier/${id}`);
+          await Supplier.deleteSupplier(id);
           setData((prevData) =>
             prevData.filter((supplier) => supplier.id !== id)
           );
@@ -85,11 +86,12 @@ const TableSuppliers = () => {
 
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <a
+          <label
+            htmlFor="add"
             type="submit"
-            className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
+            className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-5 xl:px-4"
           >
-            <span>
+            <span className="flex gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -104,13 +106,10 @@ const TableSuppliers = () => {
                   d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
+              Add Supplier
             </span>
-            <ModalAddSupplier
-              name={"Add Supplier"}
-              test={"add"}
-              addToTable={handleAdd}
-            />
-          </a>
+            <ModalAddSupplier test={"add"} addToTable={handleAdd} />
+          </label>
         </div>
       </div>
 

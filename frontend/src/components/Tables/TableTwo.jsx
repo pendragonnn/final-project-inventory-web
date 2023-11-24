@@ -1,4 +1,5 @@
 "use client";
+import supplier from "@/data/supplier";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -7,7 +8,7 @@ const TableTwo = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("http://localhost:8000/item");
+      const res = await supplier.getSupplier();
       const result = await res.json();
       setData(result.data);
     };
