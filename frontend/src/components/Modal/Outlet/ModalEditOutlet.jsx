@@ -3,36 +3,36 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 const ModalEditOutlet = ({ data, test }) => {
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const res = await axios.post("http://localhost:8000/outlet", {
-  //       name: e.target.name.value,
-  //       address: e.target.address.value,
-  //       phone: e.target.phone.value,
-  //     });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(`http://localhost:8000/outlet/${id}`, {
+        name: e.target.name.value,
+        address: e.target.address.value,
+        phone: e.target.phone.value,
+      });
 
-  //     Swal.fire({
-  //       position: "bottom-end",
-  //       icon: "success",
-  //       title: res.data.message,
-  //       showConfirmButton: false,
-  //       timer: 2000,
-  //       customClass: "swal-custom",
-  //     }).then(() => {
-  //       window.location.reload();
-  //     });
-  //   } catch (e) {
-  //     Swal.fire({
-  //       position: "bottom-end",
-  //       icon: "error",
-  //       title: e.message,
-  //       showConfirmButton: false,
-  //       timer: 2000,
-  //       customClass: "swal-custom",
-  //     });
-  //   }
-  // };
+      Swal.fire({
+        position: "bottom-end",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (e) {
+      Swal.fire({
+        position: "bottom-end",
+        icon: "error",
+        title: e.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      });
+    }
+  };
 
   console.log(data);
 
@@ -55,7 +55,7 @@ const ModalEditOutlet = ({ data, test }) => {
               </h3>
             </div>
 
-            <form action="#">
+            <form action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
