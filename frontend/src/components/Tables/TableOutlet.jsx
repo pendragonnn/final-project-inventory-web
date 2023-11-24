@@ -3,16 +3,16 @@ import ModalAddOutlet from "../Modal/Outlet/ModalAddOutlet";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Outlet from "@/data/outlet/index";
 import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet";
 
 const TableOutlets = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
-  const [editOutletId, setEditOutletId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get("http://localhost:8000/outlet");
+      const res = await Outlet.getOutlet();
       setData(res.data.data);
     };
 
@@ -22,9 +22,6 @@ const TableOutlets = () => {
   const handleAdd = (newOutlet) => {
     const newData = [...data, newOutlet];
     setData(newData);
-    const temp = data;
-    data[1] = newOutlet;
-    setData([...temp]);
   };
 
   const handleEditData = (updatedOutlet) => {
@@ -34,10 +31,8 @@ const TableOutlets = () => {
   };
 
   const handleEdit = async (id) => {
-    const res = await axios.get(`http://localhost:8000/outlet/${id}`);
+    const res = await Outlet.getOutletByid(id);
     setUpdate(res.data.data);
-    console.log(id);
-    setEditOutletId(id);
   };
 
   const handleDelete = async (id) => {
@@ -52,7 +47,7 @@ const TableOutlets = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await axios.delete(`http://localhost:8000/outlet/${id}`);
+          await Outlet.deleteOutlet(id);
           setData((prevData) => prevData.filter((outlet) => outlet.id !== id));
           Swal.fire({
             position: "bottom-end",
