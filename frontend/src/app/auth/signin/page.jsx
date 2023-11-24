@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
@@ -25,8 +26,10 @@ const SignIn = () => {
         timer: 1000,
         customClass: "swal-custom-auth-success",
       });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
+
+      Cookies.set("token", res.data.token, { expires: 7 });
+      Cookies.set("role", res.data.role, { expires: 7 });
+
       router.push("/dashboard");
     } catch (e) {
       Swal.fire({

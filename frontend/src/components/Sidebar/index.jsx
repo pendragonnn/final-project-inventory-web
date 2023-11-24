@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarLinkGroup from "./SidebarLinkGroup";
+import Cookies from "js-cookie";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -18,8 +19,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   );
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    const token = Cookies.get("token");
+    const role = Cookies.get("role");
 
     if (!token || !role) router.push("/");
     setTokenExist(!!token);
