@@ -1,9 +1,9 @@
+"use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-
 import TablesSupplier from "@/components/Tables/TableSuppliers";
 import SidebarLayout from "../sidebar-layout";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
 const TablesPage = () => {

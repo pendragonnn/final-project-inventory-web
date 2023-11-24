@@ -18,7 +18,6 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     const decodedToken = jwtUtil.decodeToken(token);
-
     const user = await Auth.findUserById(decodedToken.id);
 
     if (!user) {
@@ -26,45 +25,49 @@ const authenticateToken = async (req, res, next) => {
     }
 
     req.user = user;
-    // if (decodedToken.role != "admin") {
-    //   return res.status(401).json({ message: "Unauthorized access" });
-    // }
+    const role = decodedToken.role;
+    console.log(role);
 
-    // if (req.method == "POST" && decodedToken.role == "admin") {
-    //   return next();
-    // }
-
-    next();
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized access" });
-  }
-};
-
-const restrictAccess = async (req, res, next) => {
-  try {
-    const user = req.user; // Anda mungkin mendapatkan informasi pengguna setelah melakukan otentikasi
-
-    if (user && user.role_id === 2) {
-      // Jika role_id pengguna adalah 2 (role yang memiliki akses terbatas)
-      const allowedRoutes = ["/outlet", "/supplier"];
-      const requestedRoute = req.baseUrl; // Mengambil bagian dasar dari rute yang diminta
-
-      if (!allowedRoutes.includes(requestedRoute)) {
-        return res.status(401).json({ message: "Unauthorized access" });
-      }
+    if (
+      (role == 2 && req.path === "/supplier") ||
+      (role == 2 && req.path === "/outlet")
+    ) {
+      next();
+    } else if (
+      role == 1 &&
+      (req.path === "/transaksi" || req.path === "/report")
+    ) {
+      next();
+    } else {
+      return res.status(403).send("Forbidden");
     }
 
+    return;
+
     next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized access" });
   }
 };
 
-module.exports = { authenticateToken, restrictAccess };
+// const restrictAccess = async (req, res, next) => {
+//   try {
+//     const user = req.user; // Anda mungkin mendapatkan informasi pengguna setelah melakukan otentikasi
 
-// const checkUserRole = (role) => (req, res, next) => {
-//   if (role && req.user.role !== role) {
-//     return res.status(403).json({ message: "Forbidden user!" });
+//     if (user && user.role_id === 2) {
+//       // Jika role_id pengguna adalah 2 (role yang memiliki akses terbatas)
+//       const allowedRoutes = ["/outlet", "/supplier"];
+//       const requestedRoute = req.baseUrl; // Mengambil bagian dasar dari rute yang diminta
+
+//       if (!allowedRoutes.includes(requestedRoute)) {
+//         return res.status(401).json({ message: "Unauthorized access" });
+//       }
+//     }
+
+//     next();
+//   } catch (error) {
+//     res.status(401).json({ message: "Unauthorized access" });
 //   }
-//   next();
 // };
+
+module.exports = { authenticateToken /*restrictAccess */ };
