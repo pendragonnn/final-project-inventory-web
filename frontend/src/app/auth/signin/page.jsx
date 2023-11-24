@@ -28,8 +28,9 @@ const SignIn = () => {
         customClass: "swal-custom-auth-success",
       });
 
-      Cookies.set("token", res.data.token, { expires: 7 });
-      Cookies.set("role", res.data.role, { expires: 7 });
+      // const inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
+      Cookies.set("token", res.data.token, { expires: 1 });
+      Cookies.set("role", res.data.role, { expires: 1 });
 
       router.push("/dashboard");
     } catch (error) {

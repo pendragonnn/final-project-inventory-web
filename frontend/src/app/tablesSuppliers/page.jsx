@@ -1,21 +1,21 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { useEffect } from "react";
-import TableSuppliers from "@/components/Tables/TableOutlet";
+import TableSuppliers from "@/components/Tables/TableSuppliers";
 import SidebarLayout from "../sidebar-layout";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 const TablesPage = () => {
   const router = useRouter();
   const [user, setUser] = useState(null); // Berikan nilai awal pada useState
 
   useEffect(() => {
-    const role = localStorage.getItem("role");
+    const role = Cookies.get("role");
     setUser(role);
     console.log(role);
 
-    if (role && role !== 2) {
-
+    if (role && role !== "2") {
       router.push("/dashboard");
     }
   }, []);
