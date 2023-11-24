@@ -28,15 +28,9 @@ const authenticateToken = async (req, res, next) => {
     const role = decodedToken.role;
     console.log(role);
 
-    if (
-      (role == 2 && req.path === "/supplier") ||
-      (role == 2 && req.path === "/outlet")
-    ) {
+    if ((role == 2 && req.path === "/outlet") || req.path === "/supplier") {
       next();
-    } else if (
-      role == 1 &&
-      (req.path === "/transaksi" || req.path === "/report")
-    ) {
+    } else if (role == 1 && req.path === "/user") {
       next();
     } else {
       return res.status(403).send("Forbidden");

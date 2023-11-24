@@ -1,6 +1,6 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import TablesSupplier from "@/components/Tables/TableSuppliers";
+import TableSuppliers from "@/components/Tables/TableSuppliers";
 import SidebarLayout from "../sidebar-layout";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -16,7 +16,6 @@ const TablesPage = () => {
     console.log(role);
 
     if (role && role !== "2") {
-      // Ubah kondisi role agar sesuai dengan string '2'
       router.push("/dashboard");
     }
   }, []);
@@ -25,9 +24,8 @@ const TablesPage = () => {
     return (
       <SidebarLayout>
         <Breadcrumb pageName="Tables" />
-
         <div className="flex flex-col gap-10">
-          <TablesSupplier />
+          <TableSuppliers />
         </div>
       </SidebarLayout>
     );
@@ -35,4 +33,5 @@ const TablesPage = () => {
     return null; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
   }
 };
+
 export default TablesPage;
