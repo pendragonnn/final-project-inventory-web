@@ -178,6 +178,7 @@
 import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import UserData from "@/data/user/index";
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
@@ -200,10 +201,7 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
       };
 
       // Make a POST request to create user without image
-      const userResponse = await axios.post(
-        "http://localhost:8000/user",
-        userWithoutImage
-      );
+      const userResponse = await UserData.addUser(userWithoutImage)
 
       // Retrieve user ID from the response
       const userId = userResponse.data.data.id;
