@@ -2,7 +2,6 @@
 import ModalAddOutlet from "../Modal/Outlet/ModalAddOutlet"
 import Swal from "sweetalert2"
 import { useEffect, useState } from "react"
-import axios from "axios"
 import Outlet from "@/data/outlet/index"
 import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet"
 
@@ -25,14 +24,27 @@ const TableOutlets = () => {
   }
 
   const handleEditData = (updatedOutlet) => {
-    const updatedData = [...data, updatedOutlet]
-    data[0] = updatedOutlet
+    let updatedData = [...data]
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (item) => item.id === updatedOutlet[0].id
+    )
+
+    updatedData[indexToUpdate] = updatedOutlet[0]
+
     setData([...updatedData])
   }
 
   const handleEdit = async (id) => {
-    const res = await Outlet.getOutletByid(id)
-    setUpdate(res.data.data)
+    try {
+      const res = await Outlet.getOutletByid(id)
+      const result = res.data
+      console.log(result)
+      setUpdate(result)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
   }
 
   const handleDelete = async (id) => {

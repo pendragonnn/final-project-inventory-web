@@ -1,18 +1,16 @@
 import React from "react";
 import Swal from "sweetalert2";
-import Outlet from "@/data/outlet/index";
+import axios from "axios";
+import Category from "@/data/category/index";
 import { useRef } from "react";
 
-const ModalEditOutlet = ({ data, test, addToTable }) => {
+const ModalEditCategory = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await Outlet.updateOutlet(data.data.id, {
+      const res = await Category.updateCategory(data.id, {
         name: e.target.name.value,
-        address: e.target.address.value,
-        phone: e.target.phone.value,
       });
 
       Swal.fire({
@@ -23,7 +21,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data[1]);
+        addToTable(res.data.data);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
@@ -37,8 +35,6 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
       });
     }
   };
-
-  console.log(data);
 
   return (
     <>
@@ -59,7 +55,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
           <div className="rounded-sm bg-white dark:bg-boxdark">
             <div className=" py-4 px-6.5 ">
               <h3 className="font-medium text-black dark:text-white">
-                Edit data Outlet
+                Edit data Category
               </h3>
             </div>
 
@@ -72,40 +68,10 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="name"
-                    defaultValue={data?.data?.name}
+                    defaultValue={data?.name}
                     placeholder="Enter full name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    defaultValue={data?.data?.address}
-                    placeholder="Enter address"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Phone
-                  </label>
-                  <input
-                    type="number"
-                    name="phone"
-                    defaultValue={data?.data?.phone}
-                    placeholder="Enter phone number"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                    // max={12}
-                    // min={11}
                   />
                 </div>
 
@@ -123,4 +89,4 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditOutlet;
+export default ModalEditCategory;
