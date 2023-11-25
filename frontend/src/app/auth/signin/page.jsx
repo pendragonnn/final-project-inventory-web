@@ -1,23 +1,23 @@
-"use client";
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import axios from "axios";
-import Cookies from "js-cookie";
-import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+"use client"
+import React, { useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import axios from "axios"
+import Cookies from "js-cookie"
+import Swal from "sweetalert2"
+import { useRouter } from "next/navigation"
 
 const SignIn = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       const res = await axios.post("http://localhost:8000/login", {
         email: e.target.email.value,
         password: e.target.password.value,
-      });
+      })
 
       Swal.fire({
         position: "bottom-end",
@@ -26,13 +26,14 @@ const SignIn = () => {
         showConfirmButton: false,
         timer: 1000,
         customClass: "swal-custom-auth-success",
-      });
+      })
 
       // const inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
-      Cookies.set("token", res.data.token, { expires: 1 });
-      Cookies.set("role", res.data.role, { expires: 1 });
+      Cookies.set("token", res.data.token, { expires: 1 })
+      Cookies.set("role", res.data.role, { expires: 1 })
+      Cookies.set("userId", res.data.userId, { expires: 1 })
 
-      router.push("/dashboard");
+      router.push("/dashboard")
     } catch (error) {
       Swal.fire({
         position: "bottom-end",
@@ -41,9 +42,9 @@ const SignIn = () => {
         showConfirmButton: false,
         timer: 3000,
         customClass: "swal-custom-auth-error",
-      });
+      })
     }
-  };
+  }
 
   return (
     <>
@@ -146,7 +147,7 @@ const SignIn = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SignIn;
+export default SignIn

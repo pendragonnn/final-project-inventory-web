@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-dotenv.config();
+const jwt = require("jsonwebtoken")
+const dotenv = require("dotenv")
+dotenv.config()
 
-const blacklistedTokens = new Set();
+const blacklistedTokens = new Set()
 
 const encodeToken = ({ user }) => {
   const token = jwt.sign(
@@ -15,30 +15,30 @@ const encodeToken = ({ user }) => {
     {
       expiresIn: "24h",
     }
-  );
+  )
 
-  id = user.id;
-  role = user.role_id;
-  return { token, id, role };
-};
+  id = user.id
+  role = user.role_id
+  return { token, id, role }
+}
 
 const decodeToken = (token) => {
-  const decoded = jwt.verify(token, process.env.SECRET_KEY);
+  const decoded = jwt.verify(token, process.env.SECRET_KEY)
 
-  return decoded;
-};
+  return decoded
+}
 
 const isTokenBlacklisted = (token) => {
-  return blacklistedTokens.has(token);
-};
+  return blacklistedTokens.has(token)
+}
 
 const blacklistToken = (token) => {
-  blacklistedTokens.add(token);
-};
+  blacklistedTokens.add(token)
+}
 
 module.exports = {
   encodeToken,
   decodeToken,
   isTokenBlacklisted,
   blacklistToken,
-};
+}

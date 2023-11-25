@@ -13,6 +13,7 @@ const TransactionIsuing = () => {
   const [dataItem, setDataItem] = useState([])
   const [dataOutlet, setDataOutlet] = useState([])
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
   const router = useRouter()
 
   const handleSubmit = async (e) => {
@@ -63,8 +64,9 @@ const TransactionIsuing = () => {
 
   useEffect(() => {
     const role = Cookies.get("role")
+    const idUser = Cookies.get("userId")
     setUser(role)
-    console.log(role)
+    setUserId(idUser)
 
     if (role && role !== "2") {
       // Ubah kondisi role agar sesuai dengan string '2'
@@ -90,16 +92,19 @@ const TransactionIsuing = () => {
                 </label>
                 <input
                   type="text"
-                  name="user_id"
-                  placeholder="Enter your user id"
+                  value={userId}
+                  placeholder={userId}
+                  disabled
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 />
               </div>
 
               <div>
-                <label className="mb-0">Outlet</label>
+                <label className="mb-2.5 block text-black dark:text-white">
+                  Outlet
+                </label>
                 <select
-                  className="mt-0 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
                   name="outlet_id"
                 >
                   {dataOutlet.map((value) => (
@@ -111,9 +116,11 @@ const TransactionIsuing = () => {
               </div>
 
               <div>
-                <label className="mb-0">Item</label>
+                <label className="mb-2.5 block text-black dark:text-white">
+                  Item
+                </label>
                 <select
-                  className="mt-0 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
                   name="item_id"
                 >
                   {dataItem.map((value) => (

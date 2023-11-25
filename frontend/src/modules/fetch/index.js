@@ -23,7 +23,7 @@ async function getTransactionHeaderById(id) {
     const res = await instance(`/transaction-header/${id}`)
     return res.data
   } catch (err) {
-    throw new Error(err.response.data)
+    console.log(err)
   }
 }
 

@@ -13,6 +13,7 @@ const TransactionHeader = () => {
   const [dataItem, setDataItem] = useState([])
   const [dataSupplier, setDataSupplier] = useState([])
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
   const router = useRouter()
 
   const handleSubmit = async (e) => {
@@ -56,7 +57,6 @@ const TransactionHeader = () => {
     const fetchData = async () => {
       const res = await Supplier.getSupplier()
       setDataSupplier(res.data.data)
-      console.log(res.data.data)
     }
 
     fetchData()
@@ -64,8 +64,9 @@ const TransactionHeader = () => {
 
   useEffect(() => {
     const role = Cookies.get("role")
+    const idUser = Cookies.get("userId")
     setUser(role)
-    console.log(role)
+    setUserId(idUser)
 
     if (role && role !== "2") {
       // Ubah kondisi role agar sesuai dengan string '2'
@@ -88,20 +89,24 @@ const TransactionHeader = () => {
               <div className="p-6.5 mb-4.5 flex flex-col gap-6">
                 <div className="">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    User id
+                    User Id
                   </label>
                   <input
                     type="text"
                     name="user_id"
-                    placeholder="Enter your user id"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    value={userId}
+                    placeholder={userId}
+                    disabled
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-graydark"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-0">Supplier</label>
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Supplier
+                  </label>
                   <select
-                    className="mt-0 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
                     name="supplier_id"
                   >
                     {dataSupplier.map((value) => (
@@ -113,9 +118,11 @@ const TransactionHeader = () => {
                 </div>
 
                 <div>
-                  <label className="mb-0">Item</label>
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Item
+                  </label>
                   <select
-                    className="mt-0 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
                     name="item_id"
                   >
                     {dataItem.map((value) => (
