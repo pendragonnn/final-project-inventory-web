@@ -26,7 +26,7 @@ const login = async (userData) => {
   }
   const passwordMatch = await bcrypt.compare(userData.password, user.password);
   if (!passwordMatch) {
-    const error = new Error("Invalid username or password");
+    const error = new Error("Invalid email or password");
     error.status = 400;
     throw error;
   }

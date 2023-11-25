@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-
 const TableUser = () => {
   const [data, setData] = useState([]);
 
@@ -20,9 +19,6 @@ const TableUser = () => {
   const handleAdd = (newUser) => {
     const newData = [...data, newUser];
     setData(newData);
-    // const temp = data
-    // data[1] = newUser
-    // setData([...temp]);
   };
 
   const handleDelete = async (id) => {
@@ -86,10 +82,10 @@ const TableUser = () => {
                 />
               </svg>
             </span>
-            <ModalUserAdd 
-            name={"Add User"}
-            test={"add"}
-            addToTable={handleAdd} 
+            <ModalUserAdd
+              name={"Add User"}
+              test={"add"}
+              addToTable={handleAdd}
             />
           </a>
         </div>
@@ -133,7 +129,7 @@ const TableUser = () => {
                 {/* <Image src={brand.logo} alt="Brand" width={48} height={48} /> */}
               </div>
               <p className="hidden text-black dark:text-white sm:block">
-                {user?.Role?.name}
+                {user.role_id}
                 {/* {user.role_id} */}
               </p>
             </div>
