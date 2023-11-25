@@ -1,8 +1,9 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { useEffect, useState } from "react";
 import SidebarLayout from "../sidebar-layout";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import TableUser from "@/components/Tables/TableUser";
 
 const TablesPage = () => {
@@ -10,12 +11,11 @@ const TablesPage = () => {
   const [user, setUser] = useState(null); // Berikan nilai awal pada useState
 
   useEffect(() => {
-    const role = localStorage.getItem("role");
+    const role = Cookies.get("role");
     setUser(role);
     console.log(role);
 
-    if (role && role !== "2") {
-      // Ubah kondisi role agar sesuai dengan string '2'
+    if (role && role !== "1") {
       router.push("/dashboard");
     }
   }, []);

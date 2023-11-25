@@ -2,16 +2,18 @@
 import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import Supplier from "@/data/supplier/index";
 
-const TablesSupplier = () => {
+import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
+
+const TableSuppliers = () => {
   const [data, setData] = useState([]);
-  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [update, setUpdate] = useState([]);
+  const [update, setUpdate] = useState(null);
+  const [editSupplierId, setEditSupplierId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get("http://localhost:8000/supplier");
+      const res = await Supplier.getSupplier();
       setData(res.data.data);
     };
 
@@ -21,15 +23,22 @@ const TablesSupplier = () => {
   const handleAdd = (newSupplier) => {
     const newData = [...data, newSupplier];
     setData(newData);
-    // const temp = data
-    // data[1] = newOutlet
-    // setData([...temp]);
+    const temp = data;
+    data[1] = newSupplier;
+    setData([...temp]);
+  };
+
+  const handleEditData = (updatedSupplier) => {
+    const updatedData = [...data, updatedSupplier];
+    data[0] = updatedSupplier;
+    setData([...updatedData]);
   };
 
   const handleEdit = async (id) => {
-    const res = await axios.get(`http://localhost:8000/supplier/${id}`);
+    const res = await Supplier.getSupplierByid(id);
     setUpdate(res.data.data);
-    setIsModalEditOpen(true);
+    console.log(id);
+    setEditSupplierId(id);
   };
 
   const handleDelete = async (id) => {
@@ -44,7 +53,7 @@ const TablesSupplier = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await axios.delete(`http://localhost:8000/supplier/${id}`);
+          await Supplier.deleteSupplier(id);
           setData((prevData) =>
             prevData.filter((supplier) => supplier.id !== id)
           );
@@ -77,12 +86,12 @@ const TablesSupplier = () => {
 
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <a
+          <label
+            htmlFor="add"
             type="submit"
-            href="#"
-            className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
+            className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-5 xl:px-4"
           >
-            <span>
+            <span className="flex gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -97,13 +106,10 @@ const TablesSupplier = () => {
                   d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
+              Add Supplier
             </span>
-            <ModalAddSupplier
-              name={"Add supplier"}
-              test={"add"}
-              addToTable={handleAdd}
-            />
-          </a>
+            <ModalAddSupplier test={"add"} addToTable={handleAdd} />
+          </label>
         </div>
       </div>
 
@@ -157,10 +163,10 @@ const TablesSupplier = () => {
               <p className="text-meta-3">{supplier.phone}</p>
             </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <button
-                className="hover:text-primary
-              "
+            <div className="flex gap-2 items-center justify-center p-2.5 xl:p-5">
+              <label
+                htmlFor="edit"
+                className="hover:text-primary cursor-pointer"
                 onClick={() => handleEdit(supplier.id)}
               >
                 <svg
@@ -177,10 +183,8 @@ const TablesSupplier = () => {
                     d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
-                {isModalEditOpen && (
-                  <ModalEditSupplier data={update} test={"edit"} />
-                )}
-              </button>
+              </label>
+
               <button
                 className="hover:text-primary"
                 onClick={() => handleDelete(supplier.id)}
@@ -203,8 +207,14 @@ const TablesSupplier = () => {
             </div>
           </div>
         ))}
+
+        <ModalEditSupplier
+          data={update}
+          test={"edit"}
+          addToTable={handleEditData}
+        />
       </div>
     </div>
   );
 };
-export default TablesSupplier;
+export default TableSuppliers;
