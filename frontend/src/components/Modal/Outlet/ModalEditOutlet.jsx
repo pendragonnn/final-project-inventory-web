@@ -4,7 +4,7 @@ import axios from "axios";
 import Outlet from "@/data/outlet/index";
 import { useRef } from "react";
 
-const ModalEditOutlet = ({ data, test, addToTable }) => {
+const ModalEditOutlet = ({ data, test, updateOutlet }) => {
   const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
