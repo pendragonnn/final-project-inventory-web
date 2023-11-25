@@ -24,16 +24,27 @@ const TableOutlets = () => {
   };
 
   const handleEditData = (updatedOutlet) => {
-    setData((prevData) =>
-      prevData.map((outlet) =>
-        outlet.id === updatedOutlet.id ? updatedOutlet : outlet
-      )
+    let updatedData = [...data];
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (item) => item.id === updatedOutlet[0].id
     );
+
+    updatedData[indexToUpdate] = updatedOutlet[0];
+
+    setData([...updatedData]);
   };
 
   const handleEdit = async (id) => {
-    const res = await Outlet.getOutletByid(id);
-    setUpdate(res.data.data);
+    try {
+      const res = await Outlet.getOutletByid(id);
+      const result = res.data;
+      console.log(result);
+      setUpdate(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleDelete = async (id) => {
