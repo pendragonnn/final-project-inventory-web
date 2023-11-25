@@ -1,37 +1,20 @@
-// import React, { useRef } from "react";
+// import React from "react";
 // import Swal from "sweetalert2";
 // import axios from "axios";
+// import { useRef } from "react";
 
-// const ModalUserAdd = ({ name, test, addToTable }) => {
+// const ModalEditUser = ({ data, test, addToTable }) => {
 //   const modalCheckbox = useRef(null);
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const haha = {
-//         role_id: e.target.role_id.value,
-//         full_name: e.target.full_name.value,
-//         email: e.target.email.value,
-//         password: e.target.password.value,
-//       }
+//         const res = await axios.put(`http://localhost:8000/user/${data.id}`, {
+//           role_id: e.target.role_id.value,
+//           full_name: e.target.full_name.value,
+//           email: e.target.email.value,
+//           password: e.target.password.value,
+//         });
 
-      
-
-//       const res = await axios.post("http://localhost:8000/user", haha);
-//       const userId = res.data.data.id;
-
-//       const formData = {
-//         image_url: e.target.image_url.value
-//       }
-
-//       const imageResponse = await axios.post(`http://localhost:8000/user/upload/${userId}`, formData, {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//       });
-
-//       console.log(imageResponse);
-//       console.log(userId);
-//       console.log(res);
 //       Swal.fire({
 //         position: "bottom-end",
 //         icon: "success",
@@ -55,29 +38,28 @@
 //     }
 //   };
 
+//   console.log(data);
+
 //   return (
 //     <>
-//       <label htmlFor={test} className="cursor-pointer">
-//         {name}
-//       </label>
 //       <input
 //         type="checkbox"
-//         id={test}
 //         ref={modalCheckbox}
+//         id={test}
 //         className="modal-toggle"
 //       />
 //       <div className="modal" role="dialog">
 //         <div className="modal-box bg-white dark:bg-boxdark">
 //           <label
 //             htmlFor={test}
-//             className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right  text-xl text-[#6A718A] hover:text-primary"
+//             className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
 //           >
 //             x
 //           </label>
 //           <div className="rounded-sm bg-white dark:bg-boxdark">
 //             <div className=" py-4 px-6.5 ">
 //               <h3 className="font-medium text-black dark:text-white">
-//                 Add new User
+//                 Edit data User
 //               </h3>
 //             </div>
 
@@ -96,6 +78,7 @@
 //                   </label>
 //                   <select
 //                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+//                     defaultValue={data?.role_id}
 //                     name="role_id"
 //                   >
 //                     <option selected>Choose a role</option>
@@ -112,6 +95,7 @@
 //                   <input
 //                     type="text"
 //                     name="full_name"
+//                     defaultValue={data?.full_name}
 //                     placeholder="Enter full name"
 //                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 //                     required
@@ -125,6 +109,7 @@
 //                   <input
 //                     type="text"
 //                     name="email"
+//                     defaultValue={data?.email}
 //                     placeholder="Enter Email"
 //                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 //                     required
@@ -136,27 +121,21 @@
 //                     Password
 //                   </label>
 //                   <input
-//                     type="text"
+//                     type="password"
 //                     name="password"
+//                     defaultValue={data?.password}
 //                     placeholder="Enter password"
 //                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-//                     required
+//                     disabled
 //                   />
 //                 </div>
 
-//                 <div className="mb-4.5">
-//           <label className="mb-2.5 block text-black dark:text-white">
-//             Profile Photo
-//           </label>
-//           <input
-//             type="file"
-//             name="image_url"
-//             key={"user-photo"}
-//             accept="image/*"
-//             className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-            
-//           />
-//         </div>
+//                 <input
+//                   type="file"
+//                   name="image_url"
+//                   accept="image/*"
+//                   className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+//                 />
 
 //                 <input
 //                   type="submit"
@@ -172,14 +151,13 @@
 //   );
 // };
 
-// export default ModalUserAdd;
-
+// export default ModalEditUser;
 
 import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-const ModalUserAdd = ({ name, test, addToTable }) => {
+const ModalEditUser = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const [file, setFile] = useState(null);
 
@@ -199,15 +177,16 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
         password: e.target.password.value,
       };
 
-      // Make a POST request to create user without image
-      const userResponse = await axios.post(
-        "http://localhost:8000/user",
+      // Make a PUT request to create or update user without image
+      const userResponse = await axios.put(
+        `http://localhost:8000/user/${data?.id}`,
         userWithoutImage
       );
 
       // Retrieve user ID from the response
       const userId = userResponse.data.data.id;
-
+      console.log(userId);
+      console.log(data.id);
       // Create FormData to handle file upload
       const formData = new FormData();
       formData.append("role_id", e.target.role_id.value);
@@ -216,9 +195,9 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
       formData.append("password", e.target.password.value);
       formData.append("image_url", file);
 
-      // Make a POST request to upload image for the user
+      // Make a PUT request to upload image for the user
       const imageResponse = await axios.post(
-        `http://localhost:8000/user/upload/${userId}`,
+        `http://localhost:8000/user/upload/${data.id}`,
         formData,
         {
           headers: {
@@ -255,119 +234,124 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 
   return (
     <>
-      <label htmlFor={test} className="cursor-pointer">
-        {name}
-      </label>
-      <input
+     <input
         type="checkbox"
-        id={test}
         ref={modalCheckbox}
+        id={test}
         className="modal-toggle"
       />
       <div className="modal" role="dialog">
         <div className="modal-box bg-white dark:bg-boxdark">
           <label
             htmlFor={test}
-            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right  text-xl text-[#6A718A] hover:text-primary"
+            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
           >
             x
           </label>
-          <div className="rounded-sm bg-white dark:bg-boxdark">
-            <div className=" py-4 px-6.5 ">
-              <h3 className="font-medium text-black dark:text-white">
-                Add new User
-              </h3>
-            </div>
-
-            <form action="#" onSubmit={handleSubmit}>
-              <div className="p-6.5 text-start">
-                <div className="mb-4.5">
-                  <label className="block text-black dark:text-white">
-                    Role
-                  </label>
-
-                  <label
-                    htmlFor="countries"
-                    className="block  text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Select an option
-                  </label>
-                  <select
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    name="role_id"
-                  >
-                    <option value="1">Admin</option>
-                    <option value="2">Staff</option>
-                    <option value="3">Manager</option>
-                  </select>
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="full_name"
-                    placeholder="Enter full name"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Email
-                  </label>
-                  <input
-                    type="text"
-                    name="email"
-                    placeholder="Enter Email"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Password
-                  </label>
-                  <input
-                    type="text"
-                    name="password"
-                    placeholder="Enter password"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Profile Photo
-                  </label>
-                  <input
-                    type="file"
-                    name="image_url"
-                    key={"user-photo"}
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <input
-                  type="submit"
-                  value={"Add"}
-                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
-                />
+            <div className="rounded-sm bg-white dark:bg-boxdark">
+              <div className=" py-4 px-6.5 ">
+                <h3 className="font-medium text-black dark:text-white">
+                  Edit User
+                </h3>
               </div>
-            </form>
+
+              <form action="#" onSubmit={handleSubmit}>
+                <div className="p-6.5 text-start">
+                  <div className="mb-4.5">
+                    <label className="block text-black dark:text-white">
+                      Role
+                    </label>
+                    <label
+                      htmlFor="countries"
+                      className="block  text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Select an option
+                    </label>
+                    <select
+                      className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      name="role_id"
+                      defaultValue={data?.role_id}
+                    >
+                      <option value="1">Admin</option>
+                      <option value="2">Staff</option>
+                      <option value="3">Manager</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-4.5">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="full_name"
+                      defaultValue={data?.full_name}
+                      placeholder="Enter full name"
+                      className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4.5">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      name="email"
+                      defaultValue={data?.email}
+                      placeholder="Enter Email"
+                      className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4.5">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      defaultValue={data?.password}
+                      placeholder="Enter password"
+                      className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      required
+                      disabled
+                    />
+                  </div>
+
+                  <div className="mb-4.5">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Profile Photo
+                    </label>
+                    <input
+                      type="file"
+                      name="image_url"
+                      defaultValue={data?.image_url}
+                      key={"user-photo"}
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      required
+                    />
+                  </div>
+
+                  <input
+                    type="submit"
+                    value={"Update"}
+                    className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
+                  />
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      
     </>
   );
 };
 
-export default ModalUserAdd;
+export default ModalEditUser;
+
+

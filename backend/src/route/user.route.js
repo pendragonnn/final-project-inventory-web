@@ -9,7 +9,7 @@ route.get("/:id", userController.userById);
 route.post("/", userValidator, userController.postUser);
 route.put("/:id", userValidator, userController.updateUser);
 route.delete("/:id", userController. removeUser);
-route.post("/upload/:id", upload.single('user-photo'), userController.uploadUserPhoto)
+route.post("/upload/:id", upload.single('image_url'), userController.uploadUserPhoto)
 route.use("/upload", express.static(uploadDir))
 
 module.exports = route;

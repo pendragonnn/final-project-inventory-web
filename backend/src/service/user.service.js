@@ -37,18 +37,22 @@ const insertUser = async (userData) => {
 
 const editUserById = async (id, newUser) => {
   try {
-    const userEmail = await findUserByEmail(newUser.email)
-    
-    if(userEmail) {
-      throw new Error("User Email Already Added")
+    const existingUser = await findUserByEmail(newUser.email);
+
+    if (existingUser && existingUser.id !== id) {
+      throw new Error("User Email Already Added");
     }
-    
-    await findUserById(id)
-    
+
+    const userToUpdate = await findUserById(id);
+
+    if (!userToUpdate) {
+      throw new Error("User Not Found");
+    }
+
     const user = await editUser(id, newUser);
-    return user
+    return user;
   } catch (err) {
-    return null
+    throw err; // Lebih baik lemparkan kembali kesalahan untuk ditangani oleh pemanggil fungsi.
   }
 };
 
