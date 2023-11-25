@@ -54,24 +54,23 @@ const updateUser = async (req, res) => {
   const id = req.params.id;
   const userData = req.body;
 
-  if(!userData) {
-    return res.status(400).json({ message: "Data Must Have Value" })
+  if (!userData) {
+    return res.status(400).json({ message: "Data Must Have Value" });
   }
 
   try {
-  const user = await editUserById(id, userData);
+    const user = await editUserById(id, userData);
 
-  if (!user) {
-    return res
-      .status(400)
-      .json({ message: "User Not Found or Already Added" });
-  }
-  
-  res.status(200).json({ 
-    data: user, 
-    message: "Successfull Update User!" });
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+
+    res.status(200).json({
+      data: user,
+      message: "Successfully Updated User!",
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -91,6 +90,8 @@ const uploadUserPhoto = async (req, res) => {
   try {
     const id = req.params.id;
     const user = await getUserById(id);
+    console.log("Request Body:", req.body);
+    console.log("Request File:", req.file);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -100,7 +101,7 @@ const uploadUserPhoto = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const image_url = req.file.path;
+    const image_url = req.file.filename;
 
     const updatedUser = await updateUserPhoto(id, image_url);
 
@@ -108,6 +109,7 @@ const uploadUserPhoto = async (req, res) => {
       .status(200)
       .json({ message: "User photo updated successfully", data: updatedUser });
   } catch (error) {
+    console.error("Error dalam unggah file:", error);
     res.status(500).json({ message: error.message });
   }
 };

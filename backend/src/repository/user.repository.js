@@ -86,12 +86,12 @@ function generateNewId(existingIds) {
 }
 
 const editUser = async (id, userData) => {
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
   const updatedUser = await User.update(
     {
       role_id: userData.role_id,
       full_name: userData.full_name,
       email: userData.email,
-      username: userData.username,
       password: hashedPassword,
       image_url: userData.image_url,
     },
