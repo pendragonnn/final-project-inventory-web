@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-
 const TableUser = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
@@ -102,10 +101,10 @@ const TableUser = () => {
                 />
               </svg>
             </span>
-            <ModalUserAdd 
-            name={"Add User"}
-            test={"add"}
-            addToTable={handleAdd} 
+            <ModalUserAdd
+              name={"Add User"}
+              test={"add"}
+              addToTable={handleAdd}
             />
           </a>
         </div>

@@ -1,21 +1,37 @@
+"use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-
-import TablesSupplier from "@/components/Tables/TableSuppliers";
+import TableSuppliers from "@/components/Tables/TableSuppliers";
 import SidebarLayout from "../sidebar-layout";
-export const metadata = {
-  title: "Tables Page | Next.js E-commerce Dashboard Template",
-  description: "This is Tables page for TailAdmin Next.js",
-  // other metadata
-};
-const TablesPage = () => {
-  return (
-    <SidebarLayout>
-      <Breadcrumb pageName="Tables" />
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
-      <div className="flex flex-col gap-10">
-        <TablesSupplier />
-      </div>
-    </SidebarLayout>
-  );
+const TablesPage = () => {
+  const router = useRouter();
+  const [user, setUser] = useState(null); // Berikan nilai awal pada useState
+
+  useEffect(() => {
+    const role = Cookies.get("role");
+    setUser(role);
+    console.log(role);
+
+    if (role && role !== "2") {
+      router.push("/dashboard");
+    }
+  }, []);
+
+  if (user) {
+    return (
+      <SidebarLayout>
+        <Breadcrumb pageName="Tables" />
+        <div className="flex flex-col gap-10">
+          <TableSuppliers />
+        </div>
+      </SidebarLayout>
+    );
+  } else {
+    return null; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
+  }
 };
+
 export default TablesPage;

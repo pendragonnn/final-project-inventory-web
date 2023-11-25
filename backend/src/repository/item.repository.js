@@ -1,5 +1,6 @@
 const models = require("../../models")
 const Item = models.Item
+const Category = models.Category
 
 const findItems = async (page, size) => {
   const offset = (page - 1) * size
@@ -17,6 +18,12 @@ const findItemById = async (id) => {
     where: {
       id,
     },
+
+     include: [
+      {
+        model: Category,
+      },
+     ]
   })
 
   return item

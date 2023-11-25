@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { Router } from "next/router";
 
 const DropdownUser = () => {
@@ -49,15 +50,16 @@ const DropdownUser = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          const token = localStorage.getItem("token");
+          const token = Cookies.get("token");
           const res = await axios.delete("http://localhost:8000/logout/", {
             headers: {
               "content-type": "application/json; charset=utf=UTF-8",
               Authorization: `Bearer ${token}`,
             },
           });
-          localStorage.removeItem("token");
-          localStorage.removeItem("role");
+
+          Cookies.remove("token");
+          Cookies.remove("role");
 
           Swal.fire({
             position: "bottom-end",

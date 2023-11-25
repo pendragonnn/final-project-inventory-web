@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
@@ -17,6 +18,7 @@ const SignIn = () => {
         email: e.target.email.value,
         password: e.target.password.value,
       });
+
       Swal.fire({
         position: "bottom-end",
         icon: "success",
@@ -25,14 +27,17 @@ const SignIn = () => {
         timer: 1000,
         customClass: "swal-custom-auth-success",
       });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
+
+      // const inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
+      Cookies.set("token", res.data.token, { expires: 1 });
+      Cookies.set("role", res.data.role, { expires: 1 });
+
       router.push("/dashboard");
-    } catch (e) {
+    } catch (error) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: error.message,
         showConfirmButton: false,
         timer: 3000,
         customClass: "swal-custom-auth-error",

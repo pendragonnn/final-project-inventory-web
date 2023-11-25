@@ -1,19 +1,19 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import supplier from "@/data/supplier";
 import { useRef } from "react";
 
-const ModalSupplierAdd = ({ name, test, addToTable }) => {
+const ModalSupplierAdd = ({ test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/supplier", {
+      const res = await supplier.addSupplier({
         name: e.target.name.value,
         address: e.target.address.value,
         phone: e.target.phone.value,
       });
-      console.log(res);
       Swal.fire({
         position: "bottom-end",
         icon: "success",
@@ -39,9 +39,9 @@ const ModalSupplierAdd = ({ name, test, addToTable }) => {
 
   return (
     <>
-      <label htmlFor={test} className="cursor-pointer">
+      {/* <label htmlFor={test} className="cursor-pointer">
         {name}
-      </label>
+      </label> */}
       <input
         type="checkbox"
         id={test}
