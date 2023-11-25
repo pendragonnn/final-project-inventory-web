@@ -13,7 +13,6 @@ const DetailReportIsuing = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getTransactionHeaderById(id)
-      console.log("data header", res.data)
       setData(res.data)
     }
 
