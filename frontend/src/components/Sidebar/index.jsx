@@ -424,6 +424,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       Suppliers
                     </Link>
                   </li>
+
+                  
+                </>
+              )}
+              {isTokenExist && isRoleExist == "3" && (
+                <>
                   <li>
                     <SidebarLinkGroup
                       activeCondition={
