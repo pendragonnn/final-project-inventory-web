@@ -1,52 +1,59 @@
-const Auth = require("../repository/auth.repository")
-const jwtUtil = require("../util/jwt.util")
+const Auth = require("../repository/auth.repository");
+const jwtUtil = require("../util/jwt.util");
 
 const authenticateToken = async (req, res, next) => {
   const authHeader =
-    req.headers["authorization"] || req.headers["Authorization"]
-  const token = authHeader && authHeader.split(" ")[1]
+    req.headers["authorization"] || req.headers["Authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Unauthorized access: Token not provided" })
+      .json({ message: "Unauthorized access: Token not provided" });
   }
 
   if (jwtUtil.isTokenBlacklisted(token)) {
-    return res.status(401).json({ message: "Token has rejected" })
+    return res.status(401).json({ message: "Token has rejected" });
   }
 
   try {
-    const decodedToken = jwtUtil.decodeToken(token)
-    const user = await Auth.findUserById(decodedToken.id)
+    const decodedToken = jwtUtil.decodeToken(token);
+    const user = await Auth.findUserById(decodedToken.id);
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid user" })
+      return res.status(401).json({ message: "Invalid user" });
     }
 
-    req.user = user
-    const role = decodedToken.role
+    req.user = user;
+    const role = decodedToken.role;
+    console.log(role);
 
     if (
-      (role == 2 && req.path === "/supplier") ||
-      req.path === "/outlet" ||
-      req.path === "/item" ||
-      req.path === "/category" ||
+      (role == 2 && req.path.startsWith("/supplier")) ||
+      req.path.startsWith("/outlet") ||
+      req.path.startsWith("/item") ||
+      req.path.startsWith("/category") ||
       req.path.startsWith("/transaction-header") ||
-      req.path !== "/transaction-header" || // Periksa apakah path dimulai dengan "/transaction-header"
-      req.path === "/transaction-detail"
+      req.path.startsWith("/transaction-detail")
     ) {
-      next()
-    } else if (role == 1 && req.path === "/user") {
-      next()
+      next();
+    } else if (role == 1 && req.path.startsWith("/user")) {
+      next();
+    } else if (
+      (role == 3 && req.path.startsWith("/transaction-header")) ||
+      req.path.startsWith("/transaction-detail")
+    ) {
+      next();
     } else {
-      return res.status(403).send("Forbidden")
+      return res.status(403).send("Forbidden");
     }
 
-    return
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized access" })
-  }
-}
+    return;
 
-module.exports = { authenticateToken /*restrictAccess */ }
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Unauthorized access" });
+  }
+};
+
+module.exports = {authenticateToken};
