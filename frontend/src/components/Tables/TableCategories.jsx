@@ -1,39 +1,51 @@
-"use client";
-import ModalAddCategory from "../Modal/Category/ModalAddCategory";
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import Category from "@/data/category/index";
-import ModalEditCategory from "../Modal/Category/ModalEditCategory";
+"use client"
+import ModalAddCategory from "../Modal/Category/ModalAddCategory"
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
+import Category from "@/data/category/index"
+import ModalEditCategory from "../Modal/Category/ModalEditCategory"
 
 const TableCategories = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory();
-      setData(res.data.data);
-    };
+      const res = await Category.getCategory()
+      setData(res.data.data)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleAdd = (newCategory) => {
-    const newData = [...data, newCategory];
-    setData(newData);
-  };
+    const newData = [...data, newCategory]
+    setData(newData)
+  }
 
   const handleEditData = (updatedCategory) => {
-    const updatedData = [...data, updatedCategory];
-    data[0] = updatedCategory;
-    setData([...updatedData]);
-  };
+    let updatedData = [...data]
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (item) => item.id === updatedCategory[0].id
+    )
+
+    updatedData[indexToUpdate] = updatedCategory[0]
+
+    setData([...updatedData])
+  }
 
   const handleEdit = async (id) => {
-    const res = await Category.getCategoryByid(id);
-    setUpdate(res.data.data);
-  };
+    try {
+      const res = await Category.getCategoryByid(id)
+      const result = res.data
+      console.log(result)
+      setUpdate(result)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -47,15 +59,15 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
-          setData((prevData) => prevData.filter((Categorie) => Categorie.id !== id));
+          await Category.deleteCategory(id)
+          setData((prevData) => prevData.filter((category) => category.id !== id))
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
+          })
         }
       } catch (e) {
         Swal.fire({
@@ -65,10 +77,10 @@ const TableCategories = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -109,7 +121,7 @@ const TableCategories = () => {
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Actions
               </th>
             </tr>
@@ -129,7 +141,6 @@ const TableCategories = () => {
                     {category.name}
                   </h5>
                 </td>
-                
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <label
@@ -184,6 +195,6 @@ const TableCategories = () => {
         </table>
       </div>
     </div>
-  );
-};
-export default TableCategories;
+  )
+}
+export default TableCategories
