@@ -29,7 +29,8 @@ const authenticateToken = async (req, res, next) => {
     console.log(role);
 
     if (
-      (role == 2 && req.path.startsWith("/supplier")) ||
+      (role == 2 && req.path.startsWith("/asdasd")) ||
+      req.path.startsWith("/supplier") ||
       req.path.startsWith("/outlet") ||
       req.path.startsWith("/item") ||
       req.path.startsWith("/category") ||
@@ -56,4 +57,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = {authenticateToken};
+module.exports = { authenticateToken };

@@ -5,7 +5,7 @@ import { useRef } from "react";
 
 const ModalEditOutlet = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

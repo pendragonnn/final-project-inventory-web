@@ -2,12 +2,23 @@ import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useRef, useState, useEffect } from "react";
-import Item from "@/data/item/index"
-import item from "@/data/item/index";
+import Item from "@/data/item/index";
+import Category from "@/data/category/index";
 
 const ModalItemAdd = ({ name, test, addToTable }) => {
-  const {modalCheckbox,  fileInputRef} = useRef(null);
+  const modalCheckbox = useRef(null);
+  const fileInputRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [dataItem, setDataItem] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await Category.getCategory();
+      setDataItem(res.data.data);
+    };
+
+    fetchData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,18 +56,17 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
   };
 
   useEffect(() => {
-    if (item?.image_url) {
-      const file = new File([], item.image_url, { type: 'image/*' });
+    if (Item?.image_url) {
+      const file = new File([], Item.image_url, { type: "image/*" });
       setSelectedImage(URL.createObjectURL(file));
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
-  }, [item]);
+  }, [Item]);
 
   function handleImageUpload(event) {
     const file = event.target.files[0];
     setSelectedImage(URL.createObjectURL(file));
   }
-
 
   return (
     <>
@@ -101,7 +111,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                   description
+                    description
                   </label>
                   <input
                     type="text"
@@ -112,24 +122,23 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                   />
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                  Category               
-                     </label>
-                  <input
-                    type="text"
+                <div>
+                  <label className="mb-2">Category</label>
+                  <select
+                    className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
                     name="category_id"
-                    placeholder="Enter Category  "
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                    // max={12}
-                    // min={11}
-                  />
+                  >
+                    {dataItem.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                Price             
-                     </label>
+                    Price
+                  </label>
                   <input
                     type="number"
                     name="price"
@@ -142,8 +151,8 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                  Stock           
-                     </label>
+                    Stock
+                  </label>
                   <input
                     type="number"
                     name="stock"
@@ -156,8 +165,8 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-              Image            
-                     </label>
+                    Image
+                  </label>
                   <input
                     type="file"
                     name="image_url"
@@ -170,7 +179,9 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                     // max={12}
                     // min={11}
                   />
-                   {selectedImage && <img src={selectedImage} alt="Selected Image" />}
+                  {selectedImage && (
+                    <img src={selectedImage} alt="Selected Image" />
+                  )}
                 </div>
 
                 <input
