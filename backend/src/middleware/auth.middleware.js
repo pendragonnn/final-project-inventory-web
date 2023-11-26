@@ -1,8 +1,12 @@
 const Auth = require("../repository/auth.repository");
 const jwtUtil = require("../util/jwt.util");
+const Auth = require("../repository/auth.repository");
+const jwtUtil = require("../util/jwt.util");
 
 const authenticateToken = async (req, res, next) => {
   const authHeader =
+    req.headers["authorization"] || req.headers["Authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
     req.headers["authorization"] || req.headers["Authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -10,20 +14,28 @@ const authenticateToken = async (req, res, next) => {
     return res
       .status(401)
       .json({ message: "Unauthorized access: Token not provided" });
+      .json({ message: "Unauthorized access: Token not provided" });
   }
 
   if (jwtUtil.isTokenBlacklisted(token)) {
+    return res.status(401).json({ message: "Token has rejected" });
     return res.status(401).json({ message: "Token has rejected" });
   }
 
   try {
     const decodedToken = jwtUtil.decodeToken(token);
     const user = await Auth.findUserById(decodedToken.id);
+    const decodedToken = jwtUtil.decodeToken(token);
+    const user = await Auth.findUserById(decodedToken.id);
 
     if (!user) {
       return res.status(401).json({ message: "Invalid user" });
+      return res.status(401).json({ message: "Invalid user" });
     }
 
+    req.user = user;
+    const role = decodedToken.role;
+    console.log(role);
     req.user = user;
     const role = decodedToken.role;
     console.log(role);
@@ -45,16 +57,32 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/transaction-detail")
     ) {
       next();
+      req.path.startsWith("/transaction-detail")
+    ) {
+      next();
+    } else if (role == 1 && req.path.startsWith("/user")) {
+      next();
+    } else if (
+      (role == 3 && req.path.startsWith("/transaction-header")) ||
+      req.path.startsWith("/transaction-detail")
+    ) {
+      next();
     } else {
+      return res.status(403).send("Forbidden");
       return res.status(403).send("Forbidden");
     }
 
     return;
 
     next();
+    return;
+
+    next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized access" });
+    res.status(401).json({ message: "Unauthorized access" });
   }
+};
 };
 
 module.exports = { authenticateToken };

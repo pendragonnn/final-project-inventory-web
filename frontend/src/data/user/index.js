@@ -1,4 +1,3 @@
-// user.js
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -9,12 +8,16 @@ const headers = {
 };
 
 const getUsers = async () => {
-  const result = await axios.get("http://localhost:8000/user");
+  const result = await axios.get("http://localhost:8000/user",{
+    headers: headers,
+  });
   return result;
 };
 
 const getUserById = async (id) => {
-  const result = await axios.get(`http://localhost:8000/user/${id}`);
+  const result = await axios.get(`http://localhost:8000/user/${id}`,{
+    headers: headers,
+  });;
   return result;
 };
 
@@ -39,18 +42,59 @@ const deleteUser = async (id) => {
   return result;
 };
 
-const uploadImage = async (userId, formData) => {
-    const result = await axios.post(
-      `http://localhost:8000/user/upload/${userId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+const uploadImage =  async (Id, formData) => {
+  const imageResponse = await axios.post(
+    `http://localhost:8000/user/upload/${Id}`,
+    formData,
+    {
+      headers: {
+        ...headers,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return imageResponse;
+};
+
+const addUser2 = async () => {
+  try {
+    const userWithoutImage = {
+      role_id: e.target.role_id.value,
+      full_name: e.target.full_name.value,
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
+
+    const result = await axios.post("http://localhost:8000/user", userWithoutImage, {
+      headers: headers,
+    });
+
     return result;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error; // Re-throw the error to propagate it further if needed
+  }
+};
+
+function getUserImageUrl(imageUrl) {
+  return {
+    src: `http://localhost:8000/user/upload/${imageUrl}`,
+    headers: headers,
   };
+}
+
+// function getUserImageUrl(imageUrl) {
+//   const token = Cookies.get("token");
+//   const headers = {
+//     "content-type": "application/json; charset=utf=UTF-8",
+//     Authorization: `Bearer ${token}`,
+//   };
+
+//   return {
+//     src: `http://localhost:8000/user/upload/${imageUrl}`,
+//     headers: headers,
+//   };
+// }
 
 export default {
   addUser,
@@ -59,4 +103,6 @@ export default {
   updateUser,
   deleteUser,
   uploadImage,
+  addUser2,
+  getUserImageUrl,
 };
