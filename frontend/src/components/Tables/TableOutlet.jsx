@@ -28,7 +28,7 @@ const TableOutlets = () => {
 
     // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
     const indexToUpdate = updatedData.findIndex(
-      (item) => item.id === updatedOutlet[0].id
+      (outlet) => outlet.id === updatedOutlet[0].id
     );
 
     updatedData[indexToUpdate] = updatedOutlet[0];
@@ -86,7 +86,7 @@ const TableOutlets = () => {
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <a
+          <label
             type="submit"
             className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
           >
@@ -111,9 +111,10 @@ const TableOutlets = () => {
               test={"add"}
               addToTable={handleAdd}
             />
-          </a>
+          </label>
         </div>
       </div>
+      <ModalAddOutlet name={"Add Outlet"} test={"add"} addToTable={handleAdd} />
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>

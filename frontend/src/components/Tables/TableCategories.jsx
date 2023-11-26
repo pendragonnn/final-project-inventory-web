@@ -48,7 +48,9 @@ const TableCategories = () => {
       try {
         if (result.isConfirmed) {
           await Category.deleteCategory(id);
-          setData((prevData) => prevData.filter((Categorie) => Categorie.id !== id));
+          setData((prevData) =>
+            prevData.filter((Categorie) => Categorie.id !== id)
+          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -74,7 +76,7 @@ const TableCategories = () => {
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <a
+          <label
             type="submit"
             className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
           >
@@ -99,7 +101,7 @@ const TableCategories = () => {
               test={"add"}
               addToTable={handleAdd}
             />
-          </a>
+          </label>
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
@@ -129,7 +131,7 @@ const TableCategories = () => {
                     {category.name}
                   </h5>
                 </td>
-                
+
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <label

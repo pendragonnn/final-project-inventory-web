@@ -10,6 +10,7 @@ const encodeToken = ({ user }) => {
       email: user.email,
       id: user.id,
       role: user.role_id,
+      full_name: user.full_name,
     },
     process.env.SECRET_KEY,
     {
@@ -19,7 +20,8 @@ const encodeToken = ({ user }) => {
 
   id = user.id;
   role = user.role_id;
-  return { token, id, role };
+  full_name = user.full_name;
+  return { token, id, role, full_name };
 };
 
 const decodeToken = (token) => {

@@ -1,18 +1,29 @@
-
 import Swal from "sweetalert2";
+import React from "react";
+import { useRef, useEffect, useState } from "react";
+import Category from "@/data/category/index";
 
-import { React,useRef, useEffect, useState } from "react";
-
-import Item from "@/data/item";
+import Item from "@/data/item/index";
 
 const ModalEditItem = ({ data, test, addToTable }) => {
-  const {modalCheckbox,fileInputRef} = useRef(null);
+  const modalCheckbox = useRef(null);
+  const fileInputRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [dataItem, setDataItem] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await Category.getCategory();
+      setDataItem(res.data.data);
+    };
+
+    fetchData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await Item.updateItem(data.id, {
+      const res = await Item.updateItem(data.data.id, {
         name: e.target.name.value,
         description: e.target.description.value,
         category_id: e.target.category_id.value,
@@ -28,7 +39,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data);
+        addToTable(res.data.data[1]);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
@@ -43,14 +54,11 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     }
   };
 
-
-
-
   useEffect(() => {
     if (Item?.image_url) {
-      const file = new File([], Item.image_url, { type: 'image/*' });
+      const file = new File([], Item.image_url, { type: "image/*" });
       setSelectedImage(URL.createObjectURL(file));
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   }, [Item]);
 
@@ -59,11 +67,13 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     setSelectedImage(URL.createObjectURL(file));
   }
 
-
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    setSelectedImage(URL.createObjectURL(file));
+  }
 
   return (
     <>
-     
       <input
         type="checkbox"
         ref={modalCheckbox}
@@ -96,19 +106,20 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     name="name"
                     placeholder="Enter  name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    value={Item?.name}
+                    defaultValue={data?.data?.name}
                     required
                   />
                 </div>
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                   description
+                    description
                   </label>
                   <input
                     type="text"
                     name="description"
                     placeholder="Enter description"
+                    defaultValue={data?.data?.description}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />
@@ -116,26 +127,29 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                  Category               
-                     </label>
-                  <input
-                    type="text"
+                    Category
+                  </label>
+                  <select
+                    className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
                     name="category_id"
-                    placeholder="Enter Category  "
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                    // max={12}
-                    // min={11}
-                  />
+                    defaultValue={data?.data?.category}
+                  >
+                    {dataItem.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                Price             
-                     </label>
+                    Price
+                  </label>
                   <input
                     type="number"
                     name="price"
                     placeholder="Enter price"
+                    defaultValue={data?.data?.price}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                     // max={12}
@@ -144,12 +158,13 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                  Stock           
-                     </label>
+                    Stock
+                  </label>
                   <input
                     type="number"
                     name="stock"
                     placeholder="Enter Stock"
+                    defaultValue={data?.data?.stock}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                     // max={12}
@@ -158,13 +173,14 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-              Image            
-                     </label>
+                    Image
+                  </label>
                   <input
                     type="file"
                     name="image_url"
                     placeholder="Enter Image"
                     accept="image/*"
+                    defaultValue={data?.data?.image_url}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                     ref={fileInputRef}
@@ -172,7 +188,9 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     // max={12}
                     // min={11}
                   />
-                   {selectedImage && <img src={selectedImage} alt="Selected Image" />}
+                  {selectedImage && (
+                    <img src={selectedImage} alt="Selected Image" />
+                  )}
                 </div>
 
                 <input
@@ -189,4 +207,4 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditItem ;
+export default ModalEditItem;

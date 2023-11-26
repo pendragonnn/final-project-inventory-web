@@ -3,9 +3,9 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 const SignIn = () => {
   const router = useRouter();

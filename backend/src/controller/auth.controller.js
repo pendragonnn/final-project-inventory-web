@@ -20,6 +20,7 @@ const userLogin = async (req, res, next) => {
       token: result.token,
       userId: result.id,
       role: result.role,
+      full_name: result.full_name,
     });
   } catch (error) {
     next(error);
