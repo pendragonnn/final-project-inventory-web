@@ -24,14 +24,27 @@ const TableCategories = () => {
   };
 
   const handleEditData = (updatedCategory) => {
-    const updatedData = [...data, updatedCategory];
-    data[0] = updatedCategory;
+    let updatedData = [...data];
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (item) => item.id === updatedCategory[0].id
+    );
+
+    updatedData[indexToUpdate] = updatedCategory[0];
+
     setData([...updatedData]);
   };
 
   const handleEdit = async (id) => {
-    const res = await Category.getCategoryByid(id);
-    setUpdate(res.data.data);
+    try {
+      const res = await Category.getCategoryByid(id);
+      const result = res.data;
+      console.log(result);
+      setUpdate(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -46,10 +59,6 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
-          setData((prevData) =>
-            prevData.filter((Categorie) => Categorie.id !== id)
-          );
           await Category.deleteCategory(id);
           setData((prevData) =>
             prevData.filter((category) => category.id !== id)
@@ -79,7 +88,7 @@ const TableCategories = () => {
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <label
+          <a
             type="submit"
             className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
           >
@@ -104,7 +113,7 @@ const TableCategories = () => {
               test={"add"}
               addToTable={handleAdd}
             />
-          </label>
+          </a>
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
@@ -134,7 +143,6 @@ const TableCategories = () => {
                     {category.name}
                   </h5>
                 </td>
-
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <label

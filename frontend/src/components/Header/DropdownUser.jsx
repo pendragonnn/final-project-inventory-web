@@ -60,6 +60,7 @@ const DropdownUser = () => {
 
           Cookies.remove("token");
           Cookies.remove("role");
+          Cookies.remove("userId");
 
           Swal.fire({
             position: "bottom-end",

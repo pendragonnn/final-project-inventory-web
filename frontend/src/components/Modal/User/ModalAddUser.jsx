@@ -1,26 +1,30 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import UserData from "@/data/user/index";
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post("http://localhost:8000/user", {
+      // Create user without image first
+      const userWithoutImage = {
         role_id: e.target.role_id.value,
         full_name: e.target.full_name.value,
         email: e.target.email.value,
         password: e.target.password.value,
-<<<<<<< HEAD
-      });
-      console.log(res);
-=======
       };
 
       // Make a POST request to create user without image
-      const userResponse = await UserData.addUser(userWithoutImage)
+      const userResponse = await UserData.addUser(userWithoutImage);
 
       // Retrieve user ID from the response
       const userId = userResponse.data.data.id;
@@ -46,23 +50,23 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 
       console.log(imageResponse);
 
->>>>>>> dbe2a975e942be06d1e96726ad11e489d057dbc0
       Swal.fire({
         position: "bottom-end",
         icon: "success",
-        title: res.data.message,
+        title: imageResponse.data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data);
+        addToTable(imageResponse.data.data);
         modalCheckbox.current.checked = false;
       });
-    } catch (e) {
+    } catch (error) {
+      console.error("Error:", error.message);
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: error.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
@@ -104,8 +108,8 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
                   </label>
 
                   <label
-                    for="countries"
-                    class="block  text-sm font-medium text-gray-900 dark:text-white"
+                    htmlFor="countries"
+                    className="block  text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Select an option
                   </label>
@@ -113,7 +117,6 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     name="role_id"
                   >
-                    <option selected>Choose a role</option>
                     <option value="1">Admin</option>
                     <option value="2">Staff</option>
                     <option value="3">Manager</option>
@@ -159,12 +162,20 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
                   />
                 </div>
 
-                <input
-                  type="file"
-                  name="image_url"
-                  accept="image/*"
-                  className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Profile Photo
+                  </label>
+                  <input
+                    type="file"
+                    name="image_url"
+                    key={"user-photo"}
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required
+                  />
+                </div>
 
                 <input
                   type="submit"

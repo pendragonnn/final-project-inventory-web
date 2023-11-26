@@ -132,7 +132,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <select
                     className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
                     name="category_id"
-                    defaultValue={data?.data?.category}
+                    defaultValue={data?.data?.Category.name}
                   >
                     {dataItem.map((value) => (
                       <option key={value.id} value={value.id}>

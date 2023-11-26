@@ -29,16 +29,21 @@ const authenticateToken = async (req, res, next) => {
     console.log(role);
 
     if (
-      (role == 2 && req.path === "/supplier") ||
-      req.path === "/outlet" ||
+      (role == 2 && req.path.startsWith("/asdasd")) ||
+      req.path.startsWith("/supplier") ||
+      req.path.startsWith("/outlet") ||
       req.path.startsWith("/item") ||
-      req.path === "/category" ||
+      req.path.startsWith("/category") ||
       req.path.startsWith("/transaction-header") ||
-      req.path !== "/transaction-header" || // Periksa apakah path dimulai dengan "/transaction-header"
-      req.path === "/transaction-detail"
+      req.path.startsWith("/transaction-detail")
     ) {
       next();
-    } else if (role == 1 && req.path === "/user") {
+    } else if (role == 1 && req.path.startsWith("/user")) {
+      next();
+    } else if (
+      (role == 3 && req.path.startsWith("/transaction-header")) ||
+      req.path.startsWith("/transaction-detail")
+    ) {
       next();
     } else {
       return res.status(403).send("Forbidden");
@@ -52,24 +57,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-// const restrictAccess = async (req, res, next) => {
-//   try {
-//     const user = req.user; // Anda mungkin mendapatkan informasi pengguna setelah melakukan otentikasi
-
-//     if (user && user.role_id === 2) {
-//       // Jika role_id pengguna adalah 2 (role yang memiliki akses terbatas)
-//       const allowedRoutes = ["/outlet", "/supplier"];
-//       const requestedRoute = req.baseUrl; // Mengambil bagian dasar dari rute yang diminta
-
-//       if (!allowedRoutes.includes(requestedRoute)) {
-//         return res.status(401).json({ message: "Unauthorized access" });
-//       }
-//     }
-
-//     next();
-//   } catch (error) {
-//     res.status(401).json({ message: "Unauthorized access" });
-//   }
-// };
-
-module.exports = { authenticateToken /*restrictAccess */ };
+module.exports = { authenticateToken };
