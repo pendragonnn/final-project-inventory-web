@@ -1,15 +1,15 @@
 import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Category from "@/data/category/index";
 import { useRef } from "react";
 
 const ModalEditCategory = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await Category.updateCategory(data.id, {
+      const res = await Category.updateCategory(data.data.id, {
         name: e.target.name.value,
       });
 
@@ -21,7 +21,7 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data);
+        addToTable(res.data.data[1]);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
@@ -35,6 +35,8 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
       });
     }
   };
+
+  console.log(data);
 
   return (
     <>
@@ -68,8 +70,8 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="name"
-                    defaultValue={data?.name}
-                    placeholder="Enter full name"
+                    defaultValue={data?.data?.name}
+                    placeholder="Enter Category Name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />

@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import UserData from "@/data/user/index";
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
@@ -12,8 +13,40 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
         full_name: e.target.full_name.value,
         email: e.target.email.value,
         password: e.target.password.value,
+<<<<<<< HEAD
       });
       console.log(res);
+=======
+      };
+
+      // Make a POST request to create user without image
+      const userResponse = await UserData.addUser(userWithoutImage)
+
+      // Retrieve user ID from the response
+      const userId = userResponse.data.data.id;
+
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("role_id", e.target.role_id.value);
+      formData.append("full_name", e.target.full_name.value);
+      formData.append("email", e.target.email.value);
+      formData.append("password", e.target.password.value);
+      formData.append("image_url", file);
+
+      // Make a POST request to upload image for the user
+      const imageResponse = await axios.post(
+        `http://localhost:8000/user/upload/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(imageResponse);
+
+>>>>>>> dbe2a975e942be06d1e96726ad11e489d057dbc0
       Swal.fire({
         position: "bottom-end",
         icon: "success",

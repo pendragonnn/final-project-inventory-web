@@ -2,7 +2,6 @@
 import ModalAddCategory from "../Modal/Category/ModalAddCategory";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Category from "@/data/category/index";
 import ModalEditCategory from "../Modal/Category/ModalEditCategory";
 
@@ -50,6 +49,10 @@ const TableCategories = () => {
           await Category.deleteCategory(id);
           setData((prevData) =>
             prevData.filter((Categorie) => Categorie.id !== id)
+          );
+          await Category.deleteCategory(id);
+          setData((prevData) =>
+            prevData.filter((category) => category.id !== id)
           );
           Swal.fire({
             position: "bottom-end",
@@ -111,7 +114,7 @@ const TableCategories = () => {
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Actions
               </th>
             </tr>
