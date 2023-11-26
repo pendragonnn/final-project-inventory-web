@@ -3,9 +3,7 @@ import ModalUserAdd from "../Modal/user/ModalAddUser";
 import ModalEditUser from "../Modal/User/ModalEditUser";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import UserData from "@/data/user/index";
-import Cookies from "js-cookie";
 
 const TableUser = () => {
   const [data, setData] = useState([]);
@@ -16,8 +14,6 @@ const TableUser = () => {
     const fetchData = async () => {
       const res = await UserData.getUsers();
       setData(res.data.data);
-      console.log(res.data.data);
-      
     };
 
     fetchData();
@@ -28,19 +24,18 @@ const TableUser = () => {
     setData(newData);
   };
 
-   const handleEditData = (updatedUser) => {
-    let updatedData = [...data]
+  const handleEditData = (updatedUser) => {
+    let updatedData = [...data];
 
     // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
     const indexToUpdate = updatedData.findIndex(
       (user) => user.id === updatedUser[0].id
-    )
+    );
 
-    updatedData[indexToUpdate] = updatedUser[0]
+    updatedData[indexToUpdate] = updatedUser[0];
 
-    setData([...updatedData])
-  }
-
+    setData([...updatedData]);
+  };
 
   const handleEdit = async (id) => {
     const res = await UserData.getUserById(id);
@@ -64,9 +59,12 @@ const TableUser = () => {
           await UserData.deleteUser(id);
           setData((prevData) => prevData.filter((user) => user.id !== id));
           Swal.fire({
+            position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
+            customClass: "swal-custom-delete",
+            timer: 2000,
           });
         }
       } catch (e) {
@@ -158,15 +156,14 @@ const TableUser = () => {
             key={key}
           >
             <div className="p-2.5 xl:p-5">
-            <img
-  src={UserData.getUserImageUrl(imageUrl)}
-  className="w-10 h-10 rounded-full"
-/>
-              </div>
+              <img
+                // src={UserData.getUserImageUrl(imageUrl)}
+                className="w-10 h-10 rounded-full"
+              />
+            </div>
 
             <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-              </div>
+              <div className="flex-shrink-0"></div>
               <p className="hidden text-black dark:text-white sm:block">
                 {user?.Role?.name}
               </p>
@@ -181,7 +178,7 @@ const TableUser = () => {
             </div>
 
             <div className="flex gap-2 items-center justify-center p-2.5 xl:p-5">
-            <label
+              <label
                 htmlFor="edit"
                 className="hover:text-primary cursor-pointer"
                 onClick={() => handleEdit(user.id)}
@@ -234,10 +231,6 @@ const TableUser = () => {
   );
 };
 export default TableUser;
-
-
-
-
 
 // TableUser.js
 // import ModalUserAdd from "../Modal/User/ModalAddUser";
@@ -400,7 +393,7 @@ export default TableUser;
 //             <div className="p-2.5 xl:p-5">
 //                 <img
 //                   src={`http://localhost:8000/user/upload/${user.image_url}`}
-                 
+
 //                   className="w-10 h-10 rounded-full"
 //                 />
 //               </div>
@@ -475,4 +468,3 @@ export default TableUser;
 //   );
 // };
 // export default TableUser;
-
