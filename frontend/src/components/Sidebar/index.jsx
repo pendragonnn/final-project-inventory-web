@@ -1,64 +1,64 @@
-import React, { useEffect, useRef, useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import SidebarLinkGroup from "./SidebarLinkGroup"
-import Cookies from "js-cookie"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import SidebarLinkGroup from "./SidebarLinkGroup";
+import Cookies from "js-cookie";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const router = useRouter()
-  const [isTokenExist, setTokenExist] = useState(false)
-  const [isRoleExist, setRoleExist] = useState(null)
-  const pathname = usePathname()
-  const trigger = useRef(null)
-  const sidebar = useRef(null)
-  let storedSidebarExpanded = "true"
+  const router = useRouter();
+  const [isTokenExist, setTokenExist] = useState(false);
+  const [isRoleExist, setRoleExist] = useState(null);
+  const pathname = usePathname();
+  const trigger = useRef(null);
+  const sidebar = useRef(null);
+  let storedSidebarExpanded = "true";
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
-  )
+  );
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    const role = Cookies.get("role")
+    const token = Cookies.get("token");
+    const role = Cookies.get("role");
 
-    if (!token || !role) router.push("/")
-    setTokenExist(!!token)
-    setRoleExist(role)
-  }, [])
+    if (!token || !role) router.push("/forbidden");
+    setTokenExist(!!token);
+    setRoleExist(role);
+  }, []);
 
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
-      if (!sidebar.current || !trigger.current) return
+      if (!sidebar.current || !trigger.current) return;
       if (
         !sidebarOpen ||
         sidebar.current.contains(target) ||
         trigger.current.contains(target)
       )
-        return
-      setSidebarOpen(false)
-    }
-    document.addEventListener("click", clickHandler)
-    return () => document.removeEventListener("click", clickHandler)
-  })
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
+  });
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
-      if (!sidebarOpen || keyCode !== 27) return
-      setSidebarOpen(false)
-    }
-    document.addEventListener("keydown", keyHandler)
-    return () => document.removeEventListener("keydown", keyHandler)
-  })
+      if (!sidebarOpen || keyCode !== 27) return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", keyHandler);
+    return () => document.removeEventListener("keydown", keyHandler);
+  });
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString())
+    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded")
+      document.querySelector("body")?.classList.add("sidebar-expanded");
     } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded")
+      document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
-  }, [sidebarExpanded])
+  }, [sidebarExpanded]);
   return (
     <aside
       ref={sidebar}
@@ -123,10 +123,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
-                          e.preventDefault()
+                          e.preventDefault();
                           sidebarExpanded
                             ? handleClick()
-                            : setSidebarExpanded(true)
+                            : setSidebarExpanded(true);
                         }}
                       >
                         <svg
@@ -194,7 +194,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
-                  )
+                  );
                 }}
               </SidebarLinkGroup>
               {/* <!-- Menu Item Dashboard --> */}
@@ -442,10 +442,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 "bg-graydark dark:bg-meta-4"
                               }`}
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 sidebarExpanded
                                   ? handleClick()
-                                  : setSidebarExpanded(true)
+                                  : setSidebarExpanded(true);
                               }}
                             >
                               <svg
@@ -529,7 +529,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </div>
                             {/* <!-- Dropdown Menu End --> */}
                           </React.Fragment>
-                        )
+                        );
                       }}
                     </SidebarLinkGroup>
 
@@ -549,10 +549,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 "bg-graydark dark:bg-meta-4"
                               }`}
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 sidebarExpanded
                                   ? handleClick()
-                                  : setSidebarExpanded(true)
+                                  : setSidebarExpanded(true);
                               }}
                             >
                               <svg
@@ -636,7 +636,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </div>
                             {/* <!-- Dropdown Menu End --> */}
                           </React.Fragment>
-                        )
+                        );
                       }}
                     </SidebarLinkGroup>
                   </li>
@@ -650,6 +650,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         {/* <!-- Sidebar Menu --> */}
       </div>
     </aside>
-  )
-}
-export default Sidebar
+  );
+};
+export default Sidebar;
