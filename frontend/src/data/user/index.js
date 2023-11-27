@@ -8,16 +8,16 @@ const headers = {
 };
 
 const getUsers = async () => {
-  const result = await axios.get("http://localhost:8000/user",{
+  const result = await axios.get("http://localhost:8000/user", {
     headers: headers,
   });
   return result;
 };
 
 const getUserById = async (id) => {
-  const result = await axios.get(`http://localhost:8000/user/${id}`,{
+  const result = await axios.get(`http://localhost:8000/user/${id}`, {
     headers: headers,
-  });;
+  });
   return result;
 };
 
@@ -42,7 +42,7 @@ const deleteUser = async (id) => {
   return result;
 };
 
-const uploadImage =  async (Id, formData) => {
+const uploadImage = async (Id, formData) => {
   const imageResponse = await axios.post(
     `http://localhost:8000/user/upload/${Id}`,
     formData,
@@ -65,9 +65,13 @@ const addUser2 = async () => {
       password: e.target.password.value,
     };
 
-    const result = await axios.post("http://localhost:8000/user", userWithoutImage, {
-      headers: headers,
-    });
+    const result = await axios.post(
+      "http://localhost:8000/user",
+      userWithoutImage,
+      {
+        headers: headers,
+      }
+    );
 
     return result;
   } catch (error) {
@@ -76,12 +80,16 @@ const addUser2 = async () => {
   }
 };
 
-function getUserImageUrl(imageUrl) {
-  return {
-    src: `http://localhost:8000/user/upload/${imageUrl}`,
-    headers: headers,
-  };
-}
+const getUserImageUrl = async (imageUrl) => {
+  const result = await axios.get(
+    `http://localhost:8000/user/upload/${imageUrl}`,
+    {
+      headers: headers,
+    }
+  );
+
+  return result;
+};
 
 // function getUserImageUrl(imageUrl) {
 //   const token = Cookies.get("token");

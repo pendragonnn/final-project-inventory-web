@@ -32,9 +32,28 @@ const addOutlet = async (data) => {
 };
 
 const updateOutlet = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/outlet/${id}`, data, {
-    headers: headers,
-  });
+  let updatedFields = {};
+
+  // Cek setiap field yang ada pada objek data dan tambahkan ke updatedFields jika berbeda
+  if (data.hasOwnProperty("name")) {
+    updatedFields.name = data.name;
+  }
+
+  if (data.hasOwnProperty("address")) {
+    updatedFields.address = data.address;
+  }
+
+  if (data.hasOwnProperty("phone")) {
+    updatedFields.phone = data.phone;
+  }
+
+  const result = await axios.put(
+    `http://localhost:8000/outlet/${id}`,
+    updatedFields,
+    {
+      headers: headers,
+    }
+  );
 
   return result;
 };

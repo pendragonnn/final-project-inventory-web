@@ -5,7 +5,7 @@ import { useRef } from "react";
 
 const ModalEditCategory = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -80,7 +80,7 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
                 <input
                   type="submit"
                   value={"edit"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>

@@ -8,28 +8,69 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   const fileInputRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const [formData, setFormData] = useState({
+    role_id: data?.data?.role_id || "",
+    full_name: data?.data?.full_name || "",
+    email: data?.data?.email || "",
+    password: data?.data?.password || "",
+    image_url: data?.data?.image_url || "",
+  });
+
+  useEffect(() => {
+    setFormData({
+      role_id: data?.data?.role_id || "",
+      full_name: data?.data?.full_name || "",
+      email: data?.data?.email || "",
+      password: data?.data?.password || "",
+      image_url: data?.data?.image_url || "",
+    });
+  }, [data]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await user.updateUser(data.id, {
-        role_id: e.target.role_id.value,
-        full_name: e.target.full_name.value,
-        email: e.target.email.value,
-        password: e.target.password.value,
-        image_url: e.target.image_url.value,
-      });
+      const {
+        role_id: newRole,
+        full_name: newFullName,
+        email: newEmail,
+        password: newPassword,
+        image_url: newImageUrl,
+      } = formData;
+      if (
+        data?.data?.role_id !== newRole ||
+        data?.data?.full_name !== newFullName ||
+        data?.data?.email !== newEmail ||
+        data?.data?.password !== newPassword
+      ) {
+        const res = await user.updateUser(data.id, {
+          role_id: newRole,
+          full_name: newFullName,
+          email: newEmail,
+          password: newPassword,
+          image_url: newImageUrl,
+        });
+        console.log(res);
 
-      Swal.fire({
-        position: "bottom-end",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      }).then(() => {
-        addToTable(res.data.data[1]);
-        modalCheckbox.current.checked = false;
-      });
+        Swal.fire({
+          position: "bottom-end",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        }).then(() => {
+          addToTable(res.data.data[1]);
+          modalCheckbox.current.checked = false;
+
+          setFormData({
+            role_id: "",
+            full_name: "",
+            email: "",
+            password: "",
+            image_url: "",
+          });
+        });
+      }
     } catch (e) {
       Swal.fire({
         position: "bottom-end",
@@ -94,6 +135,10 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <select
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     name="role_id"
+                    value={formData.role_id}
+                    onChange={(e) =>
+                      setFormData({ ...formData, role_id: e.target.value })
+                    }
                   >
                     <option value="1">Admin</option>
                     <option value="2">Staff</option>
@@ -107,8 +152,10 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   </label>
                   <input
                     type="text"
-                    name="full_name"
-                    defaultValue={data?.full_name}
+                    value={formData.full_name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, full_name: e.target.value })
+                    }
                     placeholder="Enter full name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -122,7 +169,10 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="email"
-                    defaultValue={data?.email}
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     placeholder="Enter Email"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -133,7 +183,10 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <input
                     type="password"
                     name="password"
-                    defaultValue={data?.password}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     placeholder="Enter password"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -165,7 +218,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                 <input
                   type="submit"
                   value={"Edit"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>
