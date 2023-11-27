@@ -51,7 +51,7 @@ const DropdownUser = () => {
       try {
         if (result.isConfirmed) {
           const token = Cookies.get("token");
-          const res = await axios.delete("http://localhost:8000/logout/", {
+          const res = await axios.delete("http://localhost:8000/api/v1/logout/", {
             headers: {
               "content-type": "application/json; charset=utf=UTF-8",
               Authorization: `Bearer ${token}`,
