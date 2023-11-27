@@ -10,6 +10,13 @@ import Cookies from "js-cookie";
 const SignIn = () => {
   const router = useRouter();
 
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      router.push("/dashboard");
+    }
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
