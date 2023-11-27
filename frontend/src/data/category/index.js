@@ -8,7 +8,7 @@ const headers = {
 };
 
 const getCategory = async () => {
-  const result = await axios.get("http://localhost:8000/category", {
+  const result = await axios.get("http://localhost:8000/api/v1/category", {
     headers: headers,
   });
 
@@ -16,7 +16,7 @@ const getCategory = async () => {
 };
 
 const getCategoryByid = async (id) => {
-  const result = await axios.get(`http://localhost:8000/category/${id}`, {
+  const result = await axios.get(`http://localhost:8000/api/v1/category/${id}`, {
     headers: headers,
   });
 
@@ -24,7 +24,7 @@ const getCategoryByid = async (id) => {
 };
 
 const addCategory = async (data) => {
-  const result = await axios.post("http://localhost:8000/category", data, {
+  const result = await axios.post("http://localhost:8000/api/v1/category", data, {
     headers: headers,
   });
 
@@ -32,7 +32,7 @@ const addCategory = async (data) => {
 };
 
 const updateCategory = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/category/${id}`, data, {
+  const result = await axios.put(`http://localhost:8000/api/v1/category/${id}`, data, {
     headers: headers,
   });
 
@@ -40,7 +40,7 @@ const updateCategory = async (id, data) => {
 };
 
 const deleteCategory = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/category/${id}`, {
+  const result = await axios.delete(`http://localhost:8000/api/v1/category/${id}`, {
     headers: headers,
   });
 
