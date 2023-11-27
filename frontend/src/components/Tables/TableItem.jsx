@@ -1,5 +1,4 @@
 "use client";
-
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import ModalAddItem from "../Modal/Item/ModalAddItem";
@@ -24,16 +23,28 @@ const TableItems = () => {
     setData(newData);
   };
 
-  const handleEditData = (updatedItem) => {
-    setData((prevData) =>
-    prevData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-  );
+  const handleEditData = (updateItem) => {
+    let updatedData = [...data];
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (item) => item.id === updateItem[0].id
+    );
+
+    updatedData[indexToUpdate] = updateItem[0];
+
+    setData([...updatedData]);
   };
 
   const handleEdit = async (id) => {
-    const res = await Item.getItemByid(id);
-    setUpdate(res.data.data);
-  
+    try {
+      const res = await Item.getItemByid(id);
+      const result = res.data;
+      console.log(result);
+      setUpdate(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -107,7 +118,7 @@ const TableItems = () => {
         </div>
         <table className="w-full table-auto">
           <thead>
-            <tr className="bg-gray-2 text-left dark:bg-meta-4">
+            <tr className="bg-bodydark text-left dark:bg-meta-4">
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 name
               </th>
@@ -145,7 +156,7 @@ const TableItems = () => {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">
-                    {item.category_id}
+                    {item?.Category?.name}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -164,33 +175,32 @@ const TableItems = () => {
                         : "text-warning bg-warning"
                     }`}
                   >
-
                     {item.image_url}
                   </p>
                   {/* <Image w={24} h={24} src={`http://localhost:8000/item/upload`} /> */}
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                  <label
-                htmlFor="edit"
-                className="hover:text-primary cursor-pointer"
-                onClick={() => handleEdit(item.id)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  />
-                </svg>
-              </label>
+                    <label
+                      htmlFor="edit"
+                      className="hover:text-primary cursor-pointer"
+                      onClick={() => handleEdit(item.id)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                    </label>
 
                     <button
                       className="hover:text-primary"
@@ -221,18 +231,16 @@ const TableItems = () => {
                           fill=""
                         />
                       </svg>
-                 
                     </button>
                   </div>
                 </td>
               </tr>
             ))}
-              <ModalEditItem
-          data={update}
-          test={"edit"}
-          addToTable={handleEditData}
-        />
-                
+            <ModalEditItem
+              data={update}
+              test={"edit"}
+              addToTable={handleEditData}
+            />
           </tbody>
         </table>
       </div>

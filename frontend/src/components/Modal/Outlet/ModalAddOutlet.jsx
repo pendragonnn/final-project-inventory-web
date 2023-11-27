@@ -8,6 +8,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await Outlet.addOutlet({
         name: e.target.name.value,
@@ -22,7 +23,6 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {

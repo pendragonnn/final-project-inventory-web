@@ -26,27 +26,35 @@ const authenticateToken = async (req, res, next) => {
 
     req.user = user;
     const role = decodedToken.role;
+    console.log(role);
 
     if (
-      (role == 2 && req.path === "/supplier") ||
-      req.path === "/outlet" ||
-      req.path === "/item" ||
-      req.path === "/category"
-      // req.path.startsWith("/transaction-header") ||
-      // req.path !== "/transaction-header" || // Periksa apakah path dimulai dengan "/transaction-header"
-      // req.path === "/transaction-detail"
+      (role == 2 && req.path.startsWith("/asdasd")) ||
+      req.path.startsWith("/supplier") ||
+      req.path.startsWith("/outlet") ||
+      req.path.startsWith("/item") ||
+      req.path.startsWith("/category") ||
+      req.path.startsWith("/transaction-header") ||
+      req.path.startsWith("/transaction-detail")
     ) {
       next();
-    } else if (role == 1 && req.path === "/user") {
+    } else if (role == 1 && req.path.startsWith("/user")) {
+      next();
+    } else if (
+      (role == 3 && req.path.startsWith("/transaction-header")) ||
+      req.path.startsWith("/transaction-detail")
+    ) {
       next();
     } else {
       return res.status(403).send("Forbidden");
     }
 
     return;
+
+    next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized access" });
   }
 };
 
-module.exports = { authenticateToken }; /*restrictAccess */
+module.exports = { authenticateToken /*restrictAccess */ };
