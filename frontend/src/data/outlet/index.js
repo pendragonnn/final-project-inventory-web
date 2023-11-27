@@ -8,7 +8,7 @@ const headers = {
 };
 
 const getOutlet = async () => {
-  const result = await axios.get("http://localhost:8000/outlet", {
+  const result = await axios.get("http://localhost:8000/api/v1/outlet", {
     headers: headers,
   });
 
@@ -16,7 +16,7 @@ const getOutlet = async () => {
 };
 
 const getOutletByid = async (id) => {
-  const result = await axios.get(`http://localhost:8000/outlet/${id}`, {
+  const result = await axios.get(`http://localhost:8000/api/v1/outlet/${id}`, {
     headers: headers,
   });
 
@@ -24,7 +24,7 @@ const getOutletByid = async (id) => {
 };
 
 const addOutlet = async (data) => {
-  const result = await axios.post("http://localhost:8000/outlet", data, {
+  const result = await axios.post("http://localhost:8000/api/v1/outlet", data, {
     headers: headers,
   });
 
@@ -32,7 +32,7 @@ const addOutlet = async (data) => {
 };
 
 const updateOutlet = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/outlet/${id}`, data, {
+  const result = await axios.put(`http://localhost:8000/api/v1/outlet/${id}`, data, {
     headers: headers,
   });
 
@@ -40,7 +40,7 @@ const updateOutlet = async (id, data) => {
 };
 
 const deleteOutlet = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/outlet/${id}`, {
+  const result = await axios.delete(`http://localhost:8000/api/v1/outlet/${id}`, {
     headers: headers,
   });
 

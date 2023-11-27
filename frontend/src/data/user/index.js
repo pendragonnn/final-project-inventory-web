@@ -8,35 +8,35 @@ const headers = {
 };
 
 const getUsers = async () => {
-  const result = await axios.get("http://localhost:8000/user",{
+  const result = await axios.get("http://localhost:8000/api/v1/user",{
     headers: headers,
   });
   return result;
 };
 
 const getUserById = async (id) => {
-  const result = await axios.get(`http://localhost:8000/user/${id}`,{
+  const result = await axios.get(`http://localhost:8000/api/v1/user/${id}`,{
     headers: headers,
   });;
   return result;
 };
 
 const addUser = async (data) => {
-  const result = await axios.post("http://localhost:8000/user", data, {
+  const result = await axios.post("http://localhost:8000/api/v1/user", data, {
     headers: headers,
   });
   return result;
 };
 
 const updateUser = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/user/${id}`, data, {
+  const result = await axios.put(`http://localhost:8000/api/v1/user/${id}`, data, {
     headers: headers,
   });
   return result;
 };
 
 const deleteUser = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/user/${id}`, {
+  const result = await axios.delete(`http://localhost:8000/api/v1/user/${id}`, {
     headers: headers,
   });
   return result;
@@ -44,7 +44,7 @@ const deleteUser = async (id) => {
 
 const uploadImage =  async (Id, formData) => {
   const imageResponse = await axios.post(
-    `http://localhost:8000/user/upload/${Id}`,
+    `http://localhost:8000/api/v1/user/upload/${Id}`,
     formData,
     {
       headers: {
@@ -65,7 +65,7 @@ const addUser2 = async () => {
       password: e.target.password.value,
     };
 
-    const result = await axios.post("http://localhost:8000/user", userWithoutImage, {
+    const result = await axios.post("http://localhost:8000/api/v1/user", userWithoutImage, {
       headers: headers,
     });
 
@@ -78,7 +78,7 @@ const addUser2 = async () => {
 
 function getUserImageUrl(imageUrl) {
   return {
-    src: `http://localhost:8000/user/upload/${imageUrl}`,
+    src: `http://localhost:8000/api/v1/user/upload/${imageUrl}`,
     headers: headers,
   };
 }

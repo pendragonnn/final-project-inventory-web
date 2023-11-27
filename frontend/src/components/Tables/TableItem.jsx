@@ -181,7 +181,7 @@ const TableItems = () => {
                   >
                     {item.image_url}
                   </p>
-                  {/* <Image w={24} h={24} src={`http://localhost:8000/item/upload`} /> */}
+                  {/* <Image w={24} h={24} src={`http://localhost:8000/api/v1/item/upload`} /> */}
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">

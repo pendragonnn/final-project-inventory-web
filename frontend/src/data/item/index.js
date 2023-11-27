@@ -8,7 +8,7 @@ const headers = {
 };
 
 const getItem = async () => {
-  const result = await axios.get("http://localhost:8000/item", {
+  const result = await axios.get("http://localhost:8000/api/v1/item", {
     headers: headers,
   });
 
@@ -16,7 +16,7 @@ const getItem = async () => {
 };
 
 const getItemByid = async (id) => {
-  const result = await axios.get(`http://localhost:8000/item/${id}`, {
+  const result = await axios.get(`http://localhost:8000/api/v1/item/${id}`, {
     headers: headers,
   });
 
@@ -24,7 +24,7 @@ const getItemByid = async (id) => {
 };
 
 const addItem = async (data) => {
-  const result = await axios.post("http://localhost:8000/item", data, {
+  const result = await axios.post("http://localhost:8000/api/v1/item", data, {
     headers: headers,
   });
 
@@ -32,7 +32,7 @@ const addItem = async (data) => {
 };
 
 const updateItem = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/item/${id}`, data, {
+  const result = await axios.put(`http://localhost:8000/api/v1/item/${id}`, data, {
     headers: headers,
   });
 
@@ -40,7 +40,7 @@ const updateItem = async (id, data) => {
 };
 
 const deleteItem = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/item/${id}`, {
+  const result = await axios.delete(`http://localhost:8000/api/v1/item/${id}`, {
     headers: headers,
   });
 
@@ -49,7 +49,7 @@ const deleteItem = async (id) => {
 
 
 const uploadItem = async (id)=>{
-  const result = await axios.post(`http://localhost:8000/item//upload/${id}`, {
+  const result = await axios.post(`http://localhost:8000/api/v1/item/upload/${id}`, {
     headers: headers,
   });
   return result;

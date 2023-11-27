@@ -8,7 +8,7 @@ const headers = {
 };
 
 const getSupplier = async () => {
-  const result = await axios.get("http://localhost:8000/supplier", {
+  const result = await axios.get("http://localhost:8000/api/v1/supplier", {
     headers: headers,
   });
 
@@ -16,7 +16,7 @@ const getSupplier = async () => {
 };
 
 const getSupplierByid = async (id) => {
-  const result = await axios.get(`http://localhost:8000/supplier/${id}`, {
+  const result = await axios.get(`http://localhost:8000/api/v1/supplier/${id}`, {
     headers: headers,
   });
 
@@ -24,7 +24,7 @@ const getSupplierByid = async (id) => {
 };
 
 const addSupplier = async (data) => {
-  const result = await axios.post("http://localhost:8000/supplier", data, {
+  const result = await axios.post("http://localhost:8000/api/v1/supplier", data, {
     headers: headers,
   });
 
@@ -32,7 +32,7 @@ const addSupplier = async (data) => {
 };
 
 const updateSupplier = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/supplier/${id}`, data, {
+  const result = await axios.put(`http://localhost:8000/api/v1/supplier/${id}`, data, {
     headers: headers,
   });
 
@@ -40,7 +40,7 @@ const updateSupplier = async (id, data) => {
 };
 
 const deleteSupplier = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/supplier/${id}`, {
+  const result = await axios.delete(`http://localhost:8000/api/v1/supplier/${id}`, {
     headers: headers,
   });
 
