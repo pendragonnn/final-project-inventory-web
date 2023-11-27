@@ -32,9 +32,13 @@ const addItem = async (data) => {
 };
 
 const updateItem = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/api/v1/item/${id}`, data, {
-    headers: headers,
-  });
+  const result = await axios.put(
+    `http://localhost:8000/api/v1/item/${id}`,
+    data,
+    {
+      headers: headers,
+    }
+  );
 
   return result;
 };
@@ -47,13 +51,15 @@ const deleteItem = async (id) => {
   return result;
 };
 
-
-const uploadItem = async (id)=>{
-  const result = await axios.post(`http://localhost:8000/api/v1/item/upload/${id}`, {
-    headers: headers,
-  });
+const uploadItem = async (id) => {
+  const result = await axios.post(
+    `http://localhost:8000/api/v1/item/upload/${id}`,
+    {
+      headers: headers,
+    }
+  );
   return result;
-}
+};
 
 export default {
   addItem,

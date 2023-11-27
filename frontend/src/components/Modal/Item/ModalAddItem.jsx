@@ -187,7 +187,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 <input
                   type="submit"
                   value={"Add"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>

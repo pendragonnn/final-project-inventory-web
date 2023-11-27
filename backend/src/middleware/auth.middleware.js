@@ -38,7 +38,10 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/transaction-detail")
     ) {
       next();
-    } else if (role == 1 && req.path.startsWith("/user")) {
+    } else if (
+      (role == 1 && req.path.startsWith("/user")) ||
+      req.path.startsWith("/user/upload")
+    ) {
       next();
     } else if (
       (role == 3 && req.path.startsWith("/transaction-header")) ||

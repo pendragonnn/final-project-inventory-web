@@ -5,114 +5,116 @@ const {
   editUserById,
   deleteUserById,
   updateUserPhoto,
-} = require("../service/user.service")
-const fs = require("fs")
+} = require("../service/user.service");
+const fs = require("fs");
 
 const allUsers = async (req, res) => {
-  const page = req.query.page || 1
-  const size = req.query.size || 10
+  const page = req.query.page || 1;
+  const size = req.query.size || 10;
   try {
-    const { users, dataLength } = await getAllUsers(page, size)
+    const { users, dataLength } = await getAllUsers(page, size);
+    const user = req.user;
     res.status(200).json({
+      name: user.full_name,
       data: users,
       totalItems: users.length,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
-    })
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
-}
+};
 
 const userById = async (req, res) => {
   try {
-    const userId = req.params.id
-    const user = await getUserById(userId)
+    const userId = req.params.id;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User Not Found" })
+      return res.status(404).json({ message: "User Not Found" });
     }
-    res.status(200).json({ data: user })
+    res.status(200).json({ data: user });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const postUser = async (req, res) => {
   try {
-    const newUserData = req.body
+    const newUserData = req.body;
 
-    const user = await insertUser(newUserData)
+    const user = await insertUser(newUserData);
 
-    res.status(200).json({ data: user, message: "Successful Adding User" })
+    res.status(200).json({ data: user, message: "Successful Adding User" });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const updateUser = async (req, res) => {
-  const id = req.params.id
-  const userData = req.body
+  const id = req.params.id;
+  const userData = req.body;
 
   if (!userData) {
-    return res.status(400).json({ message: "Data Must Have Value" })
+    return res.status(400).json({ message: "Data Must Have Value" });
   }
 
   try {
-    const user = await editUserById(id, userData)
+    const user = await editUserById(id, userData);
 
     if (!user) {
-      return res.status(404).json({ message: "User Not Found" })
+      return res.status(404).json({ message: "User Not Found" });
     }
 
     res.status(200).json({
       data: user,
       message: "Successfully Updated User!",
-    })
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message })
+    res.status(400).json({ message: error.message });
   }
-}
+};
 
 const removeUser = async (req, res) => {
   try {
-    const userId = req.params.id
+    const userId = req.params.id;
 
-    await deleteUserById(userId)
+    await deleteUserById(userId);
 
-    res.status(200).json({ message: "Successful Delete User!" })
+    res.status(200).json({ message: "Successful Delete User!" });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 const uploadUserPhoto = async (req, res) => {
   try {
-    const id = req.params.id
-    const user = await getUserById(id)
-    console.log("Request Body:", req.body)
-    console.log("Request File:", req.file)
+    const id = req.params.id;
+    const user = await getUserById(id);
+    console.log("Request Body:", req.body);
+    console.log("Request File:", req.file);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" })
+      return res.status(404).json({ message: "User not found" });
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" })
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const image_url = req.file.filename
+    const image_url = req.file.filename;
 
-    const updatedUser = await updateUserPhoto(id, image_url)
+    const updatedUser = await updateUserPhoto(id, image_url);
 
     res
       .status(200)
-      .json({ message: "User photo updated successfully", data: updatedUser })
+      .json({ message: "User photo updated successfully", data: updatedUser });
   } catch (error) {
-    console.error("Error dalam unggah file:", error)
-    res.status(500).json({ message: error.message })
+    console.error("Error dalam unggah file:", error);
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 module.exports = {
   allUsers,
@@ -121,4 +123,4 @@ module.exports = {
   updateUser,
   removeUser,
   uploadUserPhoto,
-}
+};

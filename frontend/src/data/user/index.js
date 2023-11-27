@@ -8,16 +8,16 @@ const headers = {
 };
 
 const getUsers = async () => {
-  const result = await axios.get("http://localhost:8000/api/v1/user",{
+  const result = await axios.get("http://localhost:8000/api/v1/user", {
     headers: headers,
   });
   return result;
 };
 
 const getUserById = async (id) => {
-  const result = await axios.get(`http://localhost:8000/api/v1/user/${id}`,{
+  const result = await axios.get(`http://localhost:8000/api/v1/user/${id}`, {
     headers: headers,
-  });;
+  });
   return result;
 };
 
@@ -29,9 +29,13 @@ const addUser = async (data) => {
 };
 
 const updateUser = async (id, data) => {
-  const result = await axios.put(`http://localhost:8000/api/v1/user/${id}`, data, {
-    headers: headers,
-  });
+  const result = await axios.put(
+    `http://localhost:8000/api/v1/user/${id}`,
+    data,
+    {
+      headers: headers,
+    }
+  );
   return result;
 };
 
@@ -42,7 +46,7 @@ const deleteUser = async (id) => {
   return result;
 };
 
-const uploadImage =  async (Id, formData) => {
+const uploadImage = async (Id, formData) => {
   const imageResponse = await axios.post(
     `http://localhost:8000/api/v1/user/upload/${Id}`,
     formData,
@@ -65,9 +69,13 @@ const addUser2 = async () => {
       password: e.target.password.value,
     };
 
-    const result = await axios.post("http://localhost:8000/api/v1/user", userWithoutImage, {
-      headers: headers,
-    });
+    const result = await axios.post(
+      "http://localhost:8000/api/v1/user",
+      userWithoutImage,
+      {
+        headers: headers,
+      }
+    );
 
     return result;
   } catch (error) {
