@@ -61,6 +61,8 @@ const DropdownUser = () => {
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
+          localStorage.removeItem("sidebar-expanded");
+          localStorage.removeItem("color-theme");
 
           Swal.fire({
             position: "bottom-end",
