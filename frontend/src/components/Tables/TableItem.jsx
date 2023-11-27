@@ -18,22 +18,26 @@ const TableItems = () => {
     fetchData();
   }, []);
 
-  const handleAdd = (newItem) => {
-    const newData = [...data, newItem];
+  const handleAdd = async (newItem) => {
+    const newData = await [...data, newItem];
     setData(newData);
+    const res = await Item.getItem();
+    setData(res.data.data);
   };
 
-  const handleEditData = (updateItem) => {
+  const handleEditData = async (updateItem) => {
     let updatedData = [...data];
 
     // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
-    const indexToUpdate = updatedData.findIndex(
+    const indexToUpdate = await updatedData.findIndex(
       (item) => item.id === updateItem[0].id
     );
 
     updatedData[indexToUpdate] = updateItem[0];
 
     setData([...updatedData]);
+    const res = await Item.getItem();
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {

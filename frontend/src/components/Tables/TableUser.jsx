@@ -19,22 +19,26 @@ const TableUser = () => {
     fetchData();
   }, []);
 
-  const handleAdd = (newUser) => {
-    const newData = [...data, newUser];
+  const handleAdd = async (newUser) => {
+    const newData = await [...data, newUser];
     setData(newData);
+    const res = await UserData.getUsers();
+    setData(res.data.data);
   };
 
-  const handleEditData = (updatedUser) => {
+  const handleEditData = async (updatedUser) => {
     let updatedData = [...data];
 
     // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
-    const indexToUpdate = updatedData.findIndex(
+    const indexToUpdate = await updatedData.findIndex(
       (user) => user.id === updatedUser[0].id
     );
 
     updatedData[indexToUpdate] = updatedUser[0];
 
     setData([...updatedData]);
+    const res = await UserData.getUsers();
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {
