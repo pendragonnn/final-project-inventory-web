@@ -5,7 +5,7 @@ const token = Cookies.get("token");
 const headers = {
   "content-type": "application/json; charset=utf=UTF-8",
   Authorization: `Bearer ${token}`,
-};X
+}
 
 const getUsers = async () => {
   const result = await axios.get("http://localhost:8000/api/v1/user", {

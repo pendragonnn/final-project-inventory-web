@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import UserData from "@/data/user/index";
 import Cookies from "js-cookie";
 
@@ -44,28 +43,19 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
       formData.append("image_url", file);
 
       // Make a POST request to upload image for the user
-      const imageResponse = await axios.post(
-        `http://localhost:8000/api/v1/user/upload/${userId}`,
-        formData,
-        {
-          headers: {
-            ...headers,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const imageResponse = await UserData.uploadImage(userId,formData)
 
       console.log(imageResponse);
 
       Swal.fire({
         position: "bottom-end",
         icon: "success",
-        title: imageResponse.data.message,
+        title: userResponse.data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(imageResponse.data.data);
+        addToTable(userResponse.data.data);
         modalCheckbox.current.checked = false;
       });
     } catch (error) {
