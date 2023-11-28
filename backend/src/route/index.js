@@ -9,7 +9,6 @@ const userRouter = require("./user.route");
 const itemRouter = require("./item.route");
 const categoryRoutes = require("./category.route");
 const roleRoutes = require("./role.route");
-const imgRoutes = require("./img.route")
 
 router.use(authMiddleware.authenticateToken);
 router.use("/transaction-header", transactionheaderRoutes);
