@@ -12,9 +12,9 @@ const authenticateToken = async (req, res, next) => {
       .json({ message: "Unauthorized access: Token not provided" });
   }
 
-  if (jwtUtil.isTokenBlacklisted(token)) {
-    return res.status(401).json({ message: "Token has rejected" });
-  }
+  // if (jwtUtil.isTokenBlacklisted(token)) {
+  //   return res.status(401).json({ message: "Token has rejected" });
+  // }
 
   try {
     const decodedToken = jwtUtil.decodeToken(token);

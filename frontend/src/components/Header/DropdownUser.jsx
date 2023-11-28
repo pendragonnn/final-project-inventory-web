@@ -3,16 +3,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Cookies from "js-cookie";
-import { Router } from "next/router";
+import auth from "@/data/auth";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
   const trigger = useRef(null);
   const dropdown = useRef(null);
-  // close on click outside
+
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!dropdown.current) return;
@@ -51,16 +50,13 @@ const DropdownUser = () => {
       try {
         if (result.isConfirmed) {
           const token = Cookies.get("token");
-          const res = await axios.delete("http://localhost:8000/logout/", {
-            headers: {
-              "content-type": "application/json; charset=utf=UTF-8",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const res = await auth.logout();
 
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
+          localStorage.removeItem("sidebar-expanded");
+          localStorage.removeItem("color-theme");
 
           Swal.fire({
             position: "bottom-end",
@@ -184,7 +180,7 @@ const DropdownUser = () => {
           </li>
           <li>
             <Link
-              href="/pages/settings"
+              href="/settings"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <svg

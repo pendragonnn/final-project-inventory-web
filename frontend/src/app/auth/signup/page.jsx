@@ -2,10 +2,10 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import auth from "@/data/auth";
 
 const SignUp = () => {
   const [password, setPassword] = useState("");
@@ -19,7 +19,7 @@ const SignUp = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/register", {
+      const res = await auth.register({
         full_name: e.target.fullname.value,
         email: e.target.email.value,
         password: e.target.password.value,

@@ -1,23 +1,9 @@
 import React from "react";
 import Swal from "sweetalert2";
-import Outlet from "@/data/outlet/index";
-import { useRef, useEffect, useState } from "react";
-import outlet from "@/data/outlet/index";
+import { useRef } from "react";
 
-const ModalEditOutlet = async ({ id, test, addToTable }) => {
+const ModalEditOutlet = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-
-  if (id) {
-    const getData = await outlet.getOutletByid(id);
-  }
-
-  // const getdata = (data) => {
-  //   const result = outlet.getOutletByid(data);
-  //   setData(result);
-  //   console.log(result);
-  // };
-
-  // // getdata(id);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

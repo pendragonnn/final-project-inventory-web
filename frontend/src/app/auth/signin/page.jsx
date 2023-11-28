@@ -2,10 +2,10 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import auth from "@/data/auth";
 
 const SignIn = () => {
   const router = useRouter();
@@ -28,7 +28,7 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8000/login", {
+      const res = await auth.login({
         email: e.target.email.value,
         password: e.target.password.value,
       });

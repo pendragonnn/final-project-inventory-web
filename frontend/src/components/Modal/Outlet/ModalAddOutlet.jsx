@@ -23,6 +23,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
+        addToTable(res.data.data);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
