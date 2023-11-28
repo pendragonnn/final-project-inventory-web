@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getTransactionHeader } from "@/modules/fetch/index"
 import Cookies from "js-cookie"
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 
 const ReportIsuing = () => {
   const [data, setData] = useState([])
@@ -26,7 +27,6 @@ const ReportIsuing = () => {
   useEffect(() => {
     const role = Cookies.get("role")
     setUser(role)
-    console.log(role)
 
     if (role && role !== "2") {
       // Ubah kondisi role agar sesuai dengan string '2'
@@ -34,12 +34,21 @@ const ReportIsuing = () => {
     }
   }, [])
 
-  const filterData = data.filter((value) => value.outlet_id !== null)
+  const filterData = data
+    .filter((value) => value.outlet_id !== null)
+    .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
+
+  function formatDate(isoDate) {
+    const date = new Date(isoDate)
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return date.toLocaleDateString("id-ID", options)
+  }
 
   if (user) {
     return (
       <SidebarLayout>
-        <TableReportIsuing filterData={filterData} />
+        <Breadcrumb pageName="Report Isuing" />
+        <TableReportIsuing filterData={filterData} formatDate={formatDate} />
       </SidebarLayout>
     )
   } else {

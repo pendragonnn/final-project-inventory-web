@@ -1,50 +1,43 @@
-"use client";
-import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier";
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
+"use client"
+import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier"
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
 
-import Supplier from "@/data/supplier/index";
-import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
+import Supplier from "@/data/supplier/index"
+import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier"
 
 const TableSuppliers = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
-  const [editSupplierId, setEditSupplierId] = useState(null);
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
+  const [editSupplierId, setEditSupplierId] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Supplier.getSupplier();
-      setData(res.data.data);
-    };
+      const res = await Supplier.getSupplier()
+      setData(res.data.data)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleAdd = (newSupplier) => {
-    const newData = [...data, newSupplier];
-    setData(newData);
-  };
+    const newData = [...data, newSupplier]
+    setData(newData)
+  }
 
-  // const handleEditData = (updatedSupplier) => {
-  //   const updatedData = [...data, updatedSupplier];
-  //   data[0] = updatedSupplier;
-  //   setData([...updatedData]);
-  // };
   const handleEditData = (updatedSupplier) => {
     const updatedData = data.map((supplier) =>
       supplier.id === updatedSupplier.id ? updatedSupplier : supplier
-    );
+    )
 
-    setData(updatedData);
-  };
-
-
+    setData(updatedData)
+  }
 
   const handleEdit = async (id) => {
-    const res = await Supplier.getSupplierByid(id);
-    setUpdate(res.data.data);
-    setEditSupplierId(id);
-  };
+    const res = await Supplier.getSupplierByid(id)
+    setUpdate(res.data.data)
+    setEditSupplierId(id)
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -58,15 +51,17 @@ const TableSuppliers = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Supplier.deleteSupplier(id);
-          setData((prevData) => prevData.filter((supplier) => supplier.id !== id));
+          await Supplier.deleteSupplier(id)
+          setData((prevData) =>
+            prevData.filter((supplier) => supplier.id !== id)
+          )
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
+          })
         }
       } catch (e) {
         Swal.fire({
@@ -76,10 +71,10 @@ const TableSuppliers = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -106,10 +101,7 @@ const TableSuppliers = () => {
               </svg>
             </span>
             Add Supplier
-            <ModalAddSupplier
-              test={"add"}
-              addToTable={handleAdd}
-            />
+            <ModalAddSupplier test={"add"} addToTable={handleAdd} />
           </label>
         </div>
       </div>
@@ -147,10 +139,14 @@ const TableSuppliers = () => {
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">{supplier.address}</p>
+                  <p className="text-black dark:text-white">
+                    {supplier.address}
+                  </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="dark:text-meta-3 text-black">{supplier.phone}</p>
+                  <p className="dark:text-meta-3 text-black">
+                    {supplier.phone}
+                  </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
@@ -206,6 +202,6 @@ const TableSuppliers = () => {
         </table>
       </div>
     </div>
-  );
-};
-export default TableSuppliers;
+  )
+}
+export default TableSuppliers

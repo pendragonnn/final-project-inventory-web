@@ -31,9 +31,7 @@ const transactionDetailById = async (req, res) => {
     )
 
     if (!transactionDetail) {
-      return res
-        .status(404)
-        .json({ message: "Transaction Detail Not Found" })
+      return res.status(404).json({ message: "Transaction Detail Not Found" })
     }
 
     res.status(200).json({ data: transactionDetail })
@@ -42,25 +40,7 @@ const transactionDetailById = async (req, res) => {
   }
 }
 
-// const postTransactionDetail = async (req, res) => {
-//   try {
-//     const newTransactionDetailData = req.body
-
-//     const transactionDetail = await insertTransactionDetail(
-//       newTransactionDetailData
-//     )
-
-//     res.status(200).json({
-//       data: transactionDetail,
-//       message: "Detail transaksi berhasil ditambahkan",
-//     })
-//   } catch (error) {
-//     res.status(500).json({ message: error.message })
-//   }
-// }
-
 module.exports = {
   transactionDetailById,
-  // postTransactionDetail,
   allTransactionDetail,
 }

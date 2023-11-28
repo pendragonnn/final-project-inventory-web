@@ -27,30 +27,9 @@ async function getTransactionHeaderById(id) {
   }
 }
 
-// item
-async function getItem() {
+async function getTransactionDetailById(id) {
   try {
-    const res = await instance.get(`/item`)
-    return res.data
-  } catch (err) {
-    throw new Error(err.response.data)
-  }
-}
-
-// outlet
-async function getOutlet() {
-  try {
-    const res = await instance.get(`/outlet`)
-    return res.data
-  } catch (err) {
-    throw new Error(err.response.data)
-  }
-}
-
-// user
-async function getUser() {
-  try {
-    const res = await instance.get(`/user`)
+    const res = await instance(`/transaction-detail/${id}`)
     return res.data
   } catch (err) {
     throw new Error(err.response.data)
@@ -61,7 +40,5 @@ module.exports = {
   createTransactionHeader,
   getTransactionHeader,
   getTransactionHeaderById,
-  getItem,
-  getOutlet,
-  getUser,
+  getTransactionDetailById,
 }

@@ -5,6 +5,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import Swal from "sweetalert2"
 import { createTransactionHeader, getItem } from "@/modules/fetch/index"
 import Supplier from "@/data/supplier/index"
+import Item from "@/data/item/index"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
@@ -27,7 +28,7 @@ const TransactionHeader = () => {
         Detail: [
           {
             item_id: e.target.item_id.value,
-            quantity: e.target.quantity.value,
+            quantity: parseInt(e.target.quantity.value),
           },
         ],
       })
@@ -38,7 +39,6 @@ const TransactionHeader = () => {
         timer: 2000,
         customClass: "swal-custom",
       })
-      console.log(data)
     } catch (err) {
       console.log("err", err.response.data.message)
     }
@@ -46,8 +46,8 @@ const TransactionHeader = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getItem()
-      setDataItem(res.data)
+      const res = await Item.getItem()
+      setDataItem(res.data.data)
     }
 
     fetchData()

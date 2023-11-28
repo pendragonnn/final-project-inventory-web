@@ -3,11 +3,14 @@
 import SidebarLayout from "@/app/sidebar-layout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import Swal from "sweetalert2"
-import { createTransactionHeader, getItem } from "@/modules/fetch/index"
+import { createTransactionHeader } from "@/modules/fetch/index"
 import Outlet from "@/data/outlet/index"
+import Item from "@/data/item/index"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
+import FormTemporaryItem from "@/components/Form/FormTemporaryItem"
+import FormAddTransactionIsuing from "@/components/Form/FormAddTransactionIsuing"
 
 const TransactionHeader = () => {
   const [dataItem, setDataItem] = useState([])
@@ -15,6 +18,7 @@ const TransactionHeader = () => {
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
   const router = useRouter()
+  const [itemTemporary, setItemTemporary] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,30 +28,75 @@ const TransactionHeader = () => {
         outlet_id: e.target.outlet_id.value,
         information: e.target.information.value,
         transaction_date: e.target.transaction_date.value,
-        Detail: [
-          {
-            item_id: e.target.item_id.value,
-            quantity: e.target.quantity.value,
-          },
-        ],
+        Detail: itemTemporary.map((e) => ({
+          item_id: e.item_id,
+          quantity: parseInt(e.quantity),
+        })),
+        // Detail: itemTemporary.length,
       })
+      console.log("data submit >>>>>>>>>>>", data)
+      setItemTemporary([])
+    } catch (err) {
+      const errorMessage = err.message || "Terjadi kesalahan"
+
       Swal.fire({
-        icon: "success",
-        title: data.message,
+        icon: "error",
+        title: errorMessage,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       })
-      console.log(data)
-    } catch (err) {
-      console.log("err", err.response.data.message)
     }
   }
+  console.log("Detail", itemTemporary)
+
+  // Function to handle form submission
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+
+  //   try {
+  //     // Create transaction header data
+  //     const transactionHeaderData = {
+  //       user_id: e.target.user_id.value,
+  //       outlet_id: e.target.outlet_id.value,
+  //       information: e.target.information.value,
+  //       transaction_date: e.target.transaction_date.value,
+  //     }
+
+  //     // Create transaction detail data
+  //     const transactionDetailData = itemTemporary.map((e) => ({
+  //       item_id: e.item_id,
+  //       quantity: parseInt(e.quantity),
+  //     }))
+
+  //     // Combine transaction header and detail data into a single object
+  //     const transactionData = {
+  //       ...transactionHeaderData,
+  //       Detail: transactionDetailData,
+  //     }
+
+  //     // Submit transaction data
+  //     const response = await createTransactionHeader(transactionData)
+
+  //     // Handle successful transaction submission
+  //     if (response) {
+  //       console.log("Transaction submitted successfully!")
+  //       // Reset form
+  //       e.target.reset()
+  //       // Clear temporary item list
+  //       setItemTemporary([])
+  //     }
+  //   } catch (err) {
+  //     // Handle error
+  //     console.error("Error submitting transaction:", err)
+  //     console.error(err.message || "An error occurred.")
+  //   }
+  // }
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getItem()
-      setDataItem(res.data)
+      const res = await Item.getItem()
+      setDataItem(res.data.data)
     }
 
     fetchData()
@@ -74,120 +123,52 @@ const TransactionHeader = () => {
     }
   }, [])
 
+  const handleAdd = (e) => {
+    e.preventDefault()
+    const newItem = {
+      item_id: e.target.a.value,
+      quantity: parseInt(e.target.b.value),
+    }
+
+    const existingItemIndex = itemTemporary.findIndex(
+      (item) => item.item_id === newItem.item_id
+    )
+
+    if (existingItemIndex !== -1) {
+      const updatedItems = [...itemTemporary]
+      updatedItems[existingItemIndex].quantity += newItem.quantity
+      setItemTemporary(updatedItems)
+    } else {
+      setItemTemporary([...itemTemporary, newItem])
+    }
+
+    e.target.reset()
+  }
+
+  const handleDelete = (index) => {
+    const newData = [...itemTemporary]
+    newData.splice(index, 1)
+    setItemTemporary(newData)
+  }
+
   if (user) {
     return (
       <>
         <SidebarLayout>
-          <Breadcrumb pageName="Transaction Receiving" />
-          <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-              <h3 className="font-medium text-black dark:text-white">
-                Transaction Form
-              </h3>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="p-6.5 mb-4.5 flex flex-col gap-6">
-                <div className="">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    User Id
-                  </label>
-                  <input
-                    type="text"
-                    name="user_id"
-                    value={userId}
-                    placeholder={userId}
-                    disabled
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-graydark"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Outlet
-                  </label>
-                  <select
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
-                    name="outlet_id"
-                  >
-                    {dataOutlet.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Item
-                  </label>
-                  <select
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
-                    name="item_id"
-                  >
-                    {dataItem.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    placeholder="Enter your Quantity"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  />
-                </div>
-
-                <div className="">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Information
-                  </label>
-                  <input
-                    type="text"
-                    name="information"
-                    placeholder="Enter your information"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  />
-                </div>
-
-                {/* <!-- Time and date --> */}
-                <div className=" rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                  <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                    <h3 className="font-medium text-black dark:text-white">
-                      Time and date
-                    </h3>
-                  </div>
-                  <div className="flex flex-col gap-5.5 p-6.5">
-                    <div>
-                      <label className="mb-3 block text-black dark:text-white">
-                        Date picker
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="date"
-                          name="transaction_date"
-                          className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="flex  justify-center rounded bg-primary p-3 font-medium text-gray"
-                >
-                  Add Transaction
-                </button>
+          <Breadcrumb pageName="Transaction Isuing" />
+          <div className="">
+            <div className=" ">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 ">
+                <FormTemporaryItem handleAdd={handleAdd} dataItem={dataItem} />
+                <FormAddTransactionIsuing
+                  handleSubmit={handleSubmit}
+                  userId={userId}
+                  dataOutlet={dataOutlet}
+                  itemTemporary={itemTemporary}
+                  handleDelete={handleDelete}
+                />
               </div>
-            </form>
+            </div>
           </div>
         </SidebarLayout>
       </>

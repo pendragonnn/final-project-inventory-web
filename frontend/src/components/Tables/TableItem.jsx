@@ -1,40 +1,39 @@
-"use client";
+"use client"
 
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
-import ModalAddItem from "../Modal/Item/ModalAddItem";
-import ModalEditItem from "../Modal/Item/ModalEditItem";
-import Item from "@/data/item/index";
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
+import ModalAddItem from "../Modal/Item/ModalAddItem"
+import ModalEditItem from "../Modal/Item/ModalEditItem"
+import Item from "@/data/item/index"
 
 const TableItems = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Item.getItem();
-      setData(res.data.data);
-    };
+      const res = await Item.getItem()
+      setData(res.data.data)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleAdd = (newItem) => {
-    const newData = [...data, newItem];
-    setData(newData);
-  };
+    const newData = [...data, newItem]
+    setData(newData)
+  }
 
   const handleEditData = (updatedItem) => {
     setData((prevData) =>
-    prevData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-  );
-  };
+      prevData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    )
+  }
 
   const handleEdit = async (id) => {
-    const res = await Item.getItemByid(id);
-    setUpdate(res.data.data);
-  
-  };
+    const res = await Item.getItemByid(id)
+    setUpdate(res.data.data)
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -48,15 +47,15 @@ const TableItems = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Item.deleteItem(id);
-          setData((prevData) => prevData.filter((item) => item.id !== id));
+          await Item.deleteItem(id)
+          setData((prevData) => prevData.filter((item) => item.id !== id))
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
+          })
         }
       } catch (e) {
         Swal.fire({
@@ -66,11 +65,10 @@ const TableItems = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
-        console.log(e);
+        })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -164,33 +162,32 @@ const TableItems = () => {
                         : "text-warning bg-warning"
                     }`}
                   >
-
                     {item.image_url}
                   </p>
                   {/* <Image w={24} h={24} src={`http://localhost:8000/item/upload`} /> */}
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                  <label
-                htmlFor="edit"
-                className="hover:text-primary cursor-pointer"
-                onClick={() => handleEdit(item.id)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  />
-                </svg>
-              </label>
+                    <label
+                      htmlFor="edit"
+                      className="hover:text-primary cursor-pointer"
+                      onClick={() => handleEdit(item.id)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                    </label>
 
                     <button
                       className="hover:text-primary"
@@ -221,22 +218,20 @@ const TableItems = () => {
                           fill=""
                         />
                       </svg>
-                 
                     </button>
                   </div>
                 </td>
               </tr>
             ))}
-              <ModalEditItem
-          data={update}
-          test={"edit"}
-          addToTable={handleEditData}
-        />
-                
+            <ModalEditItem
+              data={update}
+              test={"edit"}
+              addToTable={handleEditData}
+            />
           </tbody>
         </table>
       </div>
     </div>
-  );
-};
-export default TableItems;
+  )
+}
+export default TableItems

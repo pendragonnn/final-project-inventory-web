@@ -27,7 +27,6 @@ const ReportsReceiving = () => {
   useEffect(() => {
     const role = Cookies.get("role")
     setUser(role)
-    console.log(role)
 
     if (role && role !== "2") {
       // Ubah kondisi role agar sesuai dengan string '2'
@@ -35,7 +34,9 @@ const ReportsReceiving = () => {
     }
   }, [])
 
-  const filterData = data.filter((value) => value.supplier_id !== null)
+  const filterData = data
+    .filter((value) => value.supplier_id !== null)
+    .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
 
   if (user) {
     return (

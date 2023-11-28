@@ -20,7 +20,7 @@ const { error } = require("../schema/category.schema")
 
 const allTransactionHeader = async (req, res) => {
   const page = req.query.page || 1
-  const size = req.query.size || 10
+  const size = req.query.size || 1000
   try {
     const { transactionHeaders, dataLength } = await getAllTransactionHeader(
       page,
@@ -45,9 +45,7 @@ const transactionHeaderById = async (req, res) => {
     )
 
     if (!transactionHeader) {
-      return res
-        .status(404)
-        .json({ message: "Transaction Header Not Found" })
+      return res.status(404).json({ message: "Transaction Header Not Found" })
     }
 
     res.status(200).json({ data: transactionHeader })
@@ -60,20 +58,19 @@ const postTransactionHeader = async (req, res) => {
   try {
     const newTransactionHeaderData = req.body
 
-    const detail = newTransactionHeaderData.Detail
-    for (let i of detail) {
-      const item = await getItemById(i.item_id)
-      if (i.quantity > item.stock) {
-        res.send("Quantity must not exceed stock")
-        throw error()
-      }
-    }
-
     const transactionHeader = await insertTransactionHeader(
       newTransactionHeaderData
     )
 
     const allTransactionDetail = []
+
+    const detail = newTransactionHeaderData.Detail
+    for (let i of detail) {
+      const item = await getItemById(i.item_id)
+      if (i.quantity > item.stock && transactionHeader.outlet_id != null) {
+        return res.send("Quantity must not exceed stock")
+      }
+    }
 
     for (let i of detail) {
       const transactiondetail = await insertTransactionDetail(
