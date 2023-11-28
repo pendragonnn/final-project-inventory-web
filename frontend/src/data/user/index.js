@@ -91,6 +91,28 @@ function getUserImageUrl(imageUrl) {
   };
 }
 
+const getUserById1 = async (image_url) => {
+  const result = await axios.get(
+    `http://localhost:8000/api/v1/user/${image_url}`,
+    {
+      headers: headers,
+    }
+  );
+  return result;
+};
+
+const getUserImageUrl2 = async (imageUrl) => {
+  const img = await axios.get(
+    `http://localhost:8000/api/v1/user/upload/${imageUrl}`,
+    {
+      headers: headers,
+    }
+  );
+  return {
+    src: img,
+  };
+};
+
 const updatePassword = async (id, data) => {
   const result = await axios.post(
     `http://localhost:8000/api/v1/user/${id}`,
@@ -124,5 +146,7 @@ export default {
   uploadImage,
   addUser2,
   getUserImageUrl,
+  getUserById1,
+  getUserImageUrl2,
   updatePassword,
 };

@@ -1,59 +1,75 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { useRef, useState, useEffect } from "react";
-import user from "@/data/user/index";
+import UserData from "@/data/user/index";
+import Cookies from "js-cookie";
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
+  const token = Cookies.get("token");
+    const headers = {
+      "content-type": "application/json; charset=utf=UTF-8",
+      Authorization: `Bearer ${token}`,
+    };
   const modalCheckbox = useRef(null);
-  const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await user.addUser({
+      // Create user without image first
+      const userWithoutImage = {
         role_id: e.target.role_id.value,
         full_name: e.target.full_name.value,
         email: e.target.email.value,
         password: e.target.password.value,
-      });
+      };
+
+      // Make a POST request to create user without image
+      const userResponse = await UserData.addUser(userWithoutImage)
+
+      // Retrieve user ID from the response
+      const userId = userResponse.data.data.id;
+
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("role_id", e.target.role_id.value);
+      formData.append("full_name", e.target.full_name.value);
+      formData.append("email", e.target.email.value);
+      formData.append("password", e.target.password.value);
+      formData.append("image_url", file);
+
+      // Make a POST request to upload image for the user
+      const imageResponse = await UserData.uploadImage(userId,formData)
+
+      console.log(imageResponse);
+
       Swal.fire({
         position: "bottom-end",
         icon: "success",
-        title: res.data.message,
+        title: userResponse.data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data);
+        addToTable(userResponse.data.data);
         modalCheckbox.current.checked = false;
       });
-    } catch (e) {
-      console.error(e.response);
+    } catch (error) {
+      console.error("Error:", error.message);
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: error.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       });
     }
   };
-
-  useEffect(() => {
-    if (user?.image_url) {
-      const file = new File([], user.image_url, { type: "image/*" });
-      setSelectedImage(URL.createObjectURL(file));
-      fileInputRef.current.value = "";
-    }
-  }, [user]);
-
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-  }
 
   return (
     <>
@@ -70,7 +86,7 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
         <div className="modal-box bg-white dark:bg-boxdark">
           <label
             htmlFor={test}
-            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
+            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right  text-xl text-[#6A718A] hover:text-primary"
           >
             x
           </label>
@@ -143,31 +159,27 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
                     minLength={8}
                   />
                 </div>
+
+
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Image
+                    Profile Photo
                   </label>
                   <input
                     type="file"
                     name="image_url"
-                    placeholder="Enter Image"
+                    key={"user-photo"}
                     accept="image/*"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={handleFileChange}
+                    className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    // max={12}
-                    // min={11}
                   />
-                  {selectedImage && (
-                    <img src={selectedImage} alt="Selected Image" />
-                  )}
                 </div>
 
                 <input
                   type="submit"
                   value={"Add"}
-                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>
