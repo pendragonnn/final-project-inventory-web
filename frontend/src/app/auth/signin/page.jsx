@@ -144,7 +144,7 @@ const SignIn = () => {
               <input
                 type="submit"
                 value="Log In"
-                className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black font-bold transition hover:bg-opacity-90"
+                className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black transition hover:bg-opacity-90"
               />
             </div>
 
