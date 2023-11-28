@@ -1,100 +1,68 @@
+import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
-import React from "react";
-import { useRef, useEffect, useState } from "react";
-import user from "@/data/user/index";
+import UserData from "@/data/user/index";
 
-const ModalEditItem = ({ data, test, addToTable }) => {
+const ModalEditUser = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-  const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [file, setFile] = useState(null);
 
-  const [formData, setFormData] = useState({
-    role_id: data?.data?.role_id || "",
-    full_name: data?.data?.full_name || "",
-    email: data?.data?.email || "",
-    password: data?.data?.password || "",
-    image_url: data?.data?.image_url || "",
-  });
-
-  useEffect(() => {
-    setFormData({
-      role_id: data?.data?.role_id || "",
-      full_name: data?.data?.full_name || "",
-      email: data?.data?.email || "",
-      password: data?.data?.password || "",
-      image_url: data?.data?.image_url || "",
-    });
-  }, [data]);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const {
-        role_id: newRole,
-        full_name: newFullName,
-        email: newEmail,
-        password: newPassword,
-        image_url: newImageUrl,
-      } = formData;
-      if (
-        data?.data?.role_id !== newRole ||
-        data?.data?.full_name !== newFullName ||
-        data?.data?.email !== newEmail ||
-        data?.data?.password !== newPassword
-      ) {
-        const res = await user.updateUser(data.id, {
-          role_id: newRole,
-          full_name: newFullName,
-          email: newEmail,
-          password: newPassword,
-          image_url: newImageUrl,
-        });
-        console.log(res);
+      // Create user without image first
+      const userWithoutImage = {
+        role_id: e.target.role_id.value,
+        full_name: e.target.full_name.value,
+        password: e.target.password.value,
+        email: e.target.email.value,
+      };
 
-        Swal.fire({
-          position: "bottom-end",
-          icon: "success",
-          title: res.data.message,
-          showConfirmButton: false,
-          timer: 2000,
-          customClass: "swal-custom",
-        }).then(() => {
-          addToTable(res.data.data[1]);
-          modalCheckbox.current.checked = false;
+      // Make a POST request to create or update user without image
+      const userResponse = await UserData.updateUser(data?.data?.id, userWithoutImage)
 
-          setFormData({
-            role_id: "",
-            full_name: "",
-            email: "",
-            password: "",
-            image_url: "",
-          });
-        });
-      }
-    } catch (e) {
+      console.log(userResponse);
+      console.log(userResponse);
+      // Retrieve user ID from the response
+      console.log(data.data.id);
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("role_id", e.target.role_id.value);
+      formData.append("full_name", e.target.full_name.value);
+      formData.append("email", e.target.email.value);
+      formData.append("password", e.target.password.value);
+      formData.append("image_url", file);
+
+      // Make a POST request to upload image for the user
+      const imageResponse =  await UserData.uploadImage(data?.data?.id,formData)
+
+      Swal.fire({
+        position: "bottom-end",
+        icon: "success",
+        title: userResponse.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      }).then(() => {
+        addToTable(userResponse.data.data);
+        modalCheckbox.current.checked = false;
+      });
+    } catch (error) {
+      console.error("Error:", error.message);
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: error.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       });
     }
   };
-
-  useEffect(() => {
-    if (user.image_url) {
-      const file = new File([], user.image_url, { type: "image/*" });
-      setSelectedImage(URL.createObjectURL(file));
-      fileInputRef.current.value = "";
-    }
-  }, [user]);
-
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-  }
 
   return (
     <>
@@ -115,7 +83,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
           <div className="rounded-sm bg-white dark:bg-boxdark">
             <div className=" py-4 px-6.5 ">
               <h3 className="font-medium text-black dark:text-white">
-                Edit data Item
+                Edit User
               </h3>
             </div>
 
@@ -125,7 +93,6 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <label className="block text-black dark:text-white">
                     Role
                   </label>
-
                   <label
                     htmlFor="countries"
                     className="block  text-sm font-medium text-gray-900 dark:text-white"
@@ -135,10 +102,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <select
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     name="role_id"
-                    value={formData.role_id}
-                    onChange={(e) =>
-                      setFormData({ ...formData, role_id: e.target.value })
-                    }
+                    defaultValue={data?.data?.role_id}
                   >
                     <option value="1">Admin</option>
                     <option value="2">Staff</option>
@@ -152,10 +116,8 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   </label>
                   <input
                     type="text"
-                    value={formData.full_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, full_name: e.target.value })
-                    }
+                    name="full_name"
+                    defaultValue={data?.data?.full_name}
                     placeholder="Enter full name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -169,10 +131,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    defaultValue={data?.data?.email}
                     placeholder="Enter Email"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -183,42 +142,35 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <input
                     type="password"
                     name="password"
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    placeholder="Enter password"
+                    defaultValue={data?.data?.password}
+                    placeholder="password"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    minLength={8}
                     hidden
                   />
                 </div>
+
+
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Image
+                    Profile Photo
                   </label>
                   <input
                     type="file"
                     name="image_url"
-                    placeholder="Enter Image"
+                    defaultValue={data?.data?.image_url}
+                    key={"user-photo"}
                     accept="image/*"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={handleFileChange}
+                    className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    // max={12}
-                    // min={11}
                   />
-                  {selectedImage && (
-                    <img src={selectedImage} alt="Selected Image" />
-                  )}
                 </div>
 
                 <input
                   type="submit"
-                  value={"Edit"}
-                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+                  value={"Update"}
+                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>
@@ -229,4 +181,4 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditItem;
+export default ModalEditUser;

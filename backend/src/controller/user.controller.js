@@ -7,15 +7,14 @@ const {
   updateUserPhoto,
 } = require("../service/user.service");
 const fs = require("fs");
+const path = require('path');
 
 const allUsers = async (req, res) => {
   const page = req.query.page || 1;
   const size = req.query.size || 10;
   try {
     const { users, dataLength } = await getAllUsers(page, size);
-    const user = req.user;
     res.status(200).json({
-      name: user.full_name,
       data: users,
       totalItems: users.length,
       currentPage: parseInt(page),
@@ -116,6 +115,32 @@ const uploadUserPhoto = async (req, res) => {
   }
 };
 
+const getUserPhoto = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await getUserById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const imagePath = user.image_url; // Assuming 'image_url' is a field in the User model
+
+    if (!imagePath) {
+      return res.status(404).json({ message: "User photo not found" });
+    }
+
+    // Use path.resolve to get an absolute path
+    const absolutePath = path.join(__dirname, '../../upload/user', imagePath);
+    console.log("Absolute Path:", absolutePath);
+    // Send the image file
+    res.sendFile(absolutePath, { headers: { 'Content-Type': 'image/jpeg' } });
+  } catch (error) {
+    console.error("Error getting user photo:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   allUsers,
   userById,
@@ -123,4 +148,5 @@ module.exports = {
   updateUser,
   removeUser,
   uploadUserPhoto,
+  getUserPhoto,
 };

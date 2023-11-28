@@ -30,8 +30,8 @@ const TableUser = () => {
 
   const handleEditData = async (updatedUser) => {
     setData((prevData) =>
-      prevData.map((outlet) =>
-        outlet.id === updatedUser.id ? updatedUser : outlet
+      prevData.map((user) =>
+        user.id === updatedUser.id ? updatedUser :user
       )
     );
     const res = await UserData.getUsers();
@@ -148,9 +148,13 @@ const TableUser = () => {
                 }
               >
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                  <h5 className="font-medium text-black dark:text-white">
-                    {userImageUrl && <img src={userImageUrl} alt="User" />}
-                  </h5>
+                <div className="p-2.5 xl:p-5">
+            <img
+  src={`/uploads/user/${user.image_url}`}
+  className="w-10 h-10 rounded-full"
+/>
+              </div>
+                 
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">{user.full_name}</p>
