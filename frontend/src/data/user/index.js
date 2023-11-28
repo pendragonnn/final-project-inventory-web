@@ -5,7 +5,7 @@ const token = Cookies.get("token");
 const headers = {
   "content-type": "application/json; charset=utf=UTF-8",
   Authorization: `Bearer ${token}`,
-};
+};X
 
 const getUsers = async () => {
   const result = await axios.get("http://localhost:8000/api/v1/user", {
@@ -87,23 +87,26 @@ const addUser2 = async () => {
 function getUserImageUrl(imageUrl) {
   return {
     src: `http://localhost:8000/api/v1/user/upload/${imageUrl}`,
-    headers: headers,
+    headers:headers
   };
 }
 
-// function getUserImageUrl(imageUrl) {
-//   const token = Cookies.get("token");
-//   const headers = {
-//     "content-type": "application/json; charset=utf=UTF-8",
-//     Authorization: `Bearer ${token}`,
-//   };
+const getUserById1= async (image_url) => {
+  const result = await axios.get(`http://localhost:8000/api/v1/user/${image_url}`, {
+    headers: headers,
+  });
+  return result;
+};
 
-//   return {
-//     src: `http://localhost:8000/user/upload/${imageUrl}`,
-//     headers: headers,
-//   };
-// }
 
+const getUserImageUrl2 = async (imageUrl) => {
+  const img = await axios.get(`http://localhost:8000/api/v1/user/upload/${imageUrl}`, {
+    headers: headers,
+  });
+  return {
+    src: img,
+  };
+}
 export default {
   addUser,
   getUsers,
@@ -113,4 +116,6 @@ export default {
   uploadImage,
   addUser2,
   getUserImageUrl,
+  getUserById1,
+  getUserImageUrl2
 };

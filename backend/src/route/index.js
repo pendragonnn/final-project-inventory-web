@@ -9,6 +9,7 @@ const userRouter = require("./user.route");
 const itemRouter = require("./item.route");
 const categoryRoutes = require("./category.route");
 const roleRoutes = require("./role.route");
+const imgRoutes = require("./img.route")
 
 router.use(authMiddleware.authenticateToken);
 router.use("/transaction-header", transactionheaderRoutes);
@@ -19,5 +20,7 @@ router.use("/outlet", outletsRoutes);
 router.use("/user", userRouter);
 router.use("/category", categoryRoutes);
 router.use("/role", roleRoutes);
+
+
 
 module.exports = router;
