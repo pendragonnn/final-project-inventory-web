@@ -8,19 +8,22 @@ const headers = {
 };
 
 const register = async (data) => {
-  const result = await axios.post("http://localhost:8000/register", data);
+  const result = await axios.post(
+    "http://localhost:8000/api/v1/register",
+    data
+  );
 
   return result;
 };
 
 const login = async (data) => {
-  const result = await axios.post("http://localhost:8000/login", data);
+  const result = await axios.post("http://localhost:8000/api/v1/login", data);
 
   return result;
 };
 
 const logout = async () => {
-  const result = await axios.delete("http://localhost:8000/logout", {
+  const result = await axios.delete("http://localhost:8000/api/v1/logout", {
     headers: headers,
   });
 

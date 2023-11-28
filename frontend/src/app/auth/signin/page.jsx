@@ -11,16 +11,12 @@ const SignIn = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const isTokenExist = Cookies.get("token");
-    const isRoleExist = Cookies.get("role");
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    if (isTokenExist && isRoleExist) {
-      Cookies.remove("token");
-      Cookies.remove("role");
-    } else if (isTokenExist && !isRoleExist) {
-      Cookies.remove("token");
-    } else if (!isTokenExist && isRoleExist) {
-      Cookies.remove("role");
+    if (isLoggedIn == "true") {
+      router.push("/dashboard");
+    } else {
+      router.push("/");
     }
   }, []);
 
@@ -46,13 +42,14 @@ const SignIn = () => {
       Cookies.set("token", res.data.token, { expires: 1 });
       Cookies.set("role", res.data.role, { expires: 1 });
       Cookies.set("userId", res.data.userId, { expires: 1 });
+      localStorage.setItem("isLoggedIn", true);
 
       router.push("/dashboard");
     } catch (error) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: error.message,
+        title: "Invalid username or password!",
         showConfirmButton: false,
         timer: 3000,
         customClass: "swal-custom-auth-error",
@@ -86,6 +83,7 @@ const SignIn = () => {
                   name="email"
                   placeholder="Enter your email"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -115,6 +113,7 @@ const SignIn = () => {
                   name="password"
                   placeholder="Enter your password"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">

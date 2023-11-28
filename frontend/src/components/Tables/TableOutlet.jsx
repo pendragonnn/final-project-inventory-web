@@ -22,22 +22,21 @@ const TableOutlets = () => {
     fetchData();
   }, []);
 
-  const handleAdd = (newOutlet) => {
+  const handleAdd = async (newOutlet) => {
     const newData = [...data, newOutlet];
     setData(newData);
+    const res = await Outlet.getOutlet();
+    setData(res.data.data);
   };
 
-  const handleEditData = (updatedOutlet) => {
-    let updatedData = [...data];
-
-    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
-    const indexToUpdate = updatedData.findIndex(
-      (outlet) => outlet.id === updatedOutlet[0].id
+  const handleEditData = async (updatedOutlet) => {
+    setData((prevData) =>
+      prevData.map((outlet) =>
+        outlet.id === updatedOutlet.id ? updatedOutlet : outlet
+      )
     );
-
-    updatedData[indexToUpdate] = updatedOutlet[0];
-
-    setData([...updatedData]);
+    const res = await Outlet.getOutlet();
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {

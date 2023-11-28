@@ -1,30 +1,63 @@
 import React from "react";
 import Swal from "sweetalert2";
-import { useRef } from "react";
+import Outlet from "@/data/outlet/index";
+import { useRef, useState, useEffect } from "react";
 
 const ModalEditOutlet = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
 
+  const [formData, setFormData] = useState({
+    name: data?.data?.name || "",
+    address: data?.data?.address || "",
+    phone: data?.data?.phone || "",
+  });
+
+  useEffect(() => {
+    setFormData({
+      name: data?.data?.name || "",
+      address: data?.data?.address || "",
+      phone: data?.data?.phone || "",
+    });
+  }, [data]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await Outlet.updateOutlet(data.data.id, {
-        name: e.target.name.value,
-        address: e.target.address.value,
-        phone: e.target.phone.value,
-      });
+      const { name: newName, address: newAddress, phone: newPhone } = formData;
 
-      Swal.fire({
-        position: "bottom-end",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      }).then(() => {
-        addToTable(res.data.data[1]);
-        modalCheckbox.current.checked = false;
-      });
+      // Memeriksa apakah ada perubahan pada name dan address
+      if (data?.data?.name !== newName || data?.data?.phone !== newPhone) {
+        const res = await Outlet.updateOutlet(data.data.id, {
+          name: newName,
+          address: newAddress,
+          phone: newPhone,
+        });
+
+        Swal.fire({
+          position: "bottom-end",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        }).then(() => {
+          addToTable(res.data.data[1]);
+          modalCheckbox.current.checked = false;
+
+          setFormData({ name: "", address: "", phone: "" });
+        });
+      } else {
+        // Tidak ada perubahan pada name dan address
+        // Tambahkan pesan atau tindakan yang sesuai di sini, misalnya:
+        Swal.fire({
+          position: "bottom-end",
+          icon: "info",
+          title: "No changes made.",
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        });
+      }
     } catch (e) {
       Swal.fire({
         position: "bottom-end",
@@ -69,7 +102,10 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="name"
-                    defaultValue={data?.data?.name}
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Enter full name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -83,7 +119,10 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="address"
-                    defaultValue={data?.data?.address}
+                    value={formData.address}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
                     placeholder="Enter address"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
@@ -97,9 +136,12 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
                   <input
                     type="number"
                     name="phone"
-                    defaultValue={data?.data?.phone}
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                     placeholder="Enter phone number"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    className="w-full rounded border-[1.5px] text-black dark:text-white  border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                     // max={12}
                     // min={11}
@@ -109,7 +151,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
                 <input
                   type="submit"
                   value={"edit"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>

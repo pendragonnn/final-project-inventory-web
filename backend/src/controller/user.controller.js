@@ -5,6 +5,7 @@ const {
   editUserById,
   deleteUserById,
   updateUserPhoto,
+  updateUserPassword,
 } = require("../service/user.service");
 const fs = require("fs");
 
@@ -13,13 +14,16 @@ const allUsers = async (req, res) => {
   const size = req.query.size || 10;
   try {
     const { users, dataLength } = await getAllUsers(page, size);
+    const user = req.user;
     res.status(200).json({
+      name: user.full_name,
       data: users,
       totalItems: users.length,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     });
   } catch (err) {
+    res.status(500).json({ message: err.message });
     res.status(500).json({ message: err.message });
   }
 };
@@ -114,6 +118,24 @@ const uploadUserPhoto = async (req, res) => {
   }
 };
 
+const updatePassword = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+
+    const result = await updateUserPassword(id, data);
+
+    if (!result) {
+      return res.status(404).json({ message: "Password doesn't match" });
+    }
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (e) {
+    console.log("error: " + e.message);
+    return res.status(500).json({ message: e.message });
+  }
+};
+
 module.exports = {
   allUsers,
   userById,
@@ -121,4 +143,5 @@ module.exports = {
   updateUser,
   removeUser,
   uploadUserPhoto,
+  updatePassword,
 };

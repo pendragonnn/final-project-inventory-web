@@ -6,7 +6,7 @@ const transactionHeaderSchema = Joi.object({
   supplier_id: Joi.string().allow(null).optional(),
   information: Joi.string().required(),
   transaction_date: Joi.date().required(),
-  Detail: Joi.array().required(),
+  Detail: Joi.array().optional(),
 })
 
 module.exports = transactionHeaderSchema

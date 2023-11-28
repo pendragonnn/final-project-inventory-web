@@ -8,12 +8,14 @@ import UserData from "@/data/user/index";
 const TableUser = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
-  const [editUserId, setEditUserId] = useState(null);
+  const [userImageUrl, setUserImageUrl] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (imgUrl) => {
       const res = await UserData.getUsers();
       setData(res.data.data);
+      const image = await UserData.getUserImageUrl(imgUrl);
+      setUserImageUrl(image.data.data);
     };
 
     fetchData();
@@ -27,25 +29,23 @@ const TableUser = () => {
   };
 
   const handleEditData = async (updatedUser) => {
-    let updatedData = [...data];
-
-    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
-    const indexToUpdate = await updatedData.findIndex(
-      (user) => user.id === updatedUser[0].id
+    setData((prevData) =>
+      prevData.map((outlet) =>
+        outlet.id === updatedUser.id ? updatedUser : outlet
+      )
     );
-
-    updatedData[indexToUpdate] = updatedUser[0];
-
-    setData([...updatedData]);
     const res = await UserData.getUsers();
     setData(res.data.data);
   };
 
   const handleEdit = async (id) => {
-    const res = await UserData.getUserById(id);
-    setUpdate(res.data.data);
-    console.log(id);
-    setEditUserId(id);
+    try {
+      const res = await UserData.getUserById(id);
+      const result = res.data;
+      setUpdate(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -149,7 +149,7 @@ const TableUser = () => {
               >
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {user.photo}
+                    {userImageUrl && <img src={userImageUrl} alt="User" />}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -157,7 +157,7 @@ const TableUser = () => {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="dark:text-meta-3 text-black">
-                    {user.Role.name}
+                    {user?.Role?.name}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
