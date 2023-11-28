@@ -15,7 +15,7 @@ const TablesPage = () => {
     setUser(role);
     console.log(role);
 
-    if (role && role !== "2") {
+    if (!role) {
       router.push("/dashboard");
     }
   }, []);

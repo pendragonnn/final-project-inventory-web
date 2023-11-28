@@ -19,7 +19,7 @@ module.exports = {
       black: "#1C2434",
       black2: "#010101",
       body: "#64748B",
-      bodydark: "#b8cbcd",
+      bodydark: "#c1d5d7",
       bodydark1: "#DEE4EE",
       bodydark2: "#8A99AF",
       primary: "#3C50E0",

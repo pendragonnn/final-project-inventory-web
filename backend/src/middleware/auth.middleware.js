@@ -29,7 +29,8 @@ const authenticateToken = async (req, res, next) => {
     console.log(role);
 
     if (
-      (role == 2 && req.path.startsWith("/supplier")) ||
+      (role == 2 && req.path.startsWith("/asdasd")) ||
+      req.path.startsWith("/supplier") ||
       req.path.startsWith("/outlet") ||
       req.path.startsWith("/item") ||
       req.path.startsWith("/category") ||
@@ -37,7 +38,10 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/transaction-detail")
     ) {
       next();
-    } else if (role == 1 && req.path.startsWith("/user")) {
+    } else if (
+      (role == 1 && req.path.startsWith("/user")) ||
+      req.path.startsWith("/user/upload")
+    ) {
       next();
     } else if (
       (role == 3 && req.path.startsWith("/transaction-header")) ||
@@ -56,4 +60,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = {authenticateToken};
+module.exports = { authenticateToken };

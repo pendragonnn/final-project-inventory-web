@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import SidebarLayout from "@/app/sidebar-layout"
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import Swal from "sweetalert2"
-import { createTransactionHeader, getItem } from "@/modules/fetch/index"
-import Supplier from "@/data/supplier/index"
-import { useEffect, useState } from "react"
-import Cookies from "js-cookie"
-import { useRouter } from "next/navigation"
+import SidebarLayout from "@/app/sidebar-layout";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import Swal from "sweetalert2";
+import { createTransactionHeader, getItem } from "@/modules/fetch/index";
+import Supplier from "@/data/supplier/index";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const TransactionHeader = () => {
-  const [dataItem, setDataItem] = useState([])
-  const [dataSupplier, setDataSupplier] = useState([])
-  const [user, setUser] = useState(null)
-  const [userId, setUserId] = useState(null)
-  const router = useRouter()
+  const [dataItem, setDataItem] = useState([]);
+  const [dataSupplier, setDataSupplier] = useState([]);
+  const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const data = await createTransactionHeader({
         user_id: e.target.user_id.value,
@@ -30,49 +30,49 @@ const TransactionHeader = () => {
             quantity: e.target.quantity.value,
           },
         ],
-      })
+      });
       Swal.fire({
         icon: "success",
         title: data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
-      })
-      console.log(data)
+      });
+      console.log(data);
     } catch (err) {
-      console.log("err", err.response.data.message)
+      console.log("err", err.response.data.message);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getItem()
-      setDataItem(res.data)
-    }
+      const res = await getItem();
+      setDataItem(res.data);
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Supplier.getSupplier()
-      setDataSupplier(res.data.data)
-    }
+      const res = await Supplier.getSupplier();
+      setDataSupplier(res.data.data);
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    const role = Cookies.get("role")
-    const idUser = Cookies.get("userId")
-    setUser(role)
-    setUserId(idUser)
+    const role = Cookies.get("role");
+    const idUser = Cookies.get("userId");
+    setUser(role);
+    setUserId(idUser);
 
-    if (role && role !== "2") {
+    if (!role) {
       // Ubah kondisi role agar sesuai dengan string '2'
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }, [])
+  }, []);
 
   if (user) {
     return (
@@ -191,9 +191,9 @@ const TransactionHeader = () => {
           </div>
         </SidebarLayout>
       </>
-    )
+    );
   } else {
-    return null
+    return null;
   }
-}
-export default TransactionHeader
+};
+export default TransactionHeader;

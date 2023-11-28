@@ -2,14 +2,14 @@ const models = require("../../models");
 const Outlets = models.Outlet;
 
 const findOutlets = async (page, size) => {
-  const offset = (page-1) * size
-  const outletsAll = await Outlets.findAll()
-  const dataLength = outletsAll.length
+  const offset = (page - 1) * size;
+  const outletsAll = await Outlets.findAll();
+  const dataLength = outletsAll.length;
   const outlets = await Outlets.findAll({
     offset: offset,
-    limit: size
-  })
-  return { outlets, dataLength }
+    limit: size,
+  });
+  return { outlets, dataLength };
 };
 
 const findOutletById = async (id) => {
@@ -26,7 +26,7 @@ const findOutletByName = async (name) => {
     where: {
       name: name,
     },
-    returning: true
+    returning: true,
   });
 
   return outlet;
@@ -37,7 +37,7 @@ const findOutletByPhone = async (phone) => {
     where: {
       phone,
     },
-    returning: true
+    returning: true,
   });
 
   return outlet;
@@ -74,20 +74,28 @@ function generateNewId(existingIds) {
   return newId;
 }
 
-const editOutlet = async (id, outletData) => {
-  const updatedOutlets = await Outlets.update(
-    {
-      name: outletData.name,
-      address: outletData.address,
-      phone: outletData.phone,
+const editOutlet = async (id, updatedFields) => {
+  const { name, address, phone } = updatedFields;
+  const updatedData = {};
+
+  if (name !== undefined) {
+    updatedData.name = name;
+  }
+
+  if (address !== undefined) {
+    updatedData.address = address;
+  }
+
+  if (phone !== undefined) {
+    updatedData.phone = phone;
+  }
+
+  const updatedOutlets = await Outlets.update(updatedData, {
+    where: {
+      id: id,
     },
-    {
-      where: {
-        id: id,
-      },
-      returning: true,
-    }
-  );
+    returning: true,
+  });
 
   return updatedOutlets;
 };

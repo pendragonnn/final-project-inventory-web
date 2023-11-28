@@ -9,7 +9,6 @@ import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
 const TableSuppliers = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
-  const [editSupplierId, setEditSupplierId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,20 +29,27 @@ const TableSuppliers = () => {
   //   data[0] = updatedSupplier;
   //   setData([...updatedData]);
   // };
-  const handleEditData = (updatedSupplier) => {
-    const updatedData = data.map((supplier) =>
-      supplier.id === updatedSupplier.id ? updatedSupplier : supplier
+  const handleEditData = (updateSupplier) => {
+    let updatedData = [...data];
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (supplier) => supplier.id === updateSupplier[0].id
     );
 
-    setData(updatedData);
+    updatedData[indexToUpdate] = updateSupplier[0];
+
+    setData([...updatedData]);
   };
 
-
-
   const handleEdit = async (id) => {
-    const res = await Supplier.getSupplierByid(id);
-    setUpdate(res.data.data);
-    setEditSupplierId(id);
+    try {
+      const res = await Supplier.getSupplierByid(id);
+      const result = res.data;
+      setUpdate(result);
+    } catch (error) {
+      onsole.error("Error fetching data:", error);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -59,7 +65,9 @@ const TableSuppliers = () => {
       try {
         if (result.isConfirmed) {
           await Supplier.deleteSupplier(id);
-          setData((prevData) => prevData.filter((supplier) => supplier.id !== id));
+          setData((prevData) =>
+            prevData.filter((supplier) => supplier.id !== id)
+          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -106,10 +114,7 @@ const TableSuppliers = () => {
               </svg>
             </span>
             Add Supplier
-            <ModalAddSupplier
-              test={"add"}
-              addToTable={handleAdd}
-            />
+            <ModalAddSupplier test={"add"} addToTable={handleAdd} />
           </label>
         </div>
       </div>
@@ -147,10 +152,14 @@ const TableSuppliers = () => {
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">{supplier.address}</p>
+                  <p className="text-black dark:text-white">
+                    {supplier.address}
+                  </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="dark:text-meta-3 text-black">{supplier.phone}</p>
+                  <p className="dark:text-meta-3 text-black">
+                    {supplier.phone}
+                  </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">

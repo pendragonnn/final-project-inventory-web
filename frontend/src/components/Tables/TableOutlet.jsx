@@ -1,51 +1,54 @@
-"use client"
-import ModalAddOutlet from "../Modal/Outlet/ModalAddOutlet"
-import Swal from "sweetalert2"
-import { useEffect, useState } from "react"
-import Outlet from "@/data/outlet/index"
-import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet"
+"use client";
+import ModalAddOutlet from "../Modal/Outlet/ModalAddOutlet";
+import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import Outlet from "@/data/outlet/index";
+import ModalEditOutlet from "../Modal/Outlet/ModalEditOutlet";
 
 const TableOutlets = () => {
-  const [data, setData] = useState([])
-  const [update, setUpdate] = useState(null)
+  const [data, setData] = useState([]);
+  const [update, setUpdate] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Outlet.getOutlet()
-      setData(res.data.data)
-    }
+      try {
+        const res = await Outlet.getOutlet();
+        setData(res.data.data);
+      } catch (error) {
+        console.log("Error fetching outlets:", error);
+      }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  const handleAdd = (newOutlet) => {
-    const newData = [...data, newOutlet]
-    setData(newData)
-  }
+  const handleAdd = async (newOutlet) => {
+    const newData = [...data, newOutlet];
+    setData(newData);
+    const res = await Outlet.getOutlet();
+    setData(res.data.data);
+  };
 
-  const handleEditData = (updatedOutlet) => {
-    let updatedData = [...data]
-
-    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
-    const indexToUpdate = updatedData.findIndex(
-      (item) => item.id === updatedOutlet[0].id
-    )
-
-    updatedData[indexToUpdate] = updatedOutlet[0]
-
-    setData([...updatedData])
-  }
+  const handleEditData = async (updatedOutlet) => {
+    setData((prevData) =>
+      prevData.map((outlet) =>
+        outlet.id === updatedOutlet.id ? updatedOutlet : outlet
+      )
+    );
+    const res = await Outlet.getOutlet();
+    setData(res.data.data);
+  };
 
   const handleEdit = async (id) => {
     try {
-      const res = await Outlet.getOutletByid(id)
-      const result = res.data
-      console.log(result)
-      setUpdate(result)
+      const res = await Outlet.getOutletByid(id);
+      const result = res.data;
+      console.log(result);
+      setUpdate(result);
     } catch (error) {
-      console.error("Error fetching data:", error)
+      console.error("Error fetching data:", error);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -59,15 +62,15 @@ const TableOutlets = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Outlet.deleteOutlet(id)
-          setData((prevData) => prevData.filter((outlet) => outlet.id !== id))
+          await Outlet.deleteOutlet(id);
+          setData((prevData) => prevData.filter((outlet) => outlet.id !== id));
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          })
+          });
         }
       } catch (e) {
         Swal.fire({
@@ -77,16 +80,16 @@ const TableOutlets = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="p-4 md:p-6 xl:p-9">
         <div className="flex flex-wrap gap-5 xl:gap-7.5">
-          <a
+          <label
             type="submit"
             className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
           >
@@ -111,7 +114,7 @@ const TableOutlets = () => {
               test={"add"}
               addToTable={handleAdd}
             />
-          </a>
+          </label>
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
@@ -207,6 +210,6 @@ const TableOutlets = () => {
         </table>
       </div>
     </div>
-  )
-}
-export default TableOutlets
+  );
+};
+export default TableOutlets;
