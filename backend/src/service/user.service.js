@@ -6,22 +6,23 @@ const {
   editUser,
   deleteUser,
   updateUserPhotos,
+  editUserPassword,
 } = require("../repository/user.repository");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async (page, size) => {
-  const users = await findUsers(page, size)
-  return users
+  const users = await findUsers(page, size);
+  return users;
 };
 
 const getUserById = async (id) => {
   const user = await findUserById(id);
 
-  if(!user) {
-    throw Error("User Not Found")
+  if (!user) {
+    throw Error("User Not Found");
   }
-  return user 
+  return user;
 };
-
 
 const insertUser = async (userData) => {
   const userEmail = await findUserByEmail(userData.email);
@@ -29,7 +30,7 @@ const insertUser = async (userData) => {
   if (userEmail) {
     throw new Error("User Email Already Added");
   }
- 
+
   const user = await createUser(userData);
 
   return user;
@@ -58,17 +59,50 @@ const editUserById = async (id, newUser) => {
 
 const deleteUserById = async (id) => {
   try {
-    await getUserById(id)
+    await getUserById(id);
 
-    await deleteUser(id)
+    await deleteUser(id);
   } catch (err) {
-    throw err
+    throw err;
   }
 };
 
 const updateUserPhoto = async (id, image_url) => {
   try {
     return await updateUserPhotos(id, image_url);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateUserPassword = async (id, data) => {
+  try {
+    const getData = await getUserById(id);
+    if (!getData) {
+      const error = new Error("Invalid username or password");
+      error.status = 400;
+      throw error;
+    }
+
+    const isPasswordMatch = await bcrypt.compare(
+      data.current_pass,
+      getData.password
+    );
+
+    if (!isPasswordMatch) {
+      const error = new Error("Invalid password");
+      error.status = 400;
+      throw error;
+    }
+    const result = await editUserPassword(id, {
+      role_id: getData.role_id,
+      full_name: getData.full_name,
+      email: getData.email,
+      password: data.new_pass,
+      image_url: getData.image_url,
+    });
+
+    return result;
   } catch (error) {
     throw error;
   }
@@ -81,4 +115,5 @@ module.exports = {
   editUserById,
   deleteUserById,
   updateUserPhoto,
+  updateUserPassword,
 };

@@ -8,6 +8,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await Outlet.addOutlet({
         name: e.target.name.value,

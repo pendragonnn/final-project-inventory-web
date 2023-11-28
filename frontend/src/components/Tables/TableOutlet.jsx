@@ -43,8 +43,9 @@ const TableOutlets = () => {
     try {
       const res = await Outlet.getOutletByid(id);
       const result = res.data;
-      console.log(result);
+      // console.log(result);
       setUpdate(result);
+      console.log(update);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -161,7 +162,7 @@ const TableOutlets = () => {
                     <label
                       htmlFor="edit"
                       className="hover:text-primary cursor-pointer"
-                      onClick={() => handleEdit(outlet.id)}
+                      onClick={() => handleEditData(outlet.id)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
