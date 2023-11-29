@@ -8,25 +8,34 @@ import ModalEditCategory from "../Modal/Category/ModalEditCategory";
 const TableCategories = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
+  const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory();
+      const res = await Category.getCategory(currentPage, size);
+      setTotalPages(res.data.totalPages)
+      setTotalItems(res.data.totalItems)
       setData(res.data.data);
     };
 
+    console.log(currentPage)
+    console.log(data)
     fetchData();
-  }, []);
+  }, [currentPage]);
 
-  const handleAdd = (newCategory) => {
-    const newData = [...data, newCategory];
-    setData(newData);
+  const handleAdd = async (newCategory) => {
+    const res = await Category.getCategory(currentPage, size);
+    setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
   const handleEditData = (updatedCategory) => {
     let updatedData = [...data];
-
-    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
     const indexToUpdate = updatedData.findIndex(
       (item) => item.id === updatedCategory[0].id
     );
@@ -60,9 +69,6 @@ const TableCategories = () => {
       try {
         if (result.isConfirmed) {
           await Category.deleteCategory(id);
-          setData((prevData) =>
-            prevData.filter((category) => category.id !== id)
-          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -70,6 +76,19 @@ const TableCategories = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
+          const res = await Category.getCategory(currentPage, size);
+          console.log(res.data)
+          setData(res.data.data);
+
+          setTotalPages(res.data.totalPages);
+          setTotalItems(res.data.totalItems);
+          setCurrentPage(res.data.currentPage);
+
+          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+            paginationHandle(currentPage - 1);
+          } else {
+            paginationHandle(res.data.currentPage)
+          }
         }
       } catch (e) {
         Swal.fire({
@@ -83,6 +102,10 @@ const TableCategories = () => {
       }
     });
   };
+
+  const paginationHandle = async (currentPage) => {
+    setCurrentPage(currentPage)
+  }
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -195,6 +218,20 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
+        <div className="join float-right m-2">
+          {
+            Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`join-item btn btn-outline btn-default ${index === currentPage - 1 ? 'btn btn-active btn-primary' : ''
+                  }`}
+                onClick={() => paginationHandle(index + 1, totalPages)}
+              >
+                {index + 1}
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   );

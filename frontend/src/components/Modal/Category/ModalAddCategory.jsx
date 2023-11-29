@@ -1,6 +1,5 @@
 import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Category from "@/data/category/index";
 import { useRef } from "react";
 
@@ -22,6 +21,7 @@ const ModalAddCategory = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(res.data.data);
         modalCheckbox.current.checked = false;
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       Swal.fire({
