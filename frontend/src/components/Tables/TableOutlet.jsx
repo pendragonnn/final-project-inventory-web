@@ -33,7 +33,7 @@ const TableOutlets = () => {
   const handleEditData = async (updatedOutlet) => {
     setData((prevData) =>
       prevData.map((outlet) =>
-        outlet.id === updatedOutlet.id ? updatedOutlet : outlet
+        outlet.id === updatedOutlet?.id ? updatedOutlet : outlet
       )
     );
     const res = await Outlet.getOutlet();
