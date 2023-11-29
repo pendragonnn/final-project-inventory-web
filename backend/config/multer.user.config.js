@@ -1,8 +1,8 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require('fs')
+const fs = require("fs");
 
-const uploadDir = path.join(__dirname, '../upload/user/');
+const uploadDir = path.join(__dirname, "../../frontend/public/uploads/user");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
@@ -23,8 +23,8 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, 
+    fileSize: 100 * 1024 * 1024,
   },
 });
 
-module.exports = { upload, uploadDir }
+module.exports = { upload, uploadDir };

@@ -1,13 +1,14 @@
 import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Outlet from "@/data/outlet/index";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const ModalOutletAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await Outlet.addOutlet({
         name: e.target.name.value,
@@ -24,6 +25,8 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(res.data.data);
         modalCheckbox.current.checked = false;
+
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       Swal.fire({
@@ -63,7 +66,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
               </h3>
             </div>
 
-            <form action="#" onSubmit={handleSubmit}>
+            <form id="formId" action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">

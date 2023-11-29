@@ -2,19 +2,29 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import auth from "@/data/auth";
 
 const SignIn = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn == "true") {
+      router.push("/dashboard");
+    } else {
+      router.push("/");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8000/login", {
+      const res = await auth.login({
         email: e.target.email.value,
         password: e.target.password.value,
       });
@@ -31,13 +41,15 @@ const SignIn = () => {
       // const inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
       Cookies.set("token", res.data.token, { expires: 1 });
       Cookies.set("role", res.data.role, { expires: 1 });
+      Cookies.set("userId", res.data.userId, { expires: 1 });
+      localStorage.setItem("isLoggedIn", true);
 
       router.push("/dashboard");
     } catch (error) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: error.message,
+        title: "Invalid username or password!",
         showConfirmButton: false,
         timer: 3000,
         customClass: "swal-custom-auth-error",
@@ -71,6 +83,7 @@ const SignIn = () => {
                   name="email"
                   placeholder="Enter your email"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -100,6 +113,7 @@ const SignIn = () => {
                   name="password"
                   placeholder="Enter your password"
                   className="w-full rounded-lg border text-white border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  required
                 />
 
                 <span className="absolute right-4 top-4">
@@ -130,7 +144,7 @@ const SignIn = () => {
               <input
                 type="submit"
                 value="Log In"
-                className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black font-bold transition hover:bg-opacity-90"
+                className="w-full cursor-pointer rounded-lg border border-white bg-white p-4 bg-slate-50 text-black transition hover:bg-opacity-90"
               />
             </div>
 

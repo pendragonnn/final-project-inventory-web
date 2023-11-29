@@ -6,19 +6,16 @@ const Role = models.Role;
 
 const findUsers = async (page, size) => {
   const offset = (page - 1) * size;
-  const usersAll = await User.findAll(
-    {
-      include: [
-        {
-          model: Role,
-          attributes: ["name"],
-        },
-      ],
-    }
-  );
+  const usersAll = await User.findAll({
+    include: [
+      {
+        model: Role,
+        attributes: ["name"],
+      },
+    ],
+  });
   const dataLength = usersAll.length;
   const users = await User.findAll({
-
     include: [
       {
         model: Role,
@@ -37,6 +34,12 @@ const findUserById = async (id) => {
     where: {
       id,
     },
+    include: [
+      {
+        model: Role,
+        attributes: ["name"],
+      },
+    ],
   });
 
   return user;
@@ -86,12 +89,12 @@ function generateNewId(existingIds) {
 }
 
 const editUser = async (id, userData) => {
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
   const updatedUser = await User.update(
     {
       role_id: userData.role_id,
       full_name: userData.full_name,
       email: userData.email,
-      username: userData.username,
       password: hashedPassword,
       image_url: userData.image_url,
     },
@@ -126,8 +129,26 @@ const updateUserPhotos = async (id, image_url) => {
   } catch (error) {
     throw error;
   }
+};
 
-  
+const editUserPassword = async (id, userData) => {
+  console.log(userData);
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const updatedUser = await User.update(
+    {
+      role_id: userData.role_id,
+      full_name: userData.full_name,
+      email: userData.email,
+      password: hashedPassword,
+      image_url: userData.image_url,
+    },
+    {
+      where: { id },
+      returning: true,
+    }
+  );
+
+  return updatedUser;
 };
 
 // const findUserWithRole = async () => {
@@ -143,7 +164,6 @@ const updateUserPhotos = async (id, image_url) => {
 //   return user;
 // };
 
-
 module.exports = {
   findUsers,
   findUserById,
@@ -152,5 +172,6 @@ module.exports = {
   editUser,
   deleteUser,
   updateUserPhotos,
+  editUserPassword,
   // findUserWithRole,
 };

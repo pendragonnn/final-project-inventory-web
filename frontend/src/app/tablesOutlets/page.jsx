@@ -13,11 +13,10 @@ const TablesPage = () => {
   useEffect(() => {
     const role = Cookies.get("role");
     setUser(role);
-    console.log(role);
 
-    if (role && role !== "2") {
+    if (!role) {
       // Ubah kondisi role agar sesuai dengan string '2'
-      router.push("/dashboard");
+      router.push("/forbidden");
     }
   }, []);
 
@@ -31,7 +30,7 @@ const TablesPage = () => {
       </SidebarLayout>
     );
   } else {
-    return null; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
+    return null;
   }
 };
 

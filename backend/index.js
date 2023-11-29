@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(authRoutes);
-app.use(router);
+app.use("/api/v1", router);
 
 const PORT = process.env.PORT;
 
