@@ -5,9 +5,26 @@ import UserData from "@/data/user/index";
 const ModalEditUser = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const [file, setFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      setFile(selectedFile);
+
+      // Create a FileReader instance
+      const reader = new FileReader();
+
+      // Set a callback function to be triggered when the file is loaded
+      reader.onloadend = () => {
+        // Update the image preview state with the data URL of the loaded file
+        setImagePreview(reader.result);
+      };
+
+      // Read the selected file as a data URL
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const handleSubmit = async (e) => {
