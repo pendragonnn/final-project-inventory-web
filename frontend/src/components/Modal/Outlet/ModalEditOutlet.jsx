@@ -70,8 +70,6 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
     }
   };
 
-  console.log(data);
-
   return (
     <>
       <input

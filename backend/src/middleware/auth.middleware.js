@@ -33,9 +33,11 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/supplier") ||
       req.path.startsWith("/outlet") ||
       req.path.startsWith("/item") ||
+      req.path.startsWith("/role") ||
       req.path.startsWith("/category") ||
       req.path.startsWith("/transaction-header") ||
-      req.path.startsWith("/transaction-detail")
+      req.path.startsWith("/transaction-detail") ||
+      req.path.startsWith("/user")
     ) {
       next();
     } else if (
@@ -45,7 +47,8 @@ const authenticateToken = async (req, res, next) => {
       next();
     } else if (
       (role == 3 && req.path.startsWith("/transaction-header")) ||
-      req.path.startsWith("/transaction-detail")
+      req.path.startsWith("/transaction-detail") ||
+      req.path.startsWith("/user")
     ) {
       next();
     } else {
@@ -60,4 +63,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken };
+module.exports = { authenticateToken /*restrictAccess */ };

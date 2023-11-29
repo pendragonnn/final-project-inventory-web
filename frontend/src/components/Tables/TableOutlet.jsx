@@ -44,8 +44,9 @@ const TableOutlets = () => {
     try {
       const res = await Outlet.getOutletByid(id);
       const result = res.data;
-      console.log(result);
+      // console.log(result);
       setUpdate(result);
+      console.log(update);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

@@ -22,7 +22,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const token = Cookies.get("token");
     const role = Cookies.get("role");
 
-    if (!token || !role) router.push("/");
+    if (!token || !role) router.push("/forbidden");
     setTokenExist(!!token);
     setRoleExist(role);
   }, []);
