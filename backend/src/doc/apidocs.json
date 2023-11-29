@@ -750,7 +750,7 @@
         "tags": [
           "Suppliers"
         ],
-        "summary": "Post Suppier",
+        "summary": "Post Supplier",
         "description": "Adding new Supplier data",
         "requestBody": {
           "content": {
@@ -827,7 +827,7 @@
             }
           }
         ],
-        "summary": "Get All Outlets",
+        "summary": "Get All Suppliers",
         "description": "Geting All Supplier Data",
         "responses": {
           "200": {
