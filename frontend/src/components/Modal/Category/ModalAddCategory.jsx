@@ -1,6 +1,5 @@
 import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Category from "@/data/category/index";
 import { useRef } from "react";
 
@@ -22,6 +21,7 @@ const ModalAddCategory = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(res.data.data);
         modalCheckbox.current.checked = false;
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       Swal.fire({
@@ -61,7 +61,7 @@ const ModalAddCategory = ({ name, test, addToTable }) => {
               </h3>
             </div>
 
-            <form action="#" onSubmit={handleSubmit}>
+            <form id="formId" action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
