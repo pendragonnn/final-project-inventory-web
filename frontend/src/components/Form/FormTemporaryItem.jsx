@@ -10,8 +10,8 @@ const FormTemporaryItem = ({ handleAdd, dataItem }) => {
             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary cursor-pointer"
             name="a"
           >
-            {dataItem.map((value) => (
-              <option key={value.id} value={value.name}>
+            {dataItem.map((value, idx) => (
+              <option key={value.id} value={idx}>
                 {value.name}
               </option>
             ))}

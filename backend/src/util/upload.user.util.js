@@ -3,7 +3,7 @@ const path = require("path");
 
 const userDiskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../upload/user"));
+    cb(null, path.join(__dirname, "../../../frontend/public/uploads"));
   },
   filename: function (req, file, cb) {
     cb(
@@ -13,4 +13,4 @@ const userDiskStorage = multer.diskStorage({
   },
 });
 
-module.exports = { userDiskStorage }
+module.exports = { userDiskStorage };

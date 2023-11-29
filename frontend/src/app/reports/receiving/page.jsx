@@ -28,7 +28,7 @@ const ReportsReceiving = () => {
     const role = Cookies.get("role")
     setUser(role)
 
-    if (role && role !== "2") {
+    if (!role) {
       // Ubah kondisi role agar sesuai dengan string '2'
       router.push("/dashboard")
     }
@@ -38,12 +38,21 @@ const ReportsReceiving = () => {
     .filter((value) => value.supplier_id !== null)
     .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
 
+  function formatDate(isoDate) {
+    const date = new Date(isoDate)
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return date.toLocaleDateString("id-ID", options)
+  }
+
   if (user) {
     return (
       <SidebarLayout>
         <Breadcrumb pageName="Tables" />
         <div className="flex flex-col gap-10">
-          <TableReportReceiving filterData={filterData} />
+          <TableReportReceiving
+            filterData={filterData}
+            formatDate={formatDate}
+          />
         </div>
       </SidebarLayout>
     )

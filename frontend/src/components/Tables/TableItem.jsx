@@ -1,5 +1,4 @@
 "use client"
-
 import Swal from "sweetalert2"
 import { useEffect, useState } from "react"
 import ModalAddItem from "../Modal/Item/ModalAddItem"
@@ -19,20 +18,37 @@ const TableItems = () => {
     fetchData()
   }, [])
 
-  const handleAdd = (newItem) => {
-    const newData = [...data, newItem]
+  const handleAdd = async (newItem) => {
+    const newData = await [...data, newItem]
     setData(newData)
+    const res = await Item.getItem()
+    setData(res.data.data)
   }
 
-  const handleEditData = (updatedItem) => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+  const handleEditData = async (updateItem) => {
+    let updatedData = [...data]
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = await updatedData.findIndex(
+      (item) => item.id === updateItem[0].id
     )
+
+    updatedData[indexToUpdate] = updateItem[0]
+
+    setData([...updatedData])
+    const res = await Item.getItem()
+    setData(res.data.data)
   }
 
   const handleEdit = async (id) => {
-    const res = await Item.getItemByid(id)
-    setUpdate(res.data.data)
+    try {
+      const res = await Item.getItemByid(id)
+      const result = res.data
+      console.log(result)
+      setUpdate(result)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
   }
 
   const handleDelete = async (id) => {
@@ -105,7 +121,7 @@ const TableItems = () => {
         </div>
         <table className="w-full table-auto">
           <thead>
-            <tr className="bg-gray-2 text-left dark:bg-meta-4">
+            <tr className="bg-bodydark text-left dark:bg-meta-4">
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 name
               </th>
@@ -143,7 +159,7 @@ const TableItems = () => {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">
-                    {item.category_id}
+                    {item?.Category?.name}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -164,7 +180,7 @@ const TableItems = () => {
                   >
                     {item.image_url}
                   </p>
-                  {/* <Image w={24} h={24} src={`http://localhost:8000/item/upload`} /> */}
+                  {/* <Image w={24} h={24} src={`http://localhost:8000/api/v1/item/upload`} /> */}
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">

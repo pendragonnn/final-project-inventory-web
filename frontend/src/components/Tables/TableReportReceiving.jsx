@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation"
 
-const TableReportReceiving = ({ filterData }) => {
+const TableReportReceiving = ({ filterData, formatDate }) => {
   const router = useRouter()
   return (
     <>
@@ -8,7 +8,7 @@ const TableReportReceiving = ({ filterData }) => {
         <div className="max-w-full overflow-x-auto">
           <table className="w-full table-auto">
             <thead>
-              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+              <tr className="bg-bodydark text-left dark:bg-meta-4">
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                   User
                 </th>
@@ -27,17 +27,17 @@ const TableReportReceiving = ({ filterData }) => {
               {filterData.map((value, key) => (
                 <tr
                   onClick={() => router.push(`/reports/receiving/${value.id}`)}
-                  className="cursor-pointer"
+                  className="cursor-pointer hover:bg-bodydark1"
                   key={key}
                 >
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
-                      {value.user_id}
+                      {value?.User?.full_name}
                     </h5>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark ">
                     <h5 className="font-medium text-black dark:text-white">
-                      {value.supplier_id}
+                      {value?.Supplier?.name}
                     </h5>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -47,7 +47,7 @@ const TableReportReceiving = ({ filterData }) => {
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <h5 className="font-medium text-black dark:text-white">
-                      {value.transaction_date}
+                      {formatDate(value.transaction_date)}
                     </h5>
                   </td>
                 </tr>

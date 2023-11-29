@@ -32,7 +32,14 @@ const TransactionHeader = () => {
           item_id: e.item_id,
           quantity: parseInt(e.quantity),
         })),
-        // Detail: itemTemporary.length,
+        // Detail: [
+        //   {
+        //     item_id: e.target.item_id.value,
+        //     quantity: parseInt(e.target.quantity.value),
+        //   },
+        // ],
+        // Detail: itemTemporary,
+        // Detail: itemTemporary.map((e) => e),
       })
       console.log("data submit >>>>>>>>>>>", data)
       setItemTemporary([])
@@ -93,6 +100,35 @@ const TransactionHeader = () => {
   //   }
   // }
 
+  const handleAdd = (e) => {
+    e.preventDefault()
+    const newItem = {
+      item_id: dataItem[e.target.a.value].id,
+      item_name: dataItem[e.target.a.value].name,
+      quantity: parseInt(e.target.b.value),
+    }
+
+    const existingItemIndex = itemTemporary.findIndex(
+      (item) => item.item_id === newItem.item_id
+    )
+
+    if (existingItemIndex !== -1) {
+      const updatedItems = [...itemTemporary]
+      updatedItems[existingItemIndex].quantity += newItem.quantity
+      setItemTemporary(updatedItems)
+    } else {
+      setItemTemporary([...itemTemporary, newItem])
+    }
+
+    e.target.reset()
+  }
+
+  const handleDelete = (index) => {
+    const newData = [...itemTemporary]
+    newData.splice(index, 1)
+    setItemTemporary(newData)
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await Item.getItem()
@@ -117,39 +153,11 @@ const TransactionHeader = () => {
     setUser(role)
     setUserId(idUser)
 
-    if (role && role !== "2") {
+    if (!role) {
       // Ubah kondisi role agar sesuai dengan string '2'
       router.push("/dashboard")
     }
   }, [])
-
-  const handleAdd = (e) => {
-    e.preventDefault()
-    const newItem = {
-      item_id: e.target.a.value,
-      quantity: parseInt(e.target.b.value),
-    }
-
-    const existingItemIndex = itemTemporary.findIndex(
-      (item) => item.item_id === newItem.item_id
-    )
-
-    if (existingItemIndex !== -1) {
-      const updatedItems = [...itemTemporary]
-      updatedItems[existingItemIndex].quantity += newItem.quantity
-      setItemTemporary(updatedItems)
-    } else {
-      setItemTemporary([...itemTemporary, newItem])
-    }
-
-    e.target.reset()
-  }
-
-  const handleDelete = (index) => {
-    const newData = [...itemTemporary]
-    newData.splice(index, 1)
-    setItemTemporary(newData)
-  }
 
   if (user) {
     return (

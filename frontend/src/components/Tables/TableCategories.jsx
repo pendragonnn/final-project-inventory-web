@@ -1,51 +1,51 @@
-"use client"
-import ModalAddCategory from "../Modal/Category/ModalAddCategory"
-import Swal from "sweetalert2"
-import { useEffect, useState } from "react"
-import Category from "@/data/category/index"
-import ModalEditCategory from "../Modal/Category/ModalEditCategory"
+"use client";
+import ModalAddCategory from "../Modal/Category/ModalAddCategory";
+import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import Category from "@/data/category/index";
+import ModalEditCategory from "../Modal/Category/ModalEditCategory";
 
 const TableCategories = () => {
-  const [data, setData] = useState([])
-  const [update, setUpdate] = useState(null)
+  const [data, setData] = useState([]);
+  const [update, setUpdate] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory()
-      setData(res.data.data)
-    }
+      const res = await Category.getCategory();
+      setData(res.data.data);
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleAdd = (newCategory) => {
-    const newData = [...data, newCategory]
-    setData(newData)
-  }
+    const newData = [...data, newCategory];
+    setData(newData);
+  };
 
   const handleEditData = (updatedCategory) => {
-    let updatedData = [...data]
+    let updatedData = [...data];
 
     // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
     const indexToUpdate = updatedData.findIndex(
       (item) => item.id === updatedCategory[0].id
-    )
+    );
 
-    updatedData[indexToUpdate] = updatedCategory[0]
+    updatedData[indexToUpdate] = updatedCategory[0];
 
-    setData([...updatedData])
-  }
+    setData([...updatedData]);
+  };
 
   const handleEdit = async (id) => {
     try {
-      const res = await Category.getCategoryByid(id)
-      const result = res.data
-      console.log(result)
-      setUpdate(result)
+      const res = await Category.getCategoryByid(id);
+      const result = res.data;
+      console.log(result);
+      setUpdate(result);
     } catch (error) {
-      console.error("Error fetching data:", error)
+      console.error("Error fetching data:", error);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -59,15 +59,17 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id)
-          setData((prevData) => prevData.filter((category) => category.id !== id))
+          await Category.deleteCategory(id);
+          setData((prevData) =>
+            prevData.filter((category) => category.id !== id)
+          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          })
+          });
         }
       } catch (e) {
         Swal.fire({
@@ -77,10 +79,10 @@ const TableCategories = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -195,6 +197,6 @@ const TableCategories = () => {
         </table>
       </div>
     </div>
-  )
-}
-export default TableCategories
+  );
+};
+export default TableCategories;

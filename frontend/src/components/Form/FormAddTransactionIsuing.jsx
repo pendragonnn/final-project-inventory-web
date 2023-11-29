@@ -73,7 +73,7 @@ const FormAddTransactionIsuing = ({
                       required
                       readOnly
                       name="item_id"
-                      value={value.item_id}
+                      value={value.item_name}
                     />
                   </td>
                   <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">

@@ -28,7 +28,7 @@ const ReportIsuing = () => {
     const role = Cookies.get("role")
     setUser(role)
 
-    if (role && role !== "2") {
+    if (!role) {
       // Ubah kondisi role agar sesuai dengan string '2'
       router.push("/dashboard")
     }

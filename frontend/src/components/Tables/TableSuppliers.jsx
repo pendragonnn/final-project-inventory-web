@@ -9,7 +9,6 @@ import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier"
 const TableSuppliers = () => {
   const [data, setData] = useState([])
   const [update, setUpdate] = useState(null)
-  const [editSupplierId, setEditSupplierId] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,18 +24,32 @@ const TableSuppliers = () => {
     setData(newData)
   }
 
-  const handleEditData = (updatedSupplier) => {
-    const updatedData = data.map((supplier) =>
-      supplier.id === updatedSupplier.id ? updatedSupplier : supplier
+  // const handleEditData = (updatedSupplier) => {
+  //   const updatedData = [...data, updatedSupplier];
+  //   data[0] = updatedSupplier;
+  //   setData([...updatedData]);
+  // };
+  const handleEditData = (updateSupplier) => {
+    let updatedData = [...data]
+
+    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+    const indexToUpdate = updatedData.findIndex(
+      (supplier) => supplier.id === updateSupplier[0].id
     )
 
-    setData(updatedData)
+    updatedData[indexToUpdate] = updateSupplier[0]
+
+    setData([...updatedData])
   }
 
   const handleEdit = async (id) => {
-    const res = await Supplier.getSupplierByid(id)
-    setUpdate(res.data.data)
-    setEditSupplierId(id)
+    try {
+      const res = await Supplier.getSupplierByid(id)
+      const result = res.data
+      setUpdate(result)
+    } catch (error) {
+      onsole.error("Error fetching data:", error)
+    }
   }
 
   const handleDelete = async (id) => {
