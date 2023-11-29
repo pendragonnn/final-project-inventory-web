@@ -40,7 +40,10 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       };
 
       // Make a POST request to create or update user without image
-      const userResponse = await UserData.updateUser(data?.data?.id, userWithoutImage)
+      const userResponse = await UserData.updateUser(
+        data?.data?.id,
+        userWithoutImage
+      );
 
       console.log(userResponse);
       console.log(userResponse);
@@ -55,7 +58,10 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       formData.append("image_url", file);
 
       // Make a POST request to upload image for the user
-      const imageResponse =  await UserData.uploadImage(data?.data?.id,formData)
+      const imageResponse = await UserData.uploadImage(
+        data?.data?.id,
+        formData
+      );
 
       Swal.fire({
         position: "bottom-end",
@@ -166,7 +172,6 @@ const ModalEditUser = ({ data, test, addToTable }) => {
                     hidden
                   />
                 </div>
-
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">

@@ -5,9 +5,10 @@ const {
   editUserById,
   deleteUserById,
   updateUserPhoto,
+  updateUserPassword,
 } = require("../service/user.service");
 const fs = require("fs");
-const path = require('path');
+const path = require("path");
 
 const allUsers = async (req, res) => {
   const page = req.query.page || 1;
@@ -21,6 +22,7 @@ const allUsers = async (req, res) => {
       totalPages: Math.ceil(dataLength / size),
     });
   } catch (err) {
+    res.status(500).json({ message: err.message });
     res.status(500).json({ message: err.message });
   }
 };
@@ -131,13 +133,31 @@ const getUserPhoto = async (req, res) => {
     }
 
     // Use path.resolve to get an absolute path
-    const absolutePath = path.join(__dirname, '../../upload/user', imagePath);
+    const absolutePath = path.join(__dirname, "../../upload/user", imagePath);
     console.log("Absolute Path:", absolutePath);
     // Send the image file
-    res.sendFile(absolutePath, { headers: { 'Content-Type': 'image/jpeg' } });
+    res.sendFile(absolutePath, { headers: { "Content-Type": "image/jpeg" } });
   } catch (error) {
     console.error("Error getting user photo:", error);
     res.status(500).json({ message: error.message });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+
+    const result = await updateUserPassword(id, data);
+
+    if (!result) {
+      return res.status(404).json({ message: "Password doesn't match" });
+    }
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (e) {
+    console.log("error: " + e.message);
+    return res.status(500).json({ message: e.message });
   }
 };
 
@@ -149,4 +169,5 @@ module.exports = {
   removeUser,
   uploadUserPhoto,
   getUserPhoto,
+  updatePassword,
 };

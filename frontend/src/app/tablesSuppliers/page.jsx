@@ -16,7 +16,7 @@ const TablesPage = () => {
     console.log(role);
 
     if (!role) {
-      router.push("/dashboard");
+      router.push("/forbidden");
     }
   }, []);
 

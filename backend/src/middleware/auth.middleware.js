@@ -12,9 +12,9 @@ const authenticateToken = async (req, res, next) => {
       .json({ message: "Unauthorized access: Token not provided" });
   }
 
-  if (jwtUtil.isTokenBlacklisted(token)) {
-    return res.status(401).json({ message: "Token has rejected" });
-  }
+  // if (jwtUtil.isTokenBlacklisted(token)) {
+  //   return res.status(401).json({ message: "Token has rejected" });
+  // }
 
   try {
     const decodedToken = jwtUtil.decodeToken(token);
@@ -36,7 +36,8 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/role") ||
       req.path.startsWith("/category") ||
       req.path.startsWith("/transaction-header") ||
-      req.path.startsWith("/transaction-detail")
+      req.path.startsWith("/transaction-detail") ||
+      req.path.startsWith("/user")
     ) {
       next();
     } else if (
@@ -46,7 +47,8 @@ const authenticateToken = async (req, res, next) => {
       next();
     } else if (
       (role == 3 && req.path.startsWith("/transaction-header")) ||
-      req.path.startsWith("/transaction-detail")
+      req.path.startsWith("/transaction-detail") ||
+      req.path.startsWith("/user")
     ) {
       next();
     } else {
@@ -61,4 +63,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken };
+module.exports = { authenticateToken /*restrictAccess */ };

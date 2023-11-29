@@ -8,6 +8,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await Outlet.addOutlet({
         name: e.target.name.value,
@@ -111,7 +112,7 @@ const ModalOutletAdd = ({ name, test, addToTable }) => {
                 <input
                   type="submit"
                   value={"Add"}
-                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>
