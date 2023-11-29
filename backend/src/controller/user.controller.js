@@ -13,9 +13,7 @@ const allUsers = async (req, res) => {
   const size = req.query.size || 10;
   try {
     const { users, dataLength } = await getAllUsers(page, size);
-    const user = req.user;
     res.status(200).json({
-      name: user.full_name,
       data: users,
       totalItems: users.length,
       currentPage: parseInt(page),

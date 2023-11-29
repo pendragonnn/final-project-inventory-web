@@ -40,7 +40,8 @@ const ModalEditItem = ({ data, test, addToTable }) => {
         data?.data?.role_id !== newRole ||
         data?.data?.full_name !== newFullName ||
         data?.data?.email !== newEmail ||
-        data?.data?.password !== newPassword
+        data?.data?.password !== newPassword ||
+        data?.data?.image_url !== newImageUrl
       ) {
         const res = await user.updateUser(data.id, {
           role_id: newRole,

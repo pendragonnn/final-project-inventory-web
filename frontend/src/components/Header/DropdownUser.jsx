@@ -6,13 +6,49 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Router } from "next/router";
+import User from "@/data/user";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState([]);
+  const [userRole, setUserRole] = useState([]);
   const router = useRouter();
   const trigger = useRef(null);
   const dropdown = useRef(null);
   // close on click outside
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await Cookies.get("full_name");
+        setUserName(res);
+      } catch (error) {
+        console.log("Error fetching outlets:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await Cookies.get("role");
+        setUserRole(res);
+      } catch (error) {
+        console.log("Error fetching outlets:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const roleTextMap = {
+    1: "Admin",
+    2: "Staff",
+    3: "Manager",
+  };
+  const roleText = roleTextMap[userRole] || "Unknown Role";
+
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!dropdown.current) return;
@@ -64,6 +100,7 @@ const DropdownUser = () => {
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
+          Cookies.remove("full_name");
           localStorage.removeItem("sidebar-expanded");
           localStorage.removeItem("color-theme");
 
@@ -100,9 +137,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {userName}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{roleText}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">

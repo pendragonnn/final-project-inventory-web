@@ -8,14 +8,21 @@ import UserData from "@/data/user/index";
 const TableUser = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
-  const [userImageUrl, setUserImageUrl] = useState(null);
+  const [userImageUrl, setUserImageUrl] = useState("");
 
   useEffect(() => {
-    const fetchData = async (imgUrl) => {
-      const res = await UserData.getUsers();
-      setData(res.data.data);
-      const image = await UserData.getUserImageUrl(imgUrl);
-      setUserImageUrl(image.data.data);
+    const fetchData = async () => {
+      try {
+        const res = await UserData.getUsers();
+        setData(res.data.data);
+
+        // Asumsi imageUrl tersedia dalam data yang diambil dari pengguna
+        const imageUrl = res.data.data[0].imageUrl; // Ubah ini sesuai dengan struktur data yang benar
+        const image = await UserData.getUserImageUrl(imageUrl);
+        setUserImageUrl(image.src);
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
     };
 
     fetchData();
@@ -149,7 +156,12 @@ const TableUser = () => {
               >
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {userImageUrl && <img src={userImageUrl} alt="User" />}
+                    {userImageUrl && (
+                      <div>
+                        {console.log(userImageUrl)}
+                        <img src={userImageUrl} alt="User" />
+                      </div>
+                    )}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

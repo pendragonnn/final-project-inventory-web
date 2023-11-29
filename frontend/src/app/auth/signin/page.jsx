@@ -39,6 +39,7 @@ const SignIn = () => {
       Cookies.set("token", res.data.token, { expires: 1 });
       Cookies.set("role", res.data.role, { expires: 1 });
       Cookies.set("userId", res.data.userId, { expires: 1 });
+      Cookies.set("full_name", res.data.full_name, { expires: 1 });
 
       router.push("/dashboard");
     } catch (error) {
