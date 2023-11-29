@@ -76,9 +76,15 @@ function generateNewId(existingIds) {
 
 const editOutlet = async (id, updatedFields) => {
   const { name, address, phone } = updatedFields;
+  const outlet = await Outlets.findByPk(id);
+
+  if (!outlet) {
+    throw new Error("Outlet not found");
+  }
+
   const updatedData = {};
 
-  if (name !== undefined) {
+  if (name !== undefined && name !== outlet.name) {
     updatedData.name = name;
   }
 
@@ -86,8 +92,13 @@ const editOutlet = async (id, updatedFields) => {
     updatedData.address = address;
   }
 
-  if (phone !== undefined) {
+  if (phone !== undefined && phone !== outlet.phone) {
     updatedData.phone = phone;
+  }
+
+  if (Object.keys(updatedData).length === 0) {
+    // Tidak ada perubahan yang perlu diperbarui
+    return outlet; // Mengembalikan data outlet tanpa melakukan update
   }
 
   const updatedOutlets = await Outlets.update(updatedData, {
@@ -97,7 +108,7 @@ const editOutlet = async (id, updatedFields) => {
     returning: true,
   });
 
-  return updatedOutlets;
+  return updatedOutlets[1][0];
 };
 
 const deleteOutlet = async (id) => {
