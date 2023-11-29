@@ -21,8 +21,6 @@ const TableCategories = () => {
       setData(res.data.data);
     };
 
-    console.log(currentPage)
-    console.log(data)
     fetchData();
   }, [currentPage]);
 
@@ -68,7 +66,6 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -76,8 +73,8 @@ const TableCategories = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
+          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
-          console.log(res.data)
           setData(res.data.data);
 
           setTotalPages(res.data.totalPages);
