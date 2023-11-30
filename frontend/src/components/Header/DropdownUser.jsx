@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import auth from "@/data/auth";
 import user from "@/data/user";
+import axios from "axios";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -65,13 +66,22 @@ const DropdownUser = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          const res = await auth.logout();
+          const token = Cookies.get("token");
+          const res = await axios.delete(
+            "http://localhost:8000/api/v1/logout/",
+            {
+              headers: {
+                "content-type": "application/json; charset=utf=UTF-8",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
-          localStorage.setItem("isLoggedIn", false);
           localStorage.removeItem("sidebar-expanded");
+          localStorage.removeItem("isLoggedIn", false);
           localStorage.removeItem("color-theme");
 
           Swal.fire({
@@ -240,3 +250,7 @@ const DropdownUser = () => {
   );
 };
 export default DropdownUser;
+
+
+
+

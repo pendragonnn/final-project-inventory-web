@@ -9,21 +9,33 @@ const TableCategories = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory(currentPage, size);
-      setTotalPages(res.data.totalPages)
-      setTotalItems(res.data.totalItems)
+      const res = await Category.getCategory(currentPage, size, searchTerm);
+      setTotalPages(res.data.totalPages);
+      setTotalItems(res.data.totalItems);
       setData(res.data.data);
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, searchTerm]);
+
+  useEffect(() => {
+    setCurrentPage(currentPage); // Reset halaman saat pencarian berubah
+    const fetchData = async () => {
+      const res = await Category.getCategory(currentPage, size, searchTerm);
+      setTotalPages(res.data.totalPages);
+      setTotalItems(res.data.totalItems);
+      setData(res.data.data);
+    };
+
+    fetchData();
+  }, [searchTerm]);
 
   const handleAdd = async () => {
     const res = await Category.getCategory(currentPage, size);
@@ -85,7 +97,7 @@ const TableCategories = () => {
           if (res.data.totalItems % (size * res.data.totalPages) <= size) {
             paginationHandle(currentPage - 1);
           } else {
-            paginationHandle(res.data.currentPage)
+            paginationHandle(res.data.currentPage);
           }
         }
       } catch (e) {
@@ -102,17 +114,15 @@ const TableCategories = () => {
   };
 
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+    setCurrentPage(currentPage);
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const filteredData = data.filter((category) => {
-    return (
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return category.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -264,18 +274,17 @@ const TableCategories = () => {
           </tbody>
         </table>
         <div className="join float-right m-2">
-          {
-            Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`join-item btn btn-outline btn-default ${index === currentPage - 1 ? 'btn btn-active btn-primary' : ''
-                  }`}
-                onClick={() => paginationHandle(index + 1, totalPages)}
-              >
-                {index + 1}
-              </button>
-            ))
-          }
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`join-item btn btn-outline btn-default ${
+                index === currentPage - 1 ? "btn btn-active btn-primary" : ""
+              }`}
+              onClick={() => paginationHandle(index + 1, totalPages)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
     </div>

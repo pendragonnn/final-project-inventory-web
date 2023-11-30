@@ -39,9 +39,9 @@ const SignIn = () => {
       });
 
       // const inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
-      Cookies.set("token", res.data.token, { expires: 1 });
-      Cookies.set("role", res.data.role, { expires: 1 });
-      Cookies.set("userId", res.data.userId, { expires: 1 });
+      Cookies.set("token", res.data.token);
+      Cookies.set("role", res.data.role);
+      Cookies.set("userId", res.data.userId);
       localStorage.setItem("isLoggedIn", true);
 
       router.push("/dashboard");
