@@ -9,51 +9,24 @@ const TableCategories = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-<<<<<<< HEAD
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-=======
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
-  const [allData, setAllData] = useState([])
->>>>>>> 07ef759a7a14e8c37dba2d5f9e8bba91f337acf1
+  const [allData, setAllData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-<<<<<<< HEAD
-      const res = await Category.getCategory(currentPage, size, searchTerm);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
-=======
       const res = await Category.getCategory(currentPage, size);
       const allRes = await Category.getCategory(1, res.data.totalItems);
-      setAllData(allRes.data.data)
-      setTotalPages(res.data.totalPages)
-      setTotalItems(res.data.totalItems)
->>>>>>> 07ef759a7a14e8c37dba2d5f9e8bba91f337acf1
-      setData(res.data.data);
-    };
-
-    fetchData();
-<<<<<<< HEAD
-  }, [currentPage, searchTerm]);
-
-  useEffect(() => {
-    setCurrentPage(currentPage); // Reset halaman saat pencarian berubah
-    const fetchData = async () => {
-      const res = await Category.getCategory(currentPage, size, searchTerm);
+      setAllData(allRes.data.data);
       setTotalPages(res.data.totalPages);
       setTotalItems(res.data.totalItems);
       setData(res.data.data);
     };
 
     fetchData();
-  }, [searchTerm]);
-=======
   }, [currentPage, update]);
->>>>>>> 07ef759a7a14e8c37dba2d5f9e8bba91f337acf1
 
   const handleAdd = async () => {
     const res = await Category.getCategory(currentPage, size);
@@ -72,7 +45,6 @@ const TableCategories = () => {
     updatedData[indexToUpdate] = updatedCategory[0];
 
     setData([...updatedData]);
-    setUpdate(true)
   };
 
   const handleEdit = async (id) => {
@@ -98,15 +70,14 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000
           });
+          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
           setData(res.data.data);
 
@@ -114,7 +85,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -141,17 +112,11 @@ const TableCategories = () => {
     setSearchTerm(event.target.value);
   };
 
-<<<<<<< HEAD
-  const filteredData = data.filter((category) => {
-    return category.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-=======
   const filteredData = searchTerm
-  ? allData.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  : data;
->>>>>>> 07ef759a7a14e8c37dba2d5f9e8bba91f337acf1
+    ? allData.filter((category) =>
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -301,31 +266,17 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-<<<<<<< HEAD
-        <div className="join float-right m-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              className={`join-item btn btn-outline btn-default ${
-                index === currentPage - 1 ? "btn btn-active btn-primary" : ""
-              }`}
-              onClick={() => paginationHandle(index + 1, totalPages)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-=======
         {totalPages > 3 ? (
           <div className="join float-right w-40 m-2 overflow-x-scroll border">
             {!searchTerm &&
               Array.from({ length: totalPages }, (_, index) => (
                 <button
                   key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                    }`}
+                  className={`join-item btn btn-outline btn-default ${
+                    index === currentPage - 1
+                      ? "btn btn-active btn-primary"
+                      : ""
+                  }`}
                   onClick={() => paginationHandle(index + 1, totalPages)}
                 >
                   {index + 1}
@@ -338,10 +289,11 @@ const TableCategories = () => {
               Array.from({ length: totalPages }, (_, index) => (
                 <button
                   key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                    }`}
+                  className={`join-item btn btn-outline btn-default ${
+                    index === currentPage - 1
+                      ? "btn btn-active btn-primary"
+                      : ""
+                  }`}
                   onClick={() => paginationHandle(index + 1, totalPages)}
                 >
                   {index + 1}
@@ -349,7 +301,6 @@ const TableCategories = () => {
               ))}
           </div>
         )}
->>>>>>> 07ef759a7a14e8c37dba2d5f9e8bba91f337acf1
       </div>
     </div>
   );
