@@ -114,11 +114,20 @@ const TableCategories = () => {
     setSearchTerm(event.target.value);
   };
 
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1)
+    // console.log(currentPage)
+  }
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1)
+  }
+
   const filteredData = searchTerm
-  ? allData.filter((category) =>
+    ? allData.filter((category) =>
       category.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  : data;
+    : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -268,37 +277,67 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        {totalPages > 3 ? (
-          <div className="join float-right w-40 m-2 overflow-x-scroll border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+        {totalPages > 3 && !searchTerm ? (
+          <div className="items-center float-right">
+            {currentPage !== 1 && (
+              <button className="btn btn-outline btn-default" onClick={() => onPaginationPrevious(currentPage)}>
+                Previous
+              </button>
+            )
+            }
+            <div className="join enter-item w-40 m-2 overflow-x-scroll border">
+              {
+                Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    className={`join-item btn btn-outline btn-default ${index === currentPage - 1
                       ? 'btn btn-active btn-primary'
                       : ''
-                    }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+                      }`}
+                    onClick={() => paginationHandle(index + 1, totalPages)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+            </div>
+            {currentPage !== totalPages && (
+              <button className="join-item btn btn-outline btn-default" onClick={() => onPaginationNext(currentPage)}>
+                Next
+              </button>
+            )
+            }
           </div>
         ) : (
-          <div className="join float-right  m-2 border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+          <div className="items-center float-right">
+            {currentPage !== 1 && (
+              <button className="btn btn-outline btn-default" onClick={() => onPaginationPrevious(currentPage)}>
+                Previous
+              </button>
+            )
+            }
+
+            <div className="join m-2 border">
+              {!searchTerm &&
+                Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    className={`join-item btn btn-outline btn-default ${index === currentPage - 1
                       ? 'btn btn-active btn-primary'
                       : ''
-                    }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+                      }`}
+                    onClick={() => paginationHandle(index + 1, totalPages)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+            </div>
+            
+            {currentPage !== totalPages && (
+              <button className="join-item btn btn-outline btn-default" onClick={() => onPaginationNext(currentPage)}>
+                Next
+              </button>
+            )
+            }
           </div>
         )}
       </div>
