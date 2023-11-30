@@ -370,8 +370,6 @@ const TableItems = () => {
                       className="w-full h-full object-contain "
                       
                     />
-                    
-          
           </div>
           
         </div>

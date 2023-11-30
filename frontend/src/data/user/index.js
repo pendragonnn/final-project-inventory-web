@@ -7,7 +7,7 @@ const headers = {
   Authorization: `Bearer ${token}`,
 };
 
-const getUsers = async (page, size) => {
+const getUsers = async (page = null, size = 100) => {
   const result = await axios.get("http://localhost:8000/api/v1/user", {
     headers: headers,
     params: {

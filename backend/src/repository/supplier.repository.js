@@ -24,7 +24,7 @@ const findSupplierById = async (id) => {
 const findSupplierByName = async (name) => {
   const supplier = await Suppliers.findOne({
     where: {
-      name,
+      name: name,
     },
     returning: true,
   });
@@ -69,27 +69,45 @@ function generateNewId(existingIds) {
   }, 0);
 
   const newNumber = maxNumber + 1;
-  const newId = `S-${String(newNumber).padStart(4, "0")}`;
+  const newId = `O-${String(newNumber).padStart(4, "0")}`;
 
   return newId;
 }
 
-const editSupplier = async (id, supplierData) => {
-  const updatedSuppliers = await Suppliers.update(
-    {
-      name: supplierData.name,
-      address: supplierData.address,
-      phone: supplierData.phone,
-    },
-    {
-      where: {
-        id: id,
-      },
-      returning: true,
-    }
-  );
+const editSupplier = async (id, updatedFields) => {
+  const { name, address, phone } = updatedFields;
+  const supplier = await Suppliers.findByPk(id);
 
-  return updatedSuppliers;
+  if (!supplier) {
+    throw new Error("Supplier not found");
+  }
+
+  const updatedData = {};
+
+  if (name !== undefined && name !== supplier.name) {
+    updatedData.name = name;
+  }
+
+  if (address !== undefined) {
+    updatedData.address = address;
+  }
+
+  if (phone !== undefined && phone !== supplier.phone) {
+    updatedData.phone = phone;
+  }
+
+  if (Object.keys(updatedData).length === 0) {
+    return supplier;
+  }
+
+  const updatedSuppliers = await Suppliers.update(updatedData, {
+    where: {
+      id: id,
+    },
+    returning: true,
+  });
+
+  return updatedSuppliers[1][0];
 };
 
 const deleteSupplier = async (id) => {
