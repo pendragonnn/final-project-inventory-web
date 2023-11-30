@@ -13,7 +13,7 @@ const allCategories = async (req, res) => {
     const { categories, dataLength } = await getAllCategories(page, size);
     res.status(200).json({ 
       data: categories,
-      totalItems: categories.length,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size)
     })

@@ -25,13 +25,17 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
     try {
       const { name: newName, address: newAddress, phone: newPhone } = formData;
 
-      // Memeriksa apakah ada perubahan pada name dan address
-      if (data?.data?.name !== newName || data?.data?.phone !== newPhone) {
+      if (
+        data?.data?.name !== newName ||
+        data?.data?.address !== newAddress ||
+        data?.data?.phone !== newPhone
+      ) {
         const res = await Outlet.updateOutlet(data.data.id, {
           name: newName,
           address: newAddress,
           phone: newPhone,
         });
+        console.log(res);
 
         Swal.fire({
           position: "bottom-end",
@@ -46,23 +50,12 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
 
           setFormData({ name: "", address: "", phone: "" });
         });
-      } else {
-        // Tidak ada perubahan pada name dan address
-        // Tambahkan pesan atau tindakan yang sesuai di sini, misalnya:
-        Swal.fire({
-          position: "bottom-end",
-          icon: "info",
-          title: "No changes made.",
-          showConfirmButton: false,
-          timer: 2000,
-          customClass: "swal-custom",
-        });
       }
     } catch (e) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: "Data is already",
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
