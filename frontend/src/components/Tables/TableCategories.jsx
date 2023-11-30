@@ -112,6 +112,15 @@ const TableCategories = () => {
     setSearchTerm(event.target.value);
   };
 
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+    // console.log(currentPage)
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
+  };
+
   const filteredData = searchTerm
     ? allData.filter((category) =>
         category.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -266,10 +275,18 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        {totalPages > 3 ? (
-          <div className="join float-right w-40 m-2 overflow-x-scroll border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
+        {totalPages > 3 && !searchTerm ? (
+          <div className="items-center float-right">
+            {currentPage !== 1 && (
+              <button
+                className="btn btn-outline btn-default"
+                onClick={() => onPaginationPrevious(currentPage)}
+              >
+                Previous
+              </button>
+            )}
+            <div className="join enter-item w-40 m-2 overflow-x-scroll border">
+              {Array.from({ length: totalPages }, (_, index) => (
                 <button
                   key={index}
                   className={`join-item btn btn-outline btn-default ${
@@ -282,23 +299,52 @@ const TableCategories = () => {
                   {index + 1}
                 </button>
               ))}
+            </div>
+            {currentPage !== totalPages && (
+              <button
+                className="join-item btn btn-outline btn-default"
+                onClick={() => onPaginationNext(currentPage)}
+              >
+                Next
+              </button>
+            )}
           </div>
         ) : (
-          <div className="join float-right  m-2 border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${
-                    index === currentPage - 1
-                      ? "btn btn-active btn-primary"
-                      : ""
-                  }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+          <div className="items-center float-right">
+            {currentPage !== 1 && (
+              <button
+                className="btn btn-outline btn-default"
+                onClick={() => onPaginationPrevious(currentPage)}
+              >
+                Previous
+              </button>
+            )}
+
+            <div className="join m-2 border">
+              {!searchTerm &&
+                Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    className={`join-item btn btn-outline btn-default ${
+                      index === currentPage - 1
+                        ? "btn btn-active btn-primary"
+                        : ""
+                    }`}
+                    onClick={() => paginationHandle(index + 1, totalPages)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+            </div>
+
+            {currentPage !== totalPages && (
+              <button
+                className="join-item btn btn-outline btn-default"
+                onClick={() => onPaginationNext(currentPage)}
+              >
+                Next
+              </button>
+            )}
           </div>
         )}
       </div>
