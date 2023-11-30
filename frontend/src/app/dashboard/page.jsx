@@ -9,8 +9,6 @@ import CardDataStats from "@/components/CardDataStats";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Loader from "@/components/common/Loader";
-// import Map from "../Maps/TestMap";
-// without this the component renders on server and throws an error
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 const MapOne = dynamic(() => import("@/components/Maps/MapOne"), {

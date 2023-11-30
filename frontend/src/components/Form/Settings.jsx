@@ -13,51 +13,6 @@ const Settings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
 
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3C50E0",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Logout",
-      customClass: "swal-custom",
-    }).then(async (result) => {
-      try {
-        if (result.isConfirmed) {
-          const res = await auth.logout();
-
-          Cookies.remove("token");
-          Cookies.remove("role");
-          Cookies.remove("userId");
-          localStorage.setItem("isLoggedIn", false);
-          localStorage.removeItem("sidebar-expanded");
-          localStorage.removeItem("color-theme");
-
-          Swal.fire({
-            position: "bottom-end",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 1000,
-            customClass: "swal-custom-auth-success",
-          });
-          router.push("/");
-        }
-      } catch (e) {
-        Swal.fire({
-          position: "bottom-end",
-          icon: "error",
-          title: e.message,
-          showConfirmButton: false,
-          timer: 3000,
-          customClass: "swal-custom-auth-error",
-        });
-      }
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {

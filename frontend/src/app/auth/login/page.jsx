@@ -148,12 +148,9 @@ const SignIn = () => {
               />
             </div>
 
-            <div className="mt-6 text-center text-white font-light">
-              <p>
-                Don’t have any account?{" "}
-                <Link href={"/auth/signup"} className="underline">
-                  Sign Up
-                </Link>
+            <div className="mt-6 text-center">
+              <p className="text-white hover:text-primary font-light">
+                <Link href={"/auth/password"}>Forgot your password?</Link>
               </p>
             </div>
           </form>
