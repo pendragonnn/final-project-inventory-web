@@ -26,7 +26,7 @@ const TableCategories = () => {
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, update]);
 
   const handleAdd = async () => {
     const res = await Category.getCategory(currentPage, size);
@@ -45,6 +45,7 @@ const TableCategories = () => {
     updatedData[indexToUpdate] = updatedCategory[0];
 
     setData([...updatedData]);
+    setUpdate(true)
   };
 
   const handleEdit = async (id) => {
@@ -86,7 +87,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage)
