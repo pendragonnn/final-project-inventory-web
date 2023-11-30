@@ -40,32 +40,27 @@ const insertOutlet = async (newOutlet) => {
 
 const editOutletById = async (id, newOutlet) => {
   try {
+    const existingOutlet = await getOutletById(id);
+
+    if (!existingOutlet) {
+      throw new Error("Outlet Not Found");
+    }
+
     const outletName = await findOutletByName(newOutlet.name);
     const outletPhone = await findOutletByPhone(newOutlet.phone);
 
-    if(outletName) {
+    if (outletName && outletName.id !== id) {
       throw new Error("Outlet Name Already Added");
     }
-    if(outletPhone) {
+
+    if (outletPhone && outletPhone.id !== id) {
       throw new Error("Outlet Phone Already Added");
     }
 
-    await getOutletById(id);
-
-    const outlet = await editOutlet(id, newOutlet);
-    return outlet;
+    const updatedOutlet = await editOutlet(id, newOutlet);
+    return updatedOutlet;
   } catch (err) {
-    return null;
-  }
-};
-
-const deleteOutletById = async (id) => {
-  try {
-    await getOutletById(id);
-
-    await deleteOutlet(id);
-  } catch (err) {
-    throw err;
+    throw new Error(err.message);
   }
 };
 
@@ -74,5 +69,4 @@ module.exports = {
   getOutletById,
   insertOutlet,
   editOutletById,
-  deleteOutletById,
 };

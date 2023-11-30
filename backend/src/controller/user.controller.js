@@ -17,13 +17,12 @@ const allUsers = async (req, res) => {
     const { users, dataLength } = await getAllUsers(page, size);
     res.status(200).json({
       data: users,
-      totalItems: users.length,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -49,7 +48,7 @@ const postUser = async (req, res) => {
 
     res.status(200).json({ data: user, message: "Successful Adding User" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "User Email Already Added" });
   }
 };
 

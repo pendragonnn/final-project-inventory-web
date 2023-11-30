@@ -1,42 +1,58 @@
 import React from "react";
 import Swal from "sweetalert2";
 import Category from "@/data/category/index";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const ModalEditCategory = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
 
+  const [formData, setFormData] = useState({
+    name: data?.data?.name || "",
+  });
+
+  useEffect(() => {
+    setFormData({
+      name: data?.data?.name || "",
+    });
+  }, [data]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await Category.updateCategory(data.data.id, {
-        name: e.target.name.value,
-      });
+      const { name: newName } = formData;
 
-      Swal.fire({
-        position: "bottom-end",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      }).then(() => {
-        addToTable(res.data.data[1]);
-        modalCheckbox.current.checked = false;
-      });
+      if (
+        data?.data?.name !== newName
+      ) {
+        const res = await Category.updateCategory(data.data.id, {
+          name: newName,
+        });
+
+        Swal.fire({
+          position: "bottom-end",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        }).then(() => {
+          addToTable(res.data.data[1]);
+          modalCheckbox.current.checked = false;
+
+          setFormData({ name: "" });
+        });
+      }
     } catch (e) {
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: e.message,
+        title: "Data is already",
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       });
     }
   };
-
-  console.log(data);
 
   return (
     <>
@@ -70,7 +86,10 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="name"
-                    defaultValue={data?.data?.name}
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Enter Category Name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
