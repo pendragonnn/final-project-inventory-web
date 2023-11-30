@@ -18,7 +18,7 @@ const TableCategories = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await Category.getCategory(currentPage, size);
-      const allRes = await Category.getCategory();
+      const allRes = await Category.getCategory(1, res.data.totalItems);
       setAllData(allRes.data.data)
       setTotalPages(res.data.totalPages)
       setTotalItems(res.data.totalItems)
@@ -268,19 +268,39 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        <div className="join float-right m-2">
-          {!searchTerm &&
-            Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`join-item btn btn-outline btn-default ${index === currentPage - 1 ? 'btn btn-active btn-primary' : ''
-                  }`}
-                onClick={() => paginationHandle(index + 1, totalPages)}
-              >
-                {index + 1}
-              </button>
-            ))}
-        </div>
+        {totalPages > 3 ? (
+          <div className="join float-right w-40 m-2 overflow-x-scroll border">
+            {!searchTerm &&
+              Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+                      ? 'btn btn-active btn-primary'
+                      : ''
+                    }`}
+                  onClick={() => paginationHandle(index + 1, totalPages)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+          </div>
+        ) : (
+          <div className="join float-right  m-2 border">
+            {!searchTerm &&
+              Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+                      ? 'btn btn-active btn-primary'
+                      : ''
+                    }`}
+                  onClick={() => paginationHandle(index + 1, totalPages)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -4,19 +4,30 @@ import { useEffect, useState } from "react";
 import ModalAddItem from "../Modal/Item/ModalAddItem";
 import ModalEditItem from "../Modal/Item/ModalEditItem";
 import Item from "@/data/item/index";
+import item from "@/data/item/index";
 
 const TableItems = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
+  const [image , setItemImageUrl] = useState(null)
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [imageModal, setImageModalUrl] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [preventClose, setPreventClose] = useState(false);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await Item.getItem();
       setData(res.data.data);
+      const image = await item.getItemImageUrl(imgUrl);
+      setItemImageUrl(image.data.data);
     };
 
     fetchData();
   }, []);
+
+
 
   const handleAdd = async (newItem) => {
     const newData = await [...data, newItem];
@@ -39,6 +50,9 @@ const TableItems = () => {
     const res = await Item.getItem();
     setData(res.data.data);
   };
+
+
+ 
 
   const handleEdit = async (id) => {
     try {
@@ -87,7 +101,38 @@ const TableItems = () => {
     });
   };
 
+
+
+  const openModal = (imageUrl) => {
+    setModalOpen(true);
+    setImageModalUrl(imageUrl);
+   
+  };
+
+  const closeModal = () => {
+    if (!preventClose) {
+      setModalOpen(false);
+    }
+  };
+  const handleImageClick = () => {
+    // Prevent the modal from closing when clicking on the image
+    setPreventClose(true);
+  };
+  // const handleZoom = (event) => {
+   
+  //   const delta = event.deltaY;
+  //   const newZoomLevel = zoomLevel + (delta > 0 ? -0.1 : 0.1);
+
+  //   // Limit the zoom level within a reasonable range
+  //   if (newZoomLevel >= 0.5 && newZoomLevel <= 2) {
+  //     setZoomLevel(newZoomLevel);
+  //   }
+  // };
+  
+
+
   return (
+    <>
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="max-w-full overflow-x-auto">
         <div className="p-4 md:p-6 xl:p-9">
@@ -169,19 +214,13 @@ const TableItems = () => {
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">{item.stock}</p>
                 </td>
-                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p
-                    className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                      Item.status === "Paid"
-                        ? "text-success bg-success"
-                        : Item.status === "Unpaid"
-                        ? "text-danger bg-danger"
-                        : "text-warning bg-warning"
-                    }`}
-                  >
-                    {item.image_url}
-                  </p>
-                  {/* <Image w={24} h={24} src={`http://localhost:8000/api/v1/item/upload`} /> */}
+                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                  <div className="p-2.5 xl:p-5"  onClick={() => openModal(item.image_url)}>
+                    <img
+                      src={`uploads/item/${item.image_url}`}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  </div>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
@@ -248,7 +287,34 @@ const TableItems = () => {
           </tbody>
         </table>
       </div>
+
+
     </div>
+
+    {isModalOpen && (
+        <div className="fixed inset-0 w-full min-w-full md:w-full bg-black bg-opacity-50 flex items-center justify-center "  >
+          <div className="fixed bg-white w-[50rem] h-[30rem] rounded shadow-md" 
+
+         
+          
+         >
+          <div className="p-0">
+          <button className="absolute z-999 ml-[90%] mt-3 btn border-white px-6 py-2 bg-white border-none text-black2 shadow-8 " onClick={closeModal}>
+
+         <span className="font-bold text-lg">X</span>
+          </button>
+            
+          </div>
+          <img  
+                      src={`uploads/item/${imageModal}`}
+                      className="w-full h-full object-contain "
+                      
+                    />
+          </div>
+          
+        </div>
+      )}
+    </>
   );
 };
 export default TableItems;

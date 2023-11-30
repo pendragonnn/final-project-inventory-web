@@ -7,7 +7,7 @@ const headers = {
   Authorization: `Bearer ${token}`,
 };
 
-const getCategory = async (page = null, size = 100) => {
+const getCategory = async (page, size) => {
   const result = await axios.get("http://localhost:8000/api/v1/category", {
     headers: headers,
     params: {

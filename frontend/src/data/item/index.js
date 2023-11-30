@@ -43,22 +43,62 @@ const updateItem = async (id, data) => {
   return result;
 };
 
-const deleteItem = async (id) => {
-  const result = await axios.delete(`http://localhost:8000/api/v1/item/${id}`, {
+const deleteItem = async (id, data) => {
+  const result = await axios.delete(`http://localhost:8000/api/v1/item/${id}`,
+
+  {
     headers: headers,
-  });
+  }
+  );
 
   return result;
 };
 
-const uploadItem = async (id) => {
+const uploadItem = async (id, formData) => {
   const result = await axios.post(
     `http://localhost:8000/api/v1/item/upload/${id}`,
+    formData,
     {
-      headers: headers,
+      headers: {
+        ...headers,
+        "Content-Type": "multipart/form-data",
+      },
     }
   );
   return result;
+};
+
+function getItemImageUrl(imageUrl) {
+  return {
+    src: `http://localhost:8000/api/v1/item/upload/${imageUrl}`,
+    headers: headers,
+  };
+}
+
+
+const addItem2 = async () => {
+  try {
+    const itemWithoutImage = {
+      name: e.target.name.value,
+      description: e.target.description.value,
+      category_id: e.target.category_id.value,
+      price: e.target.price.value,
+      stock: e.target.stock.value,
+    };
+
+    const result = await axios.post(
+      "http://localhost:8000/api/v1/item",
+      itemWithoutImage,
+      {
+        headers: headers,
+      }
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error; 
+  }
 };
 
 export default {
@@ -68,4 +108,6 @@ export default {
   updateItem,
   deleteItem,
   uploadItem,
+  addItem2,
+  getItemImageUrl
 };
