@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import UserData from "@/data/user/index";
+
 import Cookies from "js-cookie";
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
@@ -13,6 +14,8 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
+    
+    console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
 

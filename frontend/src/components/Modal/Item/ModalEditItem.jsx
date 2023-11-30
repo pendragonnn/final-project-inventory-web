@@ -7,9 +7,12 @@ import Item from "@/data/item/index";
 
 const ModalEditItem = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
-  const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [dataItem, setDataItem] = useState([]);
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,24 +25,42 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await Item.updateItem(data.data.id, {
+      const itemWithoutImage = {
         name: e.target.name.value,
         description: e.target.description.value,
         category_id: e.target.category_id.value,
         price: e.target.price.value,
         stock: e.target.stock.value,
-      });
+      };
 
-      Swal.fire({
+      const responsItem = await Item.updateItem(data?.data?.id,itemWithoutImage);
+      console.log(responsItem);
+      console.log(responsItem);
+     
+      // Retrieve user ID from the response
+      console.log(data.data.id);
+      if (file) { // Pemeriksaan file yang dipilih
+        const itemId = responsItem.data.data.id;
+
+        const formData = new FormData();
+
+ 
+        formData.append("image_url", file);
+
+        const responsGambar = await Item.uploadItem(data?.data?.id,formData);
+
+      
+      }     Swal.fire({
         position: "bottom-end",
         icon: "success",
-        title: res.data.message,
+        title: responsItem.data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       }).then(() => {
-        addToTable(res.data.data[1]);
+        addToTable(responsItem.data.data[1]);
         modalCheckbox.current.checked = false;
       });
     } catch (e) {
@@ -54,23 +75,9 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     }
   };
 
-  useEffect(() => {
-    if (Item?.image_url) {
-      const file = new File([], Item.image_url, { type: "image/*" });
-      setSelectedImage(URL.createObjectURL(file));
-      fileInputRef.current.value = "";
-    }
-  }, [Item]);
 
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-  }
 
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-  }
+ 
 
   return (
     <>
@@ -167,8 +174,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     defaultValue={data?.data?.stock}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    // max={12}
-                    // min={11}
+                  
                   />
                 </div>
                 <div className="mb-4.5">
@@ -182,15 +188,11 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     accept="image/*"
                     defaultValue={data?.data?.image_url}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={handleFileChange}
                     required
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    // max={12}
-                    // min={11}
+                   
                   />
-                  {selectedImage && (
-                    <img src={selectedImage} alt="Selected Image" />
-                  )}
+               
                 </div>
 
                 <input
@@ -207,4 +209,4 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditItem;
+export default ModalEditItem; 
