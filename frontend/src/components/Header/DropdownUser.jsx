@@ -80,7 +80,7 @@ const DropdownUser = () => {
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
-          localStorage.removeItem("isloggedin");
+          localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("sidebar-expanded");
           localStorage.removeItem("color-theme");
 
