@@ -1,3 +1,4 @@
+const { log } = require("console");
 const {
   getAllItems,
   getItemById,
@@ -6,7 +7,6 @@ const {
   deleteItemById,
   updateItemPhoto,
 } = require("../service/item.service");
-const fs = require("fs");
 
 const allItems = async (req, res) => {
   const page = req.query.page || 1;
@@ -89,9 +89,16 @@ const removeItem = async (req, res) => {
 };
 
 const uploadItemPhoto = async (req, res) => {
+  console.log("tesssss");
+ 
   try {
     const id = req.params.id;
     const item = await getItemById(id);
+    console.log("Request Body:", req.body);
+    console.log("Request File:", req.file);
+
+    // Penahan tempat: Implementasikan logika untuk mengambil item berdasarkan ID dari database
+
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
@@ -101,17 +108,19 @@ const uploadItemPhoto = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const image_url = req.file.path;
+    const image_url = req.file.filename;
+    
+    console.log(image_url);
 
-    const updatedUser = await updateItemPhoto(id, image_url);
+    // Penahan tempat: Implementasikan logika untuk memperbarui foto item di database
+    const updatedItem = await updateItemPhoto(id, image_url);
 
-    res
-      .status(200)
-      .json({ message: "User photo updated successfully", data: updatedUser });
+    res.status(200).json({ message: "Item photo updated successfully", data: updatedItem });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 module.exports = {
   allItems,

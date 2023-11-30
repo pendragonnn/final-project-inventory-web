@@ -10,6 +10,8 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleFileChange = (e) => {
+    
+    console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
 
