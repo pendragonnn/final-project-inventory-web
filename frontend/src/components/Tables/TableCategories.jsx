@@ -26,7 +26,7 @@ const TableCategories = () => {
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, update]);
 
   const handleAdd = async () => {
     const res = await Category.getCategory(currentPage, size);
@@ -45,6 +45,7 @@ const TableCategories = () => {
     updatedData[indexToUpdate] = updatedCategory[0];
 
     setData([...updatedData]);
+    setUpdate(true)
   };
 
   const handleEdit = async (id) => {
