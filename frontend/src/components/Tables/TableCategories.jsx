@@ -11,12 +11,15 @@ const TableCategories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
+  const [allData, setAllData] = useState([])
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await Category.getCategory(currentPage, size);
+      const allRes = await Category.getCategory();
+      setAllData(allRes.data.data)
       setTotalPages(res.data.totalPages)
       setTotalItems(res.data.totalItems)
       setData(res.data.data);
@@ -67,14 +70,15 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
+          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
+            timer: 2000
           });
-          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
           setData(res.data.data);
 
@@ -109,11 +113,11 @@ const TableCategories = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = data.filter((category) => {
-    return (
+  const filteredData = searchTerm
+  ? allData.filter((category) =>
       category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+    )
+  : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -264,7 +268,7 @@ const TableCategories = () => {
           </tbody>
         </table>
         <div className="join float-right m-2">
-          {
+          {!searchTerm &&
             Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index}
@@ -274,8 +278,7 @@ const TableCategories = () => {
               >
                 {index + 1}
               </button>
-            ))
-          }
+            ))}
         </div>
       </div>
     </div>
