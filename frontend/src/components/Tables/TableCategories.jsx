@@ -11,19 +11,22 @@ const TableCategories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
+  const [allData, setAllData] = useState([])
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await Category.getCategory(currentPage, size);
+      const allRes = await Category.getCategory(1, res.data.totalItems);
+      setAllData(allRes.data.data)
       setTotalPages(res.data.totalPages)
       setTotalItems(res.data.totalItems)
       setData(res.data.data);
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, update]);
 
   const handleAdd = async () => {
     const res = await Category.getCategory(currentPage, size);
@@ -33,7 +36,7 @@ const TableCategories = () => {
     setCurrentPage(res.data.currentPage);
   };
 
-  const handleEditData = (updatedCategory) => {
+  const handleEditData = async (updatedCategory) => {
     let updatedData = [...data];
     const indexToUpdate = updatedData.findIndex(
       (item) => item.id === updatedCategory[0].id
@@ -42,6 +45,7 @@ const TableCategories = () => {
     updatedData[indexToUpdate] = updatedCategory[0];
 
     setData([...updatedData]);
+    setUpdate(true)
   };
 
   const handleEdit = async (id) => {
@@ -67,14 +71,15 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
+          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
+            timer: 2000
           });
-          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
           setData(res.data.data);
 
@@ -82,7 +87,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage)
@@ -109,11 +114,11 @@ const TableCategories = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = data.filter((category) => {
-    return (
+  const filteredData = searchTerm
+  ? allData.filter((category) =>
       category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+    )
+  : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -263,20 +268,39 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        <div className="join float-right m-2">
-          {
-            Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`join-item btn btn-outline btn-default ${index === currentPage - 1 ? 'btn btn-active btn-primary' : ''
-                  }`}
-                onClick={() => paginationHandle(index + 1, totalPages)}
-              >
-                {index + 1}
-              </button>
-            ))
-          }
-        </div>
+        {totalPages > 3 ? (
+          <div className="join float-right w-40 m-2 overflow-x-scroll border">
+            {!searchTerm &&
+              Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+                      ? 'btn btn-active btn-primary'
+                      : ''
+                    }`}
+                  onClick={() => paginationHandle(index + 1, totalPages)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+          </div>
+        ) : (
+          <div className="join float-right  m-2 border">
+            {!searchTerm &&
+              Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
+                      ? 'btn btn-active btn-primary'
+                      : ''
+                    }`}
+                  onClick={() => paginationHandle(index + 1, totalPages)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );
