@@ -12,8 +12,11 @@ const TableItems = () => {
   const [image , setItemImageUrl] = useState(null)
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [preventClose, setPreventClose] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
+  const [searchTerm, setSearchTerm] = useState("");
+  const size = 10;
   
 
   useEffect(() => {
@@ -22,6 +25,15 @@ const TableItems = () => {
       setData(res.data.data);
       const image = await item.getItemImageUrl(imgUrl);
       setItemImageUrl(image.data.data);
+      setTotalPages(res.data.totalPages);
+      setTotalItems(res.data.totalItems);
+      setCurrentPage(res.data.currentPage);
+
+      if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+        paginationHandle(currentPage - 1);
+      } else {
+        paginationHandle(res.data.currentPage)
+      }
     };
 
     fetchData();
@@ -110,24 +122,29 @@ const TableItems = () => {
   };
 
   const closeModal = () => {
-    if (!preventClose) {
+    
       setModalOpen(false);
-    }
+    
   };
-  const handleImageClick = () => {
-    // Prevent the modal from closing when clicking on the image
-    setPreventClose(true);
-  };
-  // const handleZoom = (event) => {
-   
-  //   const delta = event.deltaY;
-  //   const newZoomLevel = zoomLevel + (delta > 0 ? -0.1 : 0.1);
 
-  //   // Limit the zoom level within a reasonable range
-  //   if (newZoomLevel >= 0.5 && newZoomLevel <= 2) {
-  //     setZoomLevel(newZoomLevel);
-  //   }
-  // };
+  
+  const paginationHandle = async (currentPage) => {
+    setCurrentPage(currentPage)
+  }
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredData = data.filter((item) => {
+    const nameMatch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryMatch = item?.Category?.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const stockMatch = item.stock.toString().includes(searchTerm.toLowerCase());
+    const priceMatch = item.price.toString().includes(searchTerm.toLowerCase());
+  
+    return nameMatch || categoryMatch || stockMatch || priceMatch;
+  });
+ 
+
   
 
 
@@ -164,6 +181,34 @@ const TableItems = () => {
               />
             </a>
           </div>
+           {/* Kotak pencarian */}
+           <div className="relative mt-2">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="border dark:text-black bg-white border-dark rounded-md px-3 py-2 focus:outline-none focus:border-primary w-30 md:w-45 xl:w-80"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+            </span>
+          </div>
+          {/* Akhir kotak pencarian */}
         </div>
         <table className="w-full table-auto">
           <thead>
@@ -192,7 +237,19 @@ const TableItems = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, key) => (
+            {filteredData.lengh === 0 ?(
+              <tr>
+              <td
+                colSpan="4"
+                className="text-center text-xl font-bold italic py-4 text-danger"
+              >
+                Data not found.
+              </td>
+            </tr>
+
+            ):(
+              
+           filteredData.map((item, key) => (
               <tr key={key}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white"></h5>
@@ -278,6 +335,7 @@ const TableItems = () => {
                   </div>
                 </td>
               </tr>
+                )
             ))}
             <ModalEditItem
               data={update}
@@ -286,6 +344,8 @@ const TableItems = () => {
             />
           </tbody>
         </table>
+       
+      
       </div>
 
 
