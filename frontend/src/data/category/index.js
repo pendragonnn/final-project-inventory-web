@@ -15,7 +15,6 @@ const getCategory = async (page, size) => {
       size: size
     }
   });
-
   return result;
 };
 

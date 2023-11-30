@@ -8,7 +8,7 @@ const {
 
 const allSuppliers = async (req, res) => {
   const page = req.query.page || 1;
-  const size = req.query.size || 10;
+  const size = req.query.size || 100;
   try {
     const { suppliers, dataLength } = await getAllSuppliers(page, size);
     res.status(200).json({
@@ -45,7 +45,7 @@ const postSupplier = async (req, res) => {
 
     res
       .status(200)
-      .json({ data: supplier, message: "Successful Adding Supplier" });
+      .json({ data: supplier, message: "Successful Adding Supplier!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

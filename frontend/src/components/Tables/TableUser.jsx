@@ -1,6 +1,7 @@
 "use client";
 import ModalUserAdd from "../Modal/user/ModalAddUser";
 import ModalEditUser from "../Modal/User/ModalEditUser";
+import ModalImageUser from "../Modal/User/ModalImageUser"; // Import the ModalUserProfile component
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import UserData from "@/data/user/index";
@@ -9,24 +10,27 @@ const TableUser = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [userImageUrl, setUserImageUrl] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allData, setAllData] = useState([])
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserImage, setSelectedUserImage] = useState("");
+  const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await UserData.getUsers();
-        setData(res.data.data);
-
-        // Asumsi imageUrl tersedia dalam data yang diambil dari pengguna
-        const imageUrl = res.data.data[0].imageUrl; // Ubah ini sesuai dengan struktur data yang benar
-        const image = await UserData.getUserImageUrl(imageUrl);
-        setUserImageUrl(image.src);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
+      const res = await UserData.getUsers(currentPage, size);
+      const allRes = await UserData.getUsers();
+      setAllData(allRes.data.data)
+      setTotalPages(res.data.totalPages);
+      setTotalItems(res.data.totalItems);
+      setData(res.data.data);
     };
 
     fetchData();
-  }, []);
+  }, [currentPage, update]);
 
   const handleAdd = async (newUser) => {
     const newData = await [...data, newUser];
@@ -43,7 +47,7 @@ const TableUser = () => {
     setData(res.data.data);
   };
 
-  const handleEdit = async (id) => {
+  const handleEdit = async (id, imageUrl) => {
     try {
       const res = await UserData.getUserById(id);
       const result = res.data;
@@ -52,6 +56,19 @@ const TableUser = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+  const handlefoto = async (id, imageUrl) => {
+    try {
+      const res = await UserData.getUserById(id);
+      const result = res.data;
+      setUpdate(result);
+      setSelectedUserImage(imageUrl);
+      openModal(); // Open the modal when the image is clicked
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -66,15 +83,26 @@ const TableUser = () => {
       try {
         if (result.isConfirmed) {
           await UserData.deleteUser(id);
-          setData((prevData) => prevData.filter((user) => user.id !== id));
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000,
           });
+          
+          const res = await UserData.getUsers(currentPage, size);
+          setData(res.data.data);
+
+          setTotalPages(res.data.totalPages);
+          setTotalItems(res.data.totalItems);
+          setCurrentPage(res.data.currentPage);
+
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+            paginationHandle(currentPage - 1);
+          } else {
+            paginationHandle(res.data.currentPage)
+          }
         }
       } catch (e) {
         Swal.fire({
@@ -83,16 +111,39 @@ const TableUser = () => {
           title: e.message,
           showConfirmButton: false,
           timer: 2000,
-          customclassName: "swal-custom",
+          customClass: "swal-custom",
         });
       }
     });
+  };
+  
+  const paginationHandle = async (currentPage) => {
+    setCurrentPage(currentPage)
+  }
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredData = searchTerm
+  ? allData.filter((user) =>
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : data;
+  
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserImage("");
   };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="p-4 md:p-6 xl:p-9">
-        <div className="flex flex-wrap gap-5 xl:gap-7.5">
+        <div className="flex justify-between items-center gap-5 xl:gap-7.5">
           <label
             type="submit"
             className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
@@ -119,13 +170,39 @@ const TableUser = () => {
               addToTable={handleAdd}
             />
           </label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="border dark:text-black bg-white border-dark rounded-md px-3 py-2 focus:outline-none focus:border-primary w-30 md:w-45 xl:w-80"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+            </span>
+          </div>
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
                 Photo
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
@@ -143,23 +220,34 @@ const TableUser = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((user, key) => (
-              <tr
-                key={key}
-                className={
-                  key === data.length - 1
-                    ? ""
-                    : "border-b border-stroke dark:border-strokedark"
-                }
-              >
-                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                  <div className="p-2.5 xl:p-5">
-                    <img
-                      src={`/uploads/user/${user.image_url}`}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </div>
+          {filteredData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="4"
+                  className="text-center text-xl font-bold italic py-4 text-danger"
+                >
+                  Data not found.
                 </td>
+              </tr>
+            ) : (
+              filteredData.map((user, key) => (
+                <tr
+                  key={key}
+                  className={
+                    key === filteredData.length - 1
+                      ? ""
+                      : "border-b border-stroke dark:border-strokedark"
+                  }
+              >
+               <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <div className="p-2.5 xl:p-5">
+                      <img
+                        src={`/uploads/user/${user.image_url}`}
+                        className="w-10 h-10 rounded-full cursor-pointer"
+                        onClick={() => handlefoto(user.id, user.image_url)}
+                      />
+                    </div>
+                  </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">{user.full_name}</p>
                 </td>
@@ -215,14 +303,35 @@ const TableUser = () => {
                   </div>
                 </td>
               </tr>
-            ))}
+             ))
+            )}
             <ModalEditUser
               data={update}
               test={"edit"}
               addToTable={handleEditData}
             />
           </tbody>
+          {isModalOpen && (
+        <ModalImageUser
+          imageUrl={selectedUserImage}  // Mengirim imageUrl sebagai prop
+          closeModal={closeModal}  // Mengirim closeModal sebagai prop
+        />
+      )}
         </table>
+        <div className="join float-right m-2">
+          {!searchTerm &&
+            Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`join-item btn btn-outline btn-default ${index === currentPage - 1 ? 'btn btn-active btn-primary' : ''
+                  }`}
+                onClick={() => paginationHandle(index + 1, totalPages)}
+              >
+                {index + 1}
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   );
