@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 
 const TablesPage = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null); // Berikan nilai awal pada useState
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const role = Cookies.get("role");
@@ -30,7 +30,7 @@ const TablesPage = () => {
       </SidebarLayout>
     );
   } else {
-    return null; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
+    return null;
   }
 };
 
