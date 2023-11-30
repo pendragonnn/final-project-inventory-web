@@ -121,7 +121,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
                   <select
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     name="role_id"
-                    value={data?.data?.role_id}
+                    defaultValuevalue={data?.data?.role_id}
+                    
                   >
                     <option value="1">Admin</option>
                     <option value="2">Staff</option>
