@@ -3,7 +3,10 @@
 import SidebarLayout from "@/app/sidebar-layout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import Swal from "sweetalert2"
-import { createTransactionHeader } from "@/modules/fetch/index"
+import {
+  createTransactionHeader,
+  getTransactionHeader,
+} from "@/modules/fetch/index"
 import Outlet from "@/data/outlet/index"
 import Item from "@/data/item/index"
 import { useEffect, useState } from "react"
@@ -32,14 +35,6 @@ const TransactionHeader = () => {
           item_id: e.item_id,
           quantity: parseInt(e.quantity),
         })),
-        // Detail: [
-        //   {
-        //     item_id: e.target.item_id.value,
-        //     quantity: parseInt(e.target.quantity.value),
-        //   },
-        // ],
-        // Detail: itemTemporary,
-        // Detail: itemTemporary.map((e) => e),
       })
       console.log("data submit >>>>>>>>>>>", data)
       setItemTemporary([])
@@ -56,49 +51,6 @@ const TransactionHeader = () => {
     }
   }
   console.log("Detail", itemTemporary)
-
-  // Function to handle form submission
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault()
-
-  //   try {
-  //     // Create transaction header data
-  //     const transactionHeaderData = {
-  //       user_id: e.target.user_id.value,
-  //       outlet_id: e.target.outlet_id.value,
-  //       information: e.target.information.value,
-  //       transaction_date: e.target.transaction_date.value,
-  //     }
-
-  //     // Create transaction detail data
-  //     const transactionDetailData = itemTemporary.map((e) => ({
-  //       item_id: e.item_id,
-  //       quantity: parseInt(e.quantity),
-  //     }))
-
-  //     // Combine transaction header and detail data into a single object
-  //     const transactionData = {
-  //       ...transactionHeaderData,
-  //       Detail: transactionDetailData,
-  //     }
-
-  //     // Submit transaction data
-  //     const response = await createTransactionHeader(transactionData)
-
-  //     // Handle successful transaction submission
-  //     if (response) {
-  //       console.log("Transaction submitted successfully!")
-  //       // Reset form
-  //       e.target.reset()
-  //       // Clear temporary item list
-  //       setItemTemporary([])
-  //     }
-  //   } catch (err) {
-  //     // Handle error
-  //     console.error("Error submitting transaction:", err)
-  //     console.error(err.message || "An error occurred.")
-  //   }
-  // }
 
   const handleAdd = (e) => {
     e.preventDefault()
@@ -122,6 +74,15 @@ const TransactionHeader = () => {
 
     e.target.reset()
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getTransactionHeader()
+      console.log("data th >>>>", res)
+    }
+
+    fetchData()
+  }, [])
 
   const handleDelete = (index) => {
     const newData = [...itemTemporary]

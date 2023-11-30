@@ -38,6 +38,8 @@ const ReportIsuing = () => {
     .filter((value) => value.outlet_id !== null)
     .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
 
+  console.log(filterData)
+
   function formatDate(isoDate) {
     const date = new Date(isoDate)
     const options = { day: "numeric", month: "long", year: "numeric" }

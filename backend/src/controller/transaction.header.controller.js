@@ -65,7 +65,6 @@ const postTransactionHeader = async (req, res) => {
     const allTransactionDetail = []
 
     const detail = newTransactionHeaderData.Detail
-    console.log("detail be >", detail)
     for (let i of detail) {
       const item = await getItemById(i.item_id)
       if (i.quantity > item.stock && transactionHeader.outlet_id != null) {
