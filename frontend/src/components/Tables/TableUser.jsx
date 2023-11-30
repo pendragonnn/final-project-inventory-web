@@ -49,12 +49,23 @@ const TableUser = () => {
       const res = await UserData.getUserById(id);
       const result = res.data;
       setUpdate(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const handlefoto = async (id, imageUrl) => {
+    try {
+      const res = await UserData.getUserById(id);
+      const result = res.data;
+      setUpdate(result);
       setSelectedUserImage(imageUrl);
       openModal(); // Open the modal when the image is clicked
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -230,7 +241,7 @@ const TableUser = () => {
                       <img
                         src={`/uploads/user/${user.image_url}`}
                         className="w-10 h-10 rounded-full cursor-pointer"
-                        onClick={() => handleEdit(user.id, user.image_url)}
+                        onClick={() => handlefoto(user.id, user.image_url)}
                       />
                     </div>
                   </td>

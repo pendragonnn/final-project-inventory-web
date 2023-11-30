@@ -36,7 +36,7 @@ const TableCategories = () => {
     setCurrentPage(res.data.currentPage);
   };
 
-  const handleEditData = (updatedCategory) => {
+  const handleEditData = async (updatedCategory) => {
     let updatedData = [...data];
     const indexToUpdate = updatedData.findIndex(
       (item) => item.id === updatedCategory[0].id

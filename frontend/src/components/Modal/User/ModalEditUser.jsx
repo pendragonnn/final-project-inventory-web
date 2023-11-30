@@ -150,13 +150,13 @@ const ModalEditUser = ({ data, test, addToTable }) => {
                   <input
                     type="text"
                     name="email"
-                    defaultValue={data?.data?.email}
+                    value={data?.data?.email}
                     placeholder="Enter Email"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />
                 </div>
-
+               
                 <div className="mb-4.5">
                   <input
                     type="password"
