@@ -40,22 +40,27 @@ const insertSupplier = async (newSupplier) => {
 
 const editSupplierById = async (id, newSupplier) => {
   try {
-    const supplierName = await findSupplierByName(newSupplier.name);
-    const supplierPhone = await findSupplierByPhone(newSupplier.phone);
+    const existingSupplier = await getSupplierById(id);
 
-    if (supplierName) {
+    if (!existingSupplier) {
+      throw new Error("Supplier Not Found");
+    }
+
+    const supplierName = await findSupplierByName(newSupplier.name);
+    const outletPhone = await findSupplierByPhone(newSupplier.phone);
+
+    if (supplierName && supplierName.id !== id) {
       throw new Error("Supplier Name Already Added");
     }
-    if (supplierPhone) {
+
+    if (outletPhone && outletPhone.id !== id) {
       throw new Error("Supplier Phone Already Added");
     }
 
-    await getSupplierById(id);
-
-    const supplier = await editSupplier(id, newSupplier);
-    return supplier;
+    const updatedSupplier = await editSupplier(id, newSupplier);
+    return updatedSupplier;
   } catch (err) {
-    return null;
+    throw new Error(err.message);
   }
 };
 
