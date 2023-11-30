@@ -11,6 +11,7 @@ const TableUser = () => {
   const [update, setUpdate] = useState(null);
   const [userImageUrl, setUserImageUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [allData, setAllData] = useState([])
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,13 +22,15 @@ const TableUser = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await UserData.getUsers(currentPage, size);
+      const allRes = await UserData.getUsers();
+      setAllData(allRes.data.data)
       setTotalPages(res.data.totalPages);
       setTotalItems(res.data.totalItems);
       setData(res.data.data);
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, update]);
 
   const handleAdd = async (newUser) => {
     const newData = await [...data, newUser];
@@ -95,7 +98,7 @@ const TableUser = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage)
@@ -122,11 +125,11 @@ const TableUser = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = data.filter((user) => {
-    return (
+  const filteredData = searchTerm
+  ? allData.filter((user) =>
       user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+    )
+  : data;
   
   const openModal = () => {
     setIsModalOpen(true);
@@ -316,7 +319,7 @@ const TableUser = () => {
       )}
         </table>
         <div className="join float-right m-2">
-          {
+          {!searchTerm &&
             Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index}
