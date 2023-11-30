@@ -1,6 +1,7 @@
 const models = require("../../models");
 const User = models.User;
 const Role = models.Role;
+const bcrypt = require("bcrypt");
 
 const generateNewId = (existingIds) => {
   const maxNumber = existingIds.reduce((max, id) => {
@@ -35,6 +36,25 @@ const createUser = async (userData, hashedPassword) => {
     console.error("User create failed !", error);
     throw error;
   }
+};
+
+const editUser = async (id, userData) => {
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const updatedUser = await User.update(
+    {
+      role_id: userData.role_id,
+      full_name: userData.full_name,
+      email: userData.email,
+      password: hashedPassword,
+      image_url: userData.image_url,
+    },
+    {
+      where: { id },
+      returning: true,
+    }
+  );
+
+  return updatedUser;
 };
 
 const findUserWithRole = async () => {
@@ -72,6 +92,7 @@ const findUserById = async (id) => {
 
 module.exports = {
   createUser,
+  editUser,
   findUserWithRole,
   findUserByEmail,
   findUserById,
