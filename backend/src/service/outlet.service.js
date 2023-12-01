@@ -50,11 +50,11 @@ const editOutletById = async (id, newOutlet) => {
     const outletPhone = await findOutletByPhone(newOutlet.phone);
 
     if (outletName && outletName.id !== id) {
-      throw new Error("Outlet Name Already Added");
+      throw new Error("Outlet Name Is Already");
     }
 
     if (outletPhone && outletPhone.id !== id) {
-      throw new Error("Outlet Phone Already Added");
+      throw new Error("Outlet Phone Is  Already ");
     }
 
     const updatedOutlet = await editOutlet(id, newOutlet);

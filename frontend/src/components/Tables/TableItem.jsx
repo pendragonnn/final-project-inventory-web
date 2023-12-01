@@ -13,8 +13,11 @@ const TableItems = () => {
   const [image , setItemImageUrl] = useState(null)
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [allData, setAllData] = useState([]);
   const size = 10;
   
 
@@ -26,7 +29,8 @@ const TableItems = () => {
       setItemImageUrl(image.data.data);
       setTotalPages(res.data.totalPages);
       setTotalItems(res.data.totalItems);
-      setCurrentPage(res.data.currentPage);
+     
+      setAllData(allRes.data.data);
 
       if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
         paginationHandle(currentPage - 1);
@@ -35,22 +39,25 @@ const TableItems = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    fetchData(currentPage, update);
+  }, [currentPage, update]);
 
 
 
   const handleAdd = async (newItem) => {
     const newData = await [...data, newItem];
     setData(newData);
-    const res = await Item.getItem();
+    const res = await Item.getItem(currentPage, size);
     setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
   const handleEditData = async (updateItem) => {
     let updatedData = [...data];
 
-    // Mencari indeks objek yang ingin diperbarui berdasarkan suatu kriteria
+  
     const indexToUpdate = await updatedData.findIndex(
       (item) => item.id === updateItem[0].id
     );
@@ -107,7 +114,7 @@ const TableItems = () => {
           timer: 2000,
           customClass: "swal-custom",
         });
-        console.log(e);
+
       }
     });
   };
@@ -126,10 +133,22 @@ const TableItems = () => {
     
   };
 
-  
+  // pagination
   const paginationHandle = async (currentPage) => {
     setCurrentPage(currentPage)
   }
+
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
+  };
+
+
+
+  // filter
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -353,7 +372,61 @@ const TableItems = () => {
             />
           </tbody>
         </table>
-       
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
+
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
+        </div>
       
       </div>
 

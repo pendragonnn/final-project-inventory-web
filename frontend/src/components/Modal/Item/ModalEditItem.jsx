@@ -10,6 +10,15 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   const [dataItem, setDataItem] = useState([]);
   const [file, setFile] = useState(null);
 
+  const [formData, setFormData] = useState({
+    name: data?.data?.name || "",
+    description: data?.data?.description || "",
+    category_id: data?.data?.category_id || "",
+    price: data?.data?.price || "",
+    stock: data?.data?.stock || "",
+  });
+
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -23,36 +32,36 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     fetchData();
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const itemWithoutImage = {
-        name: e.target.name.value,
-        description: e.target.description.value,
-        category_id: e.target.category_id.value,
-        price: e.target.price.value,
-        stock: e.target.stock.value,
+        name: formData.name,
+        description: formData.description,
+        category_id: formData.category_id,
+        price: formData.price,
+        stock: formData.stock,
       };
 
-      const responsItem = await Item.updateItem(data?.data?.id,itemWithoutImage);
-      console.log(responsItem);
-      console.log(responsItem);
-     
-      // Retrieve user ID from the response
-      console.log(data.data.id);
-      if (file) { 
-        const itemId = responsItem.data.data.id;
+      const responsItem = await Item.updateItem(data.data.id, itemWithoutImage);
 
+      if (file) {
         const formData = new FormData();
-
- 
         formData.append("image_url", file);
 
-        const responsGambar = await Item.uploadItem(data?.data?.id,formData);
+        await Item.uploadItem(data.data.id, formData);
+      }
 
-      
-      }     Swal.fire({
+      Swal.fire({
         position: "bottom-end",
         icon: "success",
         title: responsItem.data.message,
@@ -74,6 +83,8 @@ const ModalEditItem = ({ data, test, addToTable }) => {
       });
     }
   };
+
+
 
 
 
@@ -137,16 +148,17 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     Category
                   </label>
                   <select
-                    className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
-                    name="category_id"
-                    defaultValue={data?.data?.Category.name}
-                  >
-                    {dataItem.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.name}
-                      </option>
-                    ))}
-                  </select>
+            className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+            name="category_id"
+            value={formData.category_id}
+            onChange={handleInputChange}
+          >
+            {dataItem.map((value) => (
+              <option key={value.id} value={value.id}>
+                {value.name}
+              </option>
+            ))}
+          </select>
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
