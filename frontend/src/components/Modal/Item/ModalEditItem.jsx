@@ -19,6 +19,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     if (newStock !== "" && parseInt(newStock, 10) < 10) {
       setStockError("Stock must be at least 10.");
     } else {
+      
       setStockError("");
     }
 
