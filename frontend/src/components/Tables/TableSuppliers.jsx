@@ -5,25 +5,33 @@ import { useEffect, useState } from "react";
 import Supplier from "@/data/supplier/index";
 import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
 
-const TableSuppliers = () => {
+const TableSupplier = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [allData, setAllData] = useState([]);
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Supplier.getSupplier(currentPage, size);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
-      setData(res.data.data);
+      try {
+        const res = await Supplier.getSupplier(currentPage, size);
+
+        const allRes = await Supplier.getSupplier(1, res.data.totalItems);
+        setAllData(allRes.data.data);
+        setTotalPages(res.data.totalPages);
+        setTotalItems(res.data.totalItems);
+        setData(res.data.data);
+      } catch (error) {
+        console.log("Error fetching suppliers:", error);
+      }
     };
 
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, update]);
 
   const handleAdd = async () => {
     const res = await Supplier.getSupplier(currentPage, size);
@@ -47,7 +55,6 @@ const TableSuppliers = () => {
     try {
       const res = await Supplier.getSupplierByid(id);
       const result = res.data;
-      // console.log(result);
       setUpdate(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -66,6 +73,8 @@ const TableSuppliers = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
+          await Supplier.deleteSupplier(id);
+          setData((prevData) => prevData.filter((supplier) => supplier.id !== id));
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -104,17 +113,26 @@ const TableSuppliers = () => {
     setCurrentPage(currentPage);
   };
 
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
+  };
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = data.filter((supplier) => {
-    return (
-      supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.phone.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredData = searchTerm
+    ? allData.filter(
+        (supplier) =>
+          supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          supplier.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          supplier.phone.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -140,7 +158,6 @@ const TableSuppliers = () => {
                 />
               </svg>
             </span>
-            Add Supplier
             <ModalAddSupplier
               name={"Add Supplier"}
               test={"add"}
@@ -175,20 +192,24 @@ const TableSuppliers = () => {
           </div>
         </div>
       </div>
+
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                #
+              </th>
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                 Name
               </th>
-              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                Adress
+              <th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
+                Address
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
                 Phone
               </th>
-              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="py-4 px-4 font-medium text-black dark:text-white">
                 Actions
               </th>
             </tr>
@@ -213,6 +234,12 @@ const TableSuppliers = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {supplier.name}
@@ -259,7 +286,7 @@ const TableSuppliers = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -281,21 +308,63 @@ const TableSuppliers = () => {
             />
           </tbody>
         </table>
-        <div className="join float-right m-2">
-          {Array.from({ length: totalPages }, (_, index) => (
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
             <button
-              key={index}
-              className={`join-item btn btn-outline btn-default ${
-                index === currentPage - 1 ? "btn btn-active btn-primary" : ""
-              }`}
-              onClick={() => paginationHandle(index + 1, totalPages)}
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
             >
-              {index + 1}
+              &laquo;
             </button>
-          ))}
+          )}
+
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 };
-export default TableSuppliers;
+export default TableSupplier;

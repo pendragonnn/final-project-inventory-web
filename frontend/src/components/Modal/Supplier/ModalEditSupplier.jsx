@@ -35,7 +35,6 @@ const ModalEditSupplier = ({ data, test, addToTable }) => {
           address: newAddress,
           phone: newPhone,
         });
-        console.log(res);
 
         Swal.fire({
           position: "bottom-end",
