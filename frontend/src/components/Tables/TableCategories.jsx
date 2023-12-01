@@ -39,7 +39,7 @@ const TableCategories = () => {
   const handleEditData = async (updatedCategory) => {
     let updatedData = [...data];
     const indexToUpdate = updatedData.findIndex(
-      (item) => item.id === updatedCategory[0].id
+      (category) => category.id === updatedCategory[0].id
     );
 
     updatedData[indexToUpdate] = updatedCategory[0];
@@ -51,7 +51,6 @@ const TableCategories = () => {
     try {
       const res = await Category.getCategoryByid(id);
       const result = res.data;
-      console.log(result);
       setUpdate(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -114,7 +113,6 @@ const TableCategories = () => {
 
   const onPaginationNext = async (currentPage) => {
     setCurrentPage(currentPage + 1);
-    // console.log(currentPage)
   };
 
   const onPaginationPrevious = async (currentPage) => {
@@ -275,78 +273,61 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        {totalPages > 3 && !searchTerm ? (
-          <div className="items-center float-right">
-            {currentPage !== 1 && (
-              <button
-                className="btn btn-outline btn-default"
-                onClick={() => onPaginationPrevious(currentPage)}
-              >
-                Previous
-              </button>
-            )}
-            <div className="join enter-item w-40 m-2 overflow-x-scroll border">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${
-                    index === currentPage - 1
-                      ? "btn btn-active btn-primary"
-                      : ""
-                  }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-            {currentPage !== totalPages && (
-              <button
-                className="join-item btn btn-outline btn-default"
-                onClick={() => onPaginationNext(currentPage)}
-              >
-                Next
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="items-center float-right">
-            {currentPage !== 1 && (
-              <button
-                className="btn btn-outline btn-default"
-                onClick={() => onPaginationPrevious(currentPage)}
-              >
-                Previous
-              </button>
-            )}
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
 
-            <div className="join m-2 border">
-              {!searchTerm &&
-                Array.from({ length: totalPages }, (_, index) => (
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
                   <button
-                    key={index}
-                    className={`join-item btn btn-outline btn-default ${
-                      index === currentPage - 1
-                        ? "btn btn-active btn-primary"
-                        : ""
-                    }`}
-                    onClick={() => paginationHandle(index + 1, totalPages)}
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
                   >
-                    {index + 1}
+                    {currentPage - 1}
                   </button>
-                ))}
-            </div>
-
-            {currentPage !== totalPages && (
-              <button
-                className="join-item btn btn-outline btn-default"
-                onClick={() => onPaginationNext(currentPage)}
-              >
-                Next
-              </button>
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
             )}
           </div>
-        )}
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

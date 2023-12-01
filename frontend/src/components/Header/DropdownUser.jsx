@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 import auth from "@/data/auth";
 import user from "@/data/user";
 import axios from "axios";
-import axios from "axios";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
