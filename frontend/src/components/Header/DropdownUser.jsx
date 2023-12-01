@@ -82,6 +82,7 @@ const DropdownUser = () => {
           Cookies.remove("userId");
           localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("sidebar-expanded");
+          localStorage.removeItem("isLoggedIn", false);
           localStorage.removeItem("color-theme");
 
           Swal.fire({

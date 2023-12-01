@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import auth from "@/data/auth";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const Settings = () => {
   const [password, setPassword] = useState("");
@@ -35,13 +36,19 @@ const Settings = () => {
           timer: 2000,
           customClass: "swal-custom-auth-success",
         }).then(async () => {
-          await auth.logout();
+          const token = Cookies.get("token");
+          await axios.delete("http://localhost:8000/api/v1/logout/", {
+            headers: {
+              "content-type": "application/json; charset=utf=UTF-8",
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
-          localStorage.setItem("isLoggedIn", false);
           localStorage.removeItem("sidebar-expanded");
+          localStorage.removeItem("isLoggedIn", false);
           localStorage.removeItem("color-theme");
 
           router.push("/");

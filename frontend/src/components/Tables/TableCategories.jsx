@@ -9,9 +9,9 @@ const TableCategories = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
-  const [allData, setAllData] = useState([])
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [allData, setAllData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
@@ -19,9 +19,9 @@ const TableCategories = () => {
     const fetchData = async () => {
       const res = await Category.getCategory(currentPage, size);
       const allRes = await Category.getCategory(1, res.data.totalItems);
-      setAllData(allRes.data.data)
-      setTotalPages(res.data.totalPages)
-      setTotalItems(res.data.totalItems)
+      setAllData(allRes.data.data);
+      setTotalPages(res.data.totalPages);
+      setTotalItems(res.data.totalItems);
       setData(res.data.data);
     };
 
@@ -39,20 +39,18 @@ const TableCategories = () => {
   const handleEditData = async (updatedCategory) => {
     let updatedData = [...data];
     const indexToUpdate = updatedData.findIndex(
-      (item) => item.id === updatedCategory[0].id
+      (category) => category.id === updatedCategory[0].id
     );
 
     updatedData[indexToUpdate] = updatedCategory[0];
 
     setData([...updatedData]);
-    setUpdate(true)
   };
 
   const handleEdit = async (id) => {
     try {
       const res = await Category.getCategoryByid(id);
       const result = res.data;
-      console.log(result);
       setUpdate(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -71,15 +69,14 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000
           });
+          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
           setData(res.data.data);
 
@@ -87,10 +84,10 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
             paginationHandle(currentPage - 1);
           } else {
-            paginationHandle(res.data.currentPage)
+            paginationHandle(res.data.currentPage);
           }
         }
       } catch (e) {
@@ -107,26 +104,25 @@ const TableCategories = () => {
   };
 
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+    setCurrentPage(currentPage);
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1)
-    // console.log(currentPage)
-  }
+    setCurrentPage(currentPage + 1);
+  };
 
   const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1)
-  }
+    setCurrentPage(currentPage - 1);
+  };
 
   const filteredData = searchTerm
     ? allData.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : data;
 
   return (
@@ -277,69 +273,61 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        {totalPages > 3 && !searchTerm ? (
-          <div className="items-center float-right">
-            {currentPage !== 1 && (
-              <button className="btn btn-outline btn-default" onClick={() => onPaginationPrevious(currentPage)}>
-                Previous
-              </button>
-            )
-            }
-            <div className="join enter-item w-40 m-2 overflow-x-scroll border">
-              {
-                Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index}
-                    className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                      }`}
-                    onClick={() => paginationHandle(index + 1, totalPages)}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-            </div>
-            {currentPage !== totalPages && (
-              <button className="join-item btn btn-outline btn-default" onClick={() => onPaginationNext(currentPage)}>
-                Next
-              </button>
-            )
-            }
-          </div>
-        ) : (
-          <div className="items-center float-right">
-            {currentPage !== 1 && (
-              <button className="btn btn-outline btn-default" onClick={() => onPaginationPrevious(currentPage)}>
-                Previous
-              </button>
-            )
-            }
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
 
-            <div className="join m-2 border">
-              {!searchTerm &&
-                Array.from({ length: totalPages }, (_, index) => (
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
                   <button
-                    key={index}
-                    className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                      }`}
-                    onClick={() => paginationHandle(index + 1, totalPages)}
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
                   >
-                    {index + 1}
+                    {currentPage - 1}
                   </button>
-                ))}
-            </div>
-            
-            {currentPage !== totalPages && (
-              <button className="join-item btn btn-outline btn-default" onClick={() => onPaginationNext(currentPage)}>
-                Next
-              </button>
-            )
-            }
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
           </div>
-        )}
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
