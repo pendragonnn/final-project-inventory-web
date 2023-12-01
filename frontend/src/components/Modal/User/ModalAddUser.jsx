@@ -1,23 +1,25 @@
 import React, { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import UserData from "@/data/user/index";
-import Cookies from "js-cookie";
+
 
 const ModalUserAdd = ({ name, test, addToTable }) => {
-  const token = Cookies.get("token");
-    const headers = {
-      "content-type": "application/json; charset=utf=UTF-8",
-      Authorization: `Bearer ${token}`,
-    };
   const modalCheckbox = useRef(null);
   const [file, setFile] = useState(null);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleFileChange = (e) => {
+    
+    console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      return;
+    }
 
     try {
       // Create user without image first
@@ -33,7 +35,7 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 
       // Retrieve user ID from the response
       const userId = userResponse.data.data.id;
-
+console.log(userId );
       // Create FormData to handle file upload
       const formData = new FormData();
       formData.append("role_id", e.target.role_id.value);
@@ -57,18 +59,27 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(userResponse.data.data);
         modalCheckbox.current.checked = false;
+
+        document.getElementById("formId").reset();
       });
     } catch (error) {
       console.error("Error:", error.message);
+    
+      let errorMessage = "An error occurred. Please try again."; // Default error message
+    
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+    
       Swal.fire({
         position: "bottom-end",
         icon: "error",
-        title: error.message,
+        title: errorMessage,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       });
-    }
+    };
   };
 
   return (
@@ -97,7 +108,7 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
               </h3>
             </div>
 
-            <form action="#" onSubmit={handleSubmit}>
+            <form id="formId" action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="block text-black dark:text-white">
@@ -155,9 +166,30 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
                     name="password"
                     placeholder="Enter password"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={8}
                   />
+                </div>
+
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="retypepassword"
+                    placeholder="Enter password"
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={8}
+                  />
+                  {password !== confirmPassword && (
+                  <p className="text-sm pt-1 text-danger">
+                    Password doesn't match !
+                  </p>
+                )}
                 </div>
 
 

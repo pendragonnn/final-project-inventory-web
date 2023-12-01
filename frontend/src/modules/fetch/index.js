@@ -9,7 +9,11 @@ async function createTransactionHeader(data) {
   }
 }
 
-async function getTransactionHeader() {
+async function getTransactionHeader(
+  page,
+  size,
+  { params: { page: page, size: size } }
+) {
   try {
     const res = await instance.get(`/transaction-header`)
     return res.data
@@ -36,9 +40,19 @@ async function getTransactionDetailById(id) {
   }
 }
 
+async function deleteTransactionHeader(id) {
+  try {
+    const res = await instance.delete(`/transaction-header/${id}`)
+    return res.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 module.exports = {
   createTransactionHeader,
   getTransactionHeader,
   getTransactionHeaderById,
   getTransactionDetailById,
+  deleteTransactionHeader,
 }

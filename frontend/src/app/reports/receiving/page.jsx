@@ -3,17 +3,20 @@
 import SidebarLayout from "@/app/sidebar-layout"
 import TableReportReceiving from "@/components/Tables/TableReportReceiving"
 import React from "react"
+import Swal from "sweetalert2"
 import { useRouter } from "next/navigation"
-
 import { useEffect, useState } from "react"
-import { getTransactionHeader } from "@/modules/fetch/index"
+import {
+  getTransactionHeader,
+  deleteTransactionHeader,
+} from "@/modules/fetch/index"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import Cookies from "js-cookie"
 
 const ReportsReceiving = () => {
   const [data, setData] = useState([])
   const router = useRouter()
-  const [user, setUser] = useState(null) // Berikan nilai awal pada useState
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +37,43 @@ const ReportsReceiving = () => {
     }
   }, [])
 
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      try {
+        if (result.isConfirmed) {
+          await deleteTransactionHeader(id)
+          setData((prevData) =>
+            prevData.filter((transaction) => transaction.id !== id)
+          )
+          Swal.fire({
+            position: "bottom-end",
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+            customClass: "swal-custom-delete",
+          })
+        }
+      } catch (e) {
+        Swal.fire({
+          position: "bottom-end",
+          icon: "error",
+          title: e.message,
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        })
+      }
+    })
+  }
+
   const filterData = data
     .filter((value) => value.supplier_id !== null)
     .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
@@ -52,6 +92,8 @@ const ReportsReceiving = () => {
           <TableReportReceiving
             filterData={filterData}
             formatDate={formatDate}
+            handleDelete={handleDelete}
+            user={user}
           />
         </div>
       </SidebarLayout>

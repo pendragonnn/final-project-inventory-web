@@ -3,10 +3,7 @@
 import SidebarLayout from "@/app/sidebar-layout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import Swal from "sweetalert2"
-import {
-  createTransactionHeader,
-  getTransactionHeader,
-} from "@/modules/fetch/index"
+import { createTransactionHeader } from "@/modules/fetch/index"
 import Outlet from "@/data/outlet/index"
 import Item from "@/data/item/index"
 import { useEffect, useState } from "react"
@@ -20,8 +17,8 @@ const TransactionHeader = () => {
   const [dataOutlet, setDataOutlet] = useState([])
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
-  const router = useRouter()
   const [itemTemporary, setItemTemporary] = useState([])
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,21 +33,40 @@ const TransactionHeader = () => {
           quantity: parseInt(e.quantity),
         })),
       })
-      console.log("data submit >>>>>>>>>>>", data)
-      setItemTemporary([])
-    } catch (err) {
-      const errorMessage = err.message || "Terjadi kesalahan"
 
+      if (data) {
+        if (data === "Quantity must not exceed stock") {
+          // Lakukan sesuatu di sini, misalnya menampilkan pesan kesalahan pada pengguna
+          Swal.fire({
+            icon: "error",
+            title: data,
+            showConfirmButton: false,
+            timer: 2000,
+            customClass: "swal-custom",
+          })
+        } else {
+          // Tampilkan pesan sukses jika tidak ada pesan kesalahan
+          Swal.fire({
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 2000,
+            customClass: "swal-custom",
+          })
+        }
+      }
+      // setItemTemporary([])
+    } catch (err) {
+      // const errorMessage = err.message || "Terjadi kesalahan"
       Swal.fire({
         icon: "error",
-        title: errorMessage,
+        title: err.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       })
     }
   }
-  console.log("Detail", itemTemporary)
 
   const handleAdd = (e) => {
     e.preventDefault()
@@ -74,15 +90,6 @@ const TransactionHeader = () => {
 
     e.target.reset()
   }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getTransactionHeader()
-      console.log("data th >>>>", res)
-    }
-
-    fetchData()
-  }, [])
 
   const handleDelete = (index) => {
     const newData = [...itemTemporary]

@@ -25,7 +25,7 @@ const ModalDeleteTransaction = ({ open, value, handleDelete }) => {
       <div className="modal" role="dialog">
         <div className="modal-box text-center">
           <h3 className="font-bold text-lg">Are You Sure delete item</h3>
-          <p className="py-4">{value?.item_id}</p>
+          <p className="py-4">{value?.item_name}</p>
           <div className="modal-action flex justify-center">
             <label
               htmlFor={open}

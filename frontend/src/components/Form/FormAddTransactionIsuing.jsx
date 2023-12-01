@@ -7,8 +7,6 @@ const FormAddTransactionIsuing = ({
   itemTemporary,
   handleDelete,
 }) => {
-  // console.log("item temporary ", itemTemporary)
-
   return (
     <form
       onSubmit={handleSubmit}
