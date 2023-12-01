@@ -9,6 +9,25 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const [dataItem, setDataItem] = useState([]);
   const [file, setFile] = useState(null);
+  const [stock, setStock] = useState("");
+  const [stockError, setStockError] = useState("");
+
+  const handleStockChange = (e) => {
+    const newStock = e.target.value;
+    setStock(newStock);
+
+    if (newStock !== "" && parseInt(newStock, 10) < 10) {
+      setStockError("Stock must be at least 10.");
+    } else {
+      setStockError("");
+    }
+
+    // Set value in formData
+    setFormData((prevData) => ({
+      ...prevData,
+      stock: newStock,
+    }));
+  };
 
   const [formData, setFormData] = useState({
     name: data?.data?.name || "",
@@ -16,11 +35,27 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     category_id: data?.data?.category_id || "",
     price: data?.data?.price || "",
     stock: data?.data?.stock || "",
+    image_url: data?.data?.image_url || "",
   });
 
+  useEffect(() => {
+    setFormData({
+      name: data?.data?.name || "",
+      description: data?.data?.description || "",
+      category_id: data?.data?.category_id || "",
+      price: data?.data?.price || "",
+      stock: data?.data?.stock || "",
+      image_url: data?.data?.image_url || "",
+    });
+  }, [data]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   useEffect(() => {
@@ -32,63 +67,113 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     fetchData();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const itemWithoutImage = {
-        name: formData.name,
-        description: formData.description,
-        category_id: formData.category_id,
-        price: formData.price,
-        stock: formData.stock,
-      };
+      const {
+        name: newName,
+        description: newDescription,
+        category_id: newcategory_id,
+        price: newPrice,
+        stock: newStock,
+        image_url: newImageUrl,
+      } = formData;
+      if (
+        data?.data?.name !== newName ||
+        data?.data?.description !== newDescription ||
+        data?.data?.category_id !== newcategory_id ||
+        data?.data?.price !== newPrice ||
+        data?.data?.stock !== newStock ||
+        data?.data?.image_url !== newImageUrl
+      ) {
+        const itemResponse = await Item.updateItem(data.data.id, {
+          name: newName,
+          description: newDescription,
+          category_id: newcategory_id,
+          price: newPrice,
+          stock: newStock,
+          image_url: newImageUrl,
+        });
 
-      const responsItem = await Item.updateItem(data.data.id, itemWithoutImage);
+        console.log(itemResponse);
+        console.log(data.data.id);
+        Swal.fire({
+          position: "bottom-end",
+          icon: "success",
+          title: itemResponse.data.message || imageResponse,
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: "swal-custom",
+        }).then(() => {
+          addToTable(itemResponse.data.data);
+          modalCheckbox.current.checked = false;
 
-      if (file) {
-        const formData = new FormData();
-        formData.append("image_url", file);
+          setFormData({
+            name: "",
+            description: "",
+            category_id: "",
+            price: "",
+            stock: "",
+            image_url: "",
+          });
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
 
-        await Item.uploadItem(data.data.id, formData);
+      let errorMessage = "An error occurred. Please try again."; // Default error message
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        errorMessage = error.response.data.message;
       }
 
       Swal.fire({
         position: "bottom-end",
-        icon: "success",
-        title: responsItem.data.message,
+        icon: "error",
+        title: errorMessage,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
-      }).then(() => {
-        addToTable(responsItem.data.data[1]);
-        modalCheckbox.current.checked = false;
       });
-    } catch (e) {
+    }
+
+    // Check if a new file is selected
+    if (file) {
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("name", e.target.name.value);
+      formData.append("description", e.target.description.value);
+      formData.append("category_id", e.target.category_id.value);
+      formData.append("price", e.target.price.value);
+      formData.append("stock", e.target.stock.value);
+      formData.append("image_url", file);
+
+      // Make a POST request to upload image for the user
+      const imageResponse = await Item.uploadItem(data?.data?.id, formData);
+      console.log(imageResponse);
       Swal.fire({
         position: "bottom-end",
-        icon: "error",
-        title: e.message,
+        icon: "success",
+        title: imageResponse.data.message,
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
       });
     }
   };
-
-
-
-
-
- 
 
   return (
     <>
@@ -124,7 +209,10 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     name="name"
                     placeholder="Enter  name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    defaultValue={data?.data?.name}
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -137,8 +225,11 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     type="text"
                     name="description"
                     placeholder="Enter description"
-                    defaultValue={data?.data?.description}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -147,18 +238,26 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                   <label className="mb-2.5 block text-black dark:text-white">
                     Category
                   </label>
-                  <select
-            className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
-            name="category_id"
-            value={formData.category_id}
-            onChange={handleInputChange}
-          >
-            {dataItem.map((value) => (
-              <option key={value.id} value={value.id}>
-                {value.name}
-              </option>
-            ))}
-          </select>
+                  {dataItem.length > 0 && (
+                    <select
+                      className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                      name="category_id"
+                      value={formData.category_id}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          category_id: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select a category</option>
+                      {dataItem.map((value) => (
+                        <option key={value.id} value={value.id}>
+                          {value.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
@@ -168,11 +267,12 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     type="number"
                     name="price"
                     placeholder="Enter price"
-                    defaultValue={data?.data?.price}
+                    value={formData.price}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
                     required
-                    // max={12}
-                    // min={11}
                   />
                 </div>
                 <div className="mb-4.5">
@@ -183,28 +283,46 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     type="number"
                     name="stock"
                     placeholder="Enter Stock"
-                    defaultValue={data?.data?.stock}
+                    value={formData.stock}
+                    onChange={handleStockChange}
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                  
                   />
+                  {stockError && (
+                    <p className="text-sm text-danger">{stockError}</p>
+                  )}
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
                     Image
                   </label>
+                  {data?.data?.image_url && (
+                    <div className="mb-3">
+                      <img
+                        src={`/uploads/item/${data.data.image_url}`}
+                        alt="Item Image"
+                        className="w-200 h-200 mb-2"
+                      />
+                      <p className="text-sm text-gray-500 dark:text-gray-300">
+                        image is already uploaded. To replace it, choose a new
+                        image below.
+                      </p>
+                    </div>
+                  )}
                   <input
                     type="file"
                     name="image_url"
                     placeholder="Enter Image"
                     accept="image/*"
-                    defaultValue={data?.data?.image_url}
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     onChange={handleFileChange}
-                    required
-                   
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required={!data?.data?.image_url}
                   />
-               
+                  {!data?.data?.image_url && (
+                    <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
+                      No image uploaded. Please choose a photo.
+                    </p>
+                  )}
                 </div>
 
                 <input
@@ -221,4 +339,4 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditItem; 
+export default ModalEditItem;

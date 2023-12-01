@@ -30,7 +30,7 @@ const TableItems = () => {
       setTotalPages(res.data.totalPages);
       setTotalItems(res.data.totalItems);
      
-      setAllData(allRes.data.data);
+      setAllData(res.data.data);
 
       if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
         paginationHandle(currentPage - 1);
@@ -54,19 +54,14 @@ const TableItems = () => {
     setCurrentPage(res.data.currentPage);
   };
 
-  const handleEditData = async (updateItem) => {
-    let updatedData = [...data];
-
-  
-    const indexToUpdate = await updatedData.findIndex(
-      (item) => item.id === updateItem[0].id
-    );
-
-    updatedData[indexToUpdate] = updateItem[0];
-
-    setData([...updatedData]);
-    const res = await Item.getItem();
-    setData(res.data.data);
+  const handleEditData = async (updatedItem) => {
+    setData((prevData) =>
+    prevData.map((item) =>
+      item.id === updatedItem?.id ? updatedItem : item
+    )
+  );
+  const res = await Item.getItem();
+  setData(res.data.data);
   };
 
 
@@ -238,6 +233,9 @@ const TableItems = () => {
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 name
               </th>
+              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                Image
+              </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 description
               </th>
@@ -250,9 +248,7 @@ const TableItems = () => {
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                 Stock
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                Image
-              </th>
+            
               <th className="py-4 px-4 font-medium text-black dark:text-white">
                 Actions
               </th>
@@ -282,6 +278,15 @@ const TableItems = () => {
                   <h5 className="font-medium text-black dark:text-white"></h5>
                   <p className="text-sm">{item.name}</p>
                 </td>
+                <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                  <div className="p-2.5 xl:p-5  cursor-pointer"  onClick={() => openModal(item.image_url)}>
+                    <img
+                      src={`uploads/item/${item.image_url}`}
+                      className="w-15 ml-[-2rem] h-10 rounded-full"
+                    
+                    />
+                  </div>
+                </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">
                     {item.description}
@@ -295,18 +300,13 @@ const TableItems = () => {
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p className="text-black dark:text-white">{item.price}</p>
                 </td>
-                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                  <p className="text-black dark:text-white">{item.stock}</p>
-                </td>
-                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                  <div className="p-2.5 xl:p-5  cursor-pointer"  onClick={() => openModal(item.image_url)}>
-                    <img
-                      src={`uploads/item/${item.image_url}`}
-                      className="w-10 h-10 rounded-full"
-                    
-                    />
-                  </div>
-                </td>
+              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+  
+   
+    <p className="text-black dark:text-white">{item.stock}</p>
+  
+    </td>
+               
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <label
@@ -331,35 +331,24 @@ const TableItems = () => {
                     </label>
 
                     <button
-                      className="hover:text-primary"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <svg
-                        className="fill-current"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 18 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                        className="hover:text-primary"
+                        onClick={() => handleDelete(item.id)}
                       >
-                        <path
-                          d="M13.7535 2.47502H11.5879V1.9969C11.5879 1.15315 10.9129 0.478149 10.0691 0.478149H7.90352C7.05977 0.478149 6.38477 1.15315 6.38477 1.9969V2.47502H4.21914C3.40352 2.47502 2.72852 3.15002 2.72852 3.96565V4.8094C2.72852 5.42815 3.09414 5.9344 3.62852 6.1594L4.07852 15.4688C4.13477 16.6219 5.09102 17.5219 6.24414 17.5219H11.7004C12.8535 17.5219 13.8098 16.6219 13.866 15.4688L14.3441 6.13127C14.8785 5.90627 15.2441 5.3719 15.2441 4.78127V3.93752C15.2441 3.15002 14.5691 2.47502 13.7535 2.47502ZM7.67852 1.9969C7.67852 1.85627 7.79102 1.74377 7.93164 1.74377H10.0973C10.2379 1.74377 10.3504 1.85627 10.3504 1.9969V2.47502H7.70664V1.9969H7.67852ZM4.02227 3.96565C4.02227 3.85315 4.10664 3.74065 4.24727 3.74065H13.7535C13.866 3.74065 13.9785 3.82502 13.9785 3.96565V4.8094C13.9785 4.9219 13.8941 5.0344 13.7535 5.0344H4.24727C4.13477 5.0344 4.02227 4.95002 4.02227 4.8094V3.96565ZM11.7285 16.2563H6.27227C5.79414 16.2563 5.40039 15.8906 5.37227 15.3844L4.95039 6.2719H13.0785L12.6566 15.3844C12.6004 15.8625 12.2066 16.2563 11.7285 16.2563Z"
-                          fill=""
-                        />
-                        <path
-                          d="M9.00039 9.11255C8.66289 9.11255 8.35352 9.3938 8.35352 9.75942V13.3313C8.35352 13.6688 8.63477 13.9782 9.00039 13.9782C9.33789 13.9782 9.64727 13.6969 9.64727 13.3313V9.75942C9.64727 9.3938 9.33789 9.11255 9.00039 9.11255Z"
-                          fill=""
-                        />
-                        <path
-                          d="M11.2502 9.67504C10.8846 9.64692 10.6033 9.90004 10.5752 10.2657L10.4064 12.7407C10.3783 13.0782 10.6314 13.3875 10.9971 13.4157C11.0252 13.4157 11.0252 13.4157 11.0533 13.4157C11.3908 13.4157 11.6721 13.1625 11.6721 12.825L11.8408 10.35C11.8408 9.98442 11.5877 9.70317 11.2502 9.67504Z"
-                          fill=""
-                        />
-                        <path
-                          d="M6.72245 9.67504C6.38495 9.70317 6.1037 10.0125 6.13182 10.35L6.3287 12.825C6.35683 13.1625 6.63808 13.4157 6.94745 13.4157C6.97558 13.4157 6.97558 13.4157 7.0037 13.4157C7.3412 13.3875 7.62245 13.0782 7.59433 12.7407L7.39745 10.2657C7.39745 9.90004 7.08808 9.64692 6.72245 9.67504Z"
-                          fill=""
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="red"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
+                      </button>
                   </div>
                 </td>
               </tr>
