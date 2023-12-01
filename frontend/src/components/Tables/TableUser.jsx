@@ -32,14 +32,15 @@ const TableUser = () => {
     fetchData();
   }, [currentPage, update]);
 
-  const handleAdd = async (newUser) => {
-    const newData = await [...data, newUser];
-    setData(newData);
-    const res = await UserData.getUsers();
+  const handleAdd = async () => {
+    const res = await Userdata.getUsers(currentPage, size);
     setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
-  const handleEditData = async (updatedUser) => {
+  const handleEditData = async (updatedUser, updatedFile) => {
     try {
       if (updatedUser && updatedUser.id) {
         setData((prevData) =>
@@ -47,16 +48,31 @@ const TableUser = () => {
             user.id === updatedUser.id ? updatedUser : user
           )
         );
+        const res = await UserData.getUsers()
+        setData(res.data.data);
+        // Check if there are changes in the image file or image URL
+        const isImageChanged =
+          updatedFile ||
+          (updatedUser.image_url && updatedUser.image_url !== data?.data?.image_url);
+  
+        if (isImageChanged) {
+          // If there are changes, you can handle the image update logic here
+          // For example, trigger an image update API call
+          const imageResponse = await UserData.getUsers()(
+            updatedUser.id,
+            updatedFile
+          );
+          setData(imageResponse.data.data);
+          console.log("Image updated:", imageResponse);
+        }
       } else {
         console.error("Updated user data is invalid:", updatedUser);
       }
-
-      const res = await UserData.getUsers();
-      setData(res.data.data);
     } catch (error) {
       console.error("Error handling edit data:", error);
     }
   };
+  
 
   const handleEdit = async (id) => {
     try {
@@ -147,10 +163,19 @@ const TableUser = () => {
   };
 
   const filteredData = searchTerm
-    ? allData.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ? allData.filter((user) =>
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : data;
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserImage("");
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -214,16 +239,16 @@ const TableUser = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+              <th className="max-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                 No
               </th>
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
                 Photo
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Name
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Role Name
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
@@ -341,7 +366,7 @@ const TableUser = () => {
           )}
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -350,13 +375,13 @@ const TableUser = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -366,7 +391,7 @@ const TableUser = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -374,7 +399,7 @@ const TableUser = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -386,7 +411,7 @@ const TableUser = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}
