@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import auth from "@/data/auth";
 import user from "@/data/user";
 import axios from "axios";
+import axios from "axios";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -68,7 +69,7 @@ const DropdownUser = () => {
         if (result.isConfirmed) {
           const token = Cookies.get("token");
           const res = await axios.delete(
-            "http://localhost:8000/api/v1/logout/",
+            "http://localhost:8000/api/v1/logout",
             {
               headers: {
                 "content-type": "application/json; charset=utf=UTF-8",
@@ -80,6 +81,7 @@ const DropdownUser = () => {
           Cookies.remove("token");
           Cookies.remove("role");
           Cookies.remove("userId");
+          localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("sidebar-expanded");
           localStorage.removeItem("isLoggedIn", false);
           localStorage.removeItem("color-theme");
@@ -250,7 +252,3 @@ const DropdownUser = () => {
   );
 };
 export default DropdownUser;
-
-
-
-

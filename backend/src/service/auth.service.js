@@ -42,13 +42,34 @@ const logout = async (token) => {
     throw error;
   }
 
-  if (jwtUtil.isTokenBlacklisted(token)) {
-    const error2 = new Error("Please login first!");
-    error2.status = 401;
-    throw error2;
-  }
+  // if (jwtUtil.isTokenBlacklisted(token)) {
+  //   const error2 = new Error("Please login first!");
+  //   error2.status = 401;
+  //   throw error2;
+  // }
 
   jwtUtil.blacklistToken(token);
 };
 
-module.exports = { register, login, logout };
+const resetPassword = async (data) => {
+  const getData = await Auth.findUserByEmail(data.email);
+  if (!getData) {
+    const error = new Error("Invalid user email");
+    error.status = 400;
+    throw error;
+  }
+
+  console.log(data.password);
+
+  const result = await Auth.editUser(getData.id, {
+    role_id: getData.role_id,
+    full_name: getData.full_name,
+    email: getData.email,
+    password: data.password,
+    image_url: getData.image_url,
+  });
+
+  return result;
+};
+
+module.exports = { register, login, logout, resetPassword };

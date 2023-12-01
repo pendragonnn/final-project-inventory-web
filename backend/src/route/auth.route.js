@@ -3,10 +3,11 @@ const router = express.Router();
 const authControllers = require("../controller/auth.controller");
 const errorHandler = require("../middleware/error.handler.middleware");
 
-router.post("/api/v1/register", authControllers.userRegister);
-router.post("/api/v1/login", authControllers.userLogin);
-router.delete("/api/v1/logout", authControllers.userLogout);
-router.get("/api/v1/details", authControllers.userDetails);
+router.post("/register", authControllers.userRegister);
+router.post("/login", authControllers.userLogin);
+router.delete("/logout", authControllers.userLogout);
+router.post("/verify", authControllers.userEmail);
+router.post("/reset", authControllers.userResetPassword);
 
 router.use(errorHandler);
 
