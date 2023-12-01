@@ -25,6 +25,9 @@ const findUsers = async (page, size) => {
 
     offset: offset,
     limit: size,
+    order: [
+      ['id', 'DESC'],
+    ],
   });
   return { users, dataLength };
 };
