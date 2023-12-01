@@ -9,6 +9,23 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const [dataItem, setDataItem] = useState([]);
   const [file, setFile] = useState(null);
+  const [stock, setStock] = useState("");
+  const [stockError, setStockError] = useState("");
+  
+
+
+  // handle stock least
+  const handleStockChange = (e) => {
+    const newStock = e.target.value;
+    setStock(newStock);
+
+    if (newStock !== "" && parseInt(newStock, 10) < 10) {
+      setStockError("Stock must be at least 10.");
+    } else {
+      setStockError("");
+    }
+  };
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -134,11 +151,14 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 <div>
                   <label className="mb-2">Category</label>
                   <select
-                    className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                    className="mt-3 mb-5 select select-bordered text-black  w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white"
                     name="category_id"
                   >
+                    <option value=""></option>
                     {dataItem.map((value) => (
+                  
                       <option key={value.id} value={value.id}>
+                       
                         {value.name}
                       </option>
                     ))}
@@ -166,10 +186,16 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                     type="number"
                     name="stock"
                     placeholder="Enter Stock"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={handleStockChange}
+                    className={`w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                      stockError && "border-red-500"
+                    }`}
                     required
                 
                   />
+                   {stockError && (
+             <p className="text-danger text-sm">{stockError}</p>
+        )}
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">

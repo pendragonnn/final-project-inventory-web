@@ -30,7 +30,7 @@ const TableOutlets = () => {
       }
     };
 
-    fetchData();
+    fetchData(currentPage, update);
   }, [currentPage, update]);
 
   // const handleAdd = async (newOutlet) => {
