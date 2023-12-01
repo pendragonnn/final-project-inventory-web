@@ -35,7 +35,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const {
         role_id: newRole,
@@ -44,6 +44,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         password: newPassword,
         image_url: newImageUrl,
       } = formData;
+  
       if (
         data?.data?.role_id !== newRole ||
         data?.data?.full_name !== newFullName ||
@@ -56,9 +57,9 @@ const ModalEditUser = ({ data, test, addToTable }) => {
           full_name: newFullName,
           email: newEmail,
           password: newPassword,
-          image_url: newImageUrl,
+          // image_url: newImageUrl,
         });
-
+  
         console.log(userResponse);
         console.log(data.data.id);
         Swal.fire({
@@ -71,7 +72,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         }).then(() => {
           addToTable(userResponse.data.data);
           modalCheckbox.current.checked = false;
-          
+  
           setFormData({
             role_id: "",
             full_name: "",
@@ -79,14 +80,38 @@ const ModalEditUser = ({ data, test, addToTable }) => {
             password: "",
             image_url: null,
           });
-          setFile(null)
+          setFile(null);
+  
+          // Check if a new file is selected
+          if (file) {
+            // Create FormData to handle file upload
+            const formData = new FormData();
+            formData.append("role_id", newRole);
+            formData.append("full_name", newFullName);
+            formData.append("email", newEmail);
+            formData.append("password", newPassword);
+            formData.append("image_url", file);
+  
+            // Make a POST request to upload image for the user
+            UserData.uploadImage(data?.data?.id, formData)
+              .then(() => {
+                addToTable(imageResponse.data.data);
+                  modalCheckbox.current.checked = false;
+                  document.getElementById("formId").reset();
+                  setFile(null);
+                  e.target.reset();
+              })
+              .catch((imageError) => {
+                console.error("Image Upload Error:", imageError.message);
+              });
+          }
         });
       }
     } catch (error) {
       console.error("Error:", error.message);
-
+  
       let errorMessage = "An error occurred. Please try again."; // Default error message
-
+  
       if (
         error.response &&
         error.response.data &&
@@ -94,7 +119,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       ) {
         errorMessage = error.response.data.message;
       }
-
+  
       Swal.fire({
         position: "bottom-end",
         icon: "error",
@@ -104,39 +129,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         customClass: "swal-custom",
       });
     }
-
-    // Check if a new file is selected
-    if (file) {
-      // Create FormData to handle file upload
-      const formData = new FormData();
-      formData.append("role_id", e.target.role_id.value);
-      formData.append("full_name", e.target.full_name.value);
-      formData.append("email", e.target.email.value);
-      formData.append("password", e.target.password.value);
-      formData.append("image_url", file);
-
-      // Make a POST request to upload image for the user
-      const imageResponse = await UserData.uploadImage(
-        data?.data?.id,
-        formData
-      );
-      console.log(imageResponse);
-      Swal.fire({
-        position: "bottom-end",
-        icon: "success",
-        title: imageResponse.data.message,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      }).then(() => {
-        addToTable(imageResponse.data.data);
-        modalCheckbox.current.checked = false;
-        document.getElementById("formId").reset();
-        setFile(null)
-         e.target.reset();
-      });
-    }
   };
+  
   return (
     <>
       <input
