@@ -39,7 +39,7 @@ const TableUser = () => {
     setData(res.data.data);
   };
 
-  const handleEditData = async (updatedUser) => {
+  const handleEditData = async (updatedUser, updatedFile) => {
     try {
       if (updatedUser && updatedUser.id) {
         setData((prevData) =>
@@ -47,16 +47,29 @@ const TableUser = () => {
             user.id === updatedUser.id ? updatedUser : user
           )
         );
+  
+        // Check if there are changes in the image file or image URL
+        const isImageChanged =
+          updatedFile ||
+          (updatedUser.image_url && updatedUser.image_url !== data?.data?.image_url);
+  
+        if (isImageChanged) {
+          // If there are changes, you can handle the image update logic here
+          // For example, trigger an image update API call
+          const imageResponse = await UserData.updateUserImage(
+            updatedUser.id,
+            updatedFile
+          );
+          console.log("Image updated:", imageResponse);
+        }
       } else {
         console.error("Updated user data is invalid:", updatedUser);
       }
-
-      const res = await UserData.getUsers();
-      setData(res.data.data);
     } catch (error) {
       console.error("Error handling edit data:", error);
     }
   };
+  
 
   const handleEdit = async (id) => {
     try {
@@ -147,10 +160,19 @@ const TableUser = () => {
   };
 
   const filteredData = searchTerm
-    ? allData.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ? allData.filter((user) =>
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : data;
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserImage("");
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">

@@ -109,7 +109,7 @@ const uploadUserPhoto = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "User photo updated successfully", data: updatedUser });
+      .json({ message: "Successfully Updated User!", data: updatedUser });
   } catch (error) {
     console.error("Error dalam unggah file:", error);
     res.status(500).json({ message: error.message });
