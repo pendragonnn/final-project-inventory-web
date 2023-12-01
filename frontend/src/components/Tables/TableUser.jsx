@@ -241,13 +241,13 @@ const TableUser = () => {
               <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                 No
               </th>
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
                 Photo
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Name
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Role Name
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
