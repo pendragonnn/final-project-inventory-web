@@ -124,8 +124,8 @@ const TableCategories = () => {
 
   const filteredData = searchTerm
     ? allData.filter((category) =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : data;
 
   return (
@@ -190,6 +190,9 @@ const TableCategories = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                #
+              </th>
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
@@ -218,6 +221,12 @@ const TableCategories = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {category.name}
