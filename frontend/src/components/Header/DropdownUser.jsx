@@ -45,6 +45,7 @@ const DropdownUser = () => {
         const id = Cookies.get("userId");
         const res = await user.getUserById(id);
         setData(res.data.data);
+        
       } catch (e) {
         console.error("error while fetching data", e);
       }

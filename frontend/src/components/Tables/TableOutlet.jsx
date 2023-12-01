@@ -319,7 +319,7 @@ const TableOutlets = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -328,13 +328,13 @@ const TableOutlets = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -344,7 +344,7 @@ const TableOutlets = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -352,7 +352,7 @@ const TableOutlets = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -364,7 +364,7 @@ const TableOutlets = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}

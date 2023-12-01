@@ -29,15 +29,13 @@ const authenticateToken = async (req, res, next) => {
     console.log(role);
 
     if (
-      (role == 2 && req.path.startsWith("/asdasd")) ||
-      req.path.startsWith("/supplier") ||
+      (role == 2 && req.path.startsWith("/supplier")) ||
       req.path.startsWith("/outlet") ||
       req.path.startsWith("/item") ||
       req.path.startsWith("/role") ||
       req.path.startsWith("/category") ||
       req.path.startsWith("/transaction-header") ||
-      req.path.startsWith("/transaction-detail") ||
-      req.path.startsWith("/user")
+      req.path.startsWith("/transaction-detail")
     ) {
       next();
     } else if (

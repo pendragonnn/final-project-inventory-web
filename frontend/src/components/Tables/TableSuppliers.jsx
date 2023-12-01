@@ -74,7 +74,9 @@ const TableSupplier = () => {
       try {
         if (result.isConfirmed) {
           await Supplier.deleteSupplier(id);
-          setData((prevData) => prevData.filter((supplier) => supplier.id !== id));
+          setData((prevData) =>
+            prevData.filter((supplier) => supplier.id !== id)
+          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -235,7 +237,6 @@ const TableSupplier = () => {
                   }
                 >
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-
                     {currentPage === 1
                       ? key + 1
                       : (currentPage - 1) * size + key + 1}
@@ -309,7 +310,7 @@ const TableSupplier = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -318,13 +319,13 @@ const TableSupplier = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -334,7 +335,7 @@ const TableSupplier = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -342,7 +343,7 @@ const TableSupplier = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -354,7 +355,7 @@ const TableSupplier = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}

@@ -15,7 +15,7 @@ const TablesPage = () => {
     setUser(role);
     console.log(role);
 
-    if (role && role !== "1") {
+    if (role !== "1" && role !== "3") {
       router.push("/forbidden");
     }
   }, []);
@@ -23,14 +23,14 @@ const TablesPage = () => {
   if (user) {
     return (
       <SidebarLayout>
-        <Breadcrumb pageName="Tables" />
+        <Breadcrumb pageName="Table Users" />
         <div className="flex flex-col gap-10">
           <TableUser />
         </div>
       </SidebarLayout>
     );
   } else {
-    return null; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
+    return <p>Loading...</p>; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
   }
 };
 
