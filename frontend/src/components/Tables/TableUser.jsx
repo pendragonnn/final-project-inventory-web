@@ -47,7 +47,8 @@ const TableUser = () => {
             user.id === updatedUser.id ? updatedUser : user
           )
         );
-  
+        const res = await UserData.getUsers()
+        setData(res.data.data);
         // Check if there are changes in the image file or image URL
         const isImageChanged =
           updatedFile ||
@@ -56,10 +57,11 @@ const TableUser = () => {
         if (isImageChanged) {
           // If there are changes, you can handle the image update logic here
           // For example, trigger an image update API call
-          const imageResponse = await UserData.updateUserImage(
+          const imageResponse = await UserData.getUsers()(
             updatedUser.id,
             updatedFile
           );
+          setData(imageResponse.data.data);
           console.log("Image updated:", imageResponse);
         }
       } else {
