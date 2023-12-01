@@ -17,12 +17,16 @@ const TableCategories = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory(currentPage, size);
-      const allRes = await Category.getCategory(1, res.data.totalItems);
-      setAllData(allRes.data.data);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
-      setData(res.data.data);
+      try {
+        const res = await Category.getCategory(currentPage, size);
+        const allRes = await Category.getCategory(1, res.data.totalItems);
+        setAllData(allRes.data.data);
+        setTotalPages(res.data.totalPages);
+        setTotalItems(res.data.totalItems);
+        setData(res.data.data);
+      } catch (error) {
+        console.log("Error fetching categories:", error)
+      }
     };
 
     fetchData();
@@ -37,14 +41,13 @@ const TableCategories = () => {
   };
 
   const handleEditData = async (updatedCategory) => {
-    let updatedData = [...data];
-    const indexToUpdate = updatedData.findIndex(
-      (category) => category.id === updatedCategory[0].id
+    setData((prevData) =>
+      prevData.map((category) =>
+        category.id === updatedCategory?.id ? updatedCategory : category
+      )
     );
-
-    updatedData[indexToUpdate] = updatedCategory[0];
-
-    setData([...updatedData]);
+    const res = await Category.getCategory(currentPage, size);
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {
