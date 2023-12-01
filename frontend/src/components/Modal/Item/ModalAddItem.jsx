@@ -134,11 +134,14 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 <div>
                   <label className="mb-2">Category</label>
                   <select
-                    className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                    className="mt-3 mb-5 select select-bordered text-black  w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white"
                     name="category_id"
                   >
+                    <option value=""></option>
                     {dataItem.map((value) => (
+                  
                       <option key={value.id} value={value.id}>
+                       
                         {value.name}
                       </option>
                     ))}

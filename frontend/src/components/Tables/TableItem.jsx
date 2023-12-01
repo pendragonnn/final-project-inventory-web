@@ -5,6 +5,7 @@ import ModalAddItem from "../Modal/Item/ModalAddItem";
 import ModalEditItem from "../Modal/Item/ModalEditItem";
 import Item from "@/data/item/index";
 import item from "@/data/item/index";
+import ModalImageItem from "@/components/Modal/Item/ModalImageItem"
 
 const TableItems = () => {
   const [data, setData] = useState([]);
@@ -13,8 +14,6 @@ const TableItems = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
   
@@ -136,12 +135,15 @@ const TableItems = () => {
   };
 
   const filteredData = data.filter((item) => {
-    const nameMatch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const categoryMatch = item?.Category?.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const stockMatch = item.stock.toString().includes(searchTerm.toLowerCase());
-    const priceMatch = item.price.toString().includes(searchTerm.toLowerCase());
   
-    return nameMatch || categoryMatch || stockMatch || priceMatch;
+    return (
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())||
+      item?.Category?.name.toLowerCase().includes(searchTerm.toLowerCase())||
+      item.stock.toString().includes(searchTerm.toLowerCase()) ||
+      item.price.toString().includes(searchTerm.toLowerCase())||
+      item.price.toString().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
   });
  
 
@@ -152,37 +154,37 @@ const TableItems = () => {
     <>
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="max-w-full overflow-x-auto">
-        <div className="p-4 md:p-6 xl:p-9">
-          <div className="flex flex-wrap gap-5 xl:gap-7.5">
-            <a
-              type="submit"
-              className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
-            >
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </span>
-              <ModalAddItem
-                name={"Add Item"}
-                test={"add"}
-                addToTable={handleAdd}
-              />
-            </a>
-          </div>
-           {/* Kotak pencarian */}
-           <div className="relative mt-2">
+      <div className="p-4 md:p-6 xl:p-9">
+        <div className="flex justify-between items-center gap-5 xl:gap-7.5">
+          <label
+            type="submit"
+            className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
+          >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+            <ModalAddItem
+              name={"Add Item"}
+              test={"add"}
+              addToTable={handleAdd}
+            />
+          </label>
+
+          {/* Kotak pencarian */}
+          <div className="relative">
             <input
               type="text"
               placeholder="Search..."
@@ -210,6 +212,7 @@ const TableItems = () => {
           </div>
           {/* Akhir kotak pencarian */}
         </div>
+      </div>
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
@@ -237,20 +240,25 @@ const TableItems = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.lengh === 0 ?(
+          {filteredData.length === 0 ? (
               <tr>
-              <td
-                colSpan="4"
-                className="text-center text-xl font-bold italic py-4 text-danger"
-              >
-                Data not found.
-              </td>
-            </tr>
+                <td
+                  colSpan="4"
+                  className="text-center text-xl font-bold italic py-4 text-danger"
+                >
+                  Data not found.
+                </td>
+              </tr>
 
             ):(
               
            filteredData.map((item, key) => (
-              <tr key={key}>
+              <tr key={key}
+              className={
+                key === filteredData.length - 1
+                  ? ""
+                  : "border-b border-stroke dark:border-strokedark"
+              }>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white"></h5>
                   <p className="text-sm">{item.name}</p>
@@ -272,10 +280,11 @@ const TableItems = () => {
                   <p className="text-black dark:text-white">{item.stock}</p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                  <div className="p-2.5 xl:p-5"  onClick={() => openModal(item.image_url)}>
+                  <div className="p-2.5 xl:p-5  cursor-pointer"  onClick={() => openModal(item.image_url)}>
                     <img
                       src={`uploads/item/${item.image_url}`}
                       className="w-10 h-10 rounded-full"
+                    
                     />
                   </div>
                 </td>
@@ -352,27 +361,7 @@ const TableItems = () => {
     </div>
 
     {isModalOpen && (
-        <div className="fixed inset-0 w-full min-w-full md:w-full bg-black bg-opacity-50 flex items-center justify-center "  >
-          <div className="fixed bg-white w-[50rem] h-[30rem] rounded shadow-md" 
-
-         
-          
-         >
-          <div className="p-0">
-          <button className="absolute z-999 ml-[90%] mt-3 btn border-white px-6 py-2 bg-white border-none text-black2 shadow-8 " onClick={closeModal}>
-
-         <span className="font-bold text-lg">X</span>
-          </button>
-            
-          </div>
-          <img  
-                      src={`uploads/item/${imageModal}`}
-                      className="w-full h-full object-contain "
-                      
-                    />
-          </div>
-          
-        </div>
+        <ModalImageItem imageUrl={imageModal} closeModal={closeModal} />
       )}
     </>
   );
