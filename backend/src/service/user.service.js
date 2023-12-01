@@ -16,12 +16,21 @@ const getAllUsers = async (page, size) => {
 };
 
 const getUserById = async (id) => {
-  const user = await findUserById(id);
+  try {
+    const user = await findUserById(id);
 
-  if (!user) {
-    throw Error("User Not Found");
+    if (!user) {
+      throw new Error("User Not Found");
+    }
+
+    if (!user.dataValues || !user.dataValues.password) {
+      throw new Error("User data or password is undefined");
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
   }
-  return user;
 };
 
 const insertUser = async (userData) => {
@@ -37,23 +46,41 @@ const insertUser = async (userData) => {
 };
 
 const editUserById = async (id, newUser) => {
+  // try {
+  //   const existingUser = await findUserByEmail(newUser.email);
+
+  //   if (existingUser && existingUser.id !== id) {
+  //     throw new Error("User Email Already Added");
+  //   }
+
+  //   const userToUpdate = await findUserById(id);
+
+  //   if (!userToUpdate) {
+  //     throw new Error("User Not Found");
+  //   }
+
+  //   const user = await editUser(id, newUser);
+  //   return user;
+  // } catch (err) {
+  //   throw err; // Lebih baik lemparkan kembali kesalahan untuk ditangani oleh pemanggil fungsi.
+  // }
   try {
-    const existingUser = await findUserByEmail(newUser.email);
+    const existingUser = await getUserById(id);
 
-    if (existingUser && existingUser.id !== id) {
-      throw new Error("User Email Already Added");
-    }
-
-    const userToUpdate = await findUserById(id);
-
-    if (!userToUpdate) {
+    if (!existingUser) {
       throw new Error("User Not Found");
     }
 
-    const user = await editUser(id, newUser);
-    return user;
+    const userEmail = await findUserByEmail(newUser.email);
+
+    if (userEmail && userEmail.id !== id) {
+      throw new Error("Email Already Add");
+    }
+
+    const updatedUser = await editUser(id, newUser);
+    return updatedUser;
   } catch (err) {
-    throw err; // Lebih baik lemparkan kembali kesalahan untuk ditangani oleh pemanggil fungsi.
+    throw new Error(err.message);
   }
 };
 

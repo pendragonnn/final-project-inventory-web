@@ -29,7 +29,7 @@ const ModalUserProfile = ({ imageUrl, closeModal }) => {
         <div className="inline-block align-bottom bg-white dark:bg-boxdark rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
           <div className="bg-white dark:bg-boxdark px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="sm:flex sm:items-center sm:justify-center">
-              <div className="flex-shrink-0 flex items-center justify-center h-100 w-100">
+              <div className="flex-shrink-0 flex items-center justify-center h-150 w-150">
                 {/* Display the user's profile picture here with original size */}
                 <img
                   className="h-full w-full "

@@ -40,14 +40,25 @@ const TableUser = () => {
   };
 
   const handleEditData = async (updatedUser) => {
-    setData((prevData) =>
-      prevData.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-    );
-    const res = await UserData.getUsers();
-    setData(res.data.data);
+    try {
+      if (updatedUser && updatedUser.id) {
+        setData((prevData) =>
+          prevData.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user
+          )
+        );
+      } else {
+        console.error("Updated user data is invalid:", updatedUser);
+      }
+
+      const res = await UserData.getUsers();
+      setData(res.data.data);
+    } catch (error) {
+      console.error("Error handling edit data:", error);
+    }
   };
 
-  const handleEdit = async (id, imageUrl) => {
+  const handleEdit = async (id) => {
     try {
       const res = await UserData.getUserById(id);
       const result = res.data;
@@ -127,20 +138,19 @@ const TableUser = () => {
     setSearchTerm(event.target.value);
   };
 
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
+  };
+
   const filteredData = searchTerm
-    ? allData.filter((user) =>
-        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? allData.filter((category) =>
+      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : data;
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedUserImage("");
-  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -204,6 +214,9 @@ const TableUser = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                No
+              </th>
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
                 Photo
               </th>
@@ -241,6 +254,11 @@ const TableUser = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <div className="p-2.5 xl:p-5">
                       <img
@@ -294,7 +312,7 @@ const TableUser = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -322,19 +340,60 @@ const TableUser = () => {
             />
           )}
         </table>
-        <div className="join float-right m-2">
-          {!searchTerm &&
-            Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`join-item btn btn-outline btn-default ${
-                  index === currentPage - 1 ? "btn btn-active btn-primary" : ""
-                }`}
-                onClick={() => paginationHandle(index + 1, totalPages)}
-              >
-                {index + 1}
-              </button>
-            ))}
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
+
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
         </div>
       </div>
     </div>
