@@ -9,20 +9,24 @@ const TableCategories = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
-  const [allData, setAllData] = useState([])
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [allData, setAllData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const size = 10;
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory(currentPage, size);
-      const allRes = await Category.getCategory(1, res.data.totalItems);
-      setAllData(allRes.data.data)
-      setTotalPages(res.data.totalPages)
-      setTotalItems(res.data.totalItems)
-      setData(res.data.data);
+      try {
+        const res = await Category.getCategory(currentPage, size);
+        const allRes = await Category.getCategory(1, res.data.totalItems);
+        setAllData(allRes.data.data);
+        setTotalPages(res.data.totalPages);
+        setTotalItems(res.data.totalItems);
+        setData(res.data.data);
+      } catch (error) {
+        console.log("Error fetching categories:", error)
+      }
     };
 
     fetchData();
@@ -37,22 +41,19 @@ const TableCategories = () => {
   };
 
   const handleEditData = async (updatedCategory) => {
-    let updatedData = [...data];
-    const indexToUpdate = updatedData.findIndex(
-      (item) => item.id === updatedCategory[0].id
+    setData((prevData) =>
+      prevData.map((category) =>
+        category.id === updatedCategory?.id ? updatedCategory : category
+      )
     );
-
-    updatedData[indexToUpdate] = updatedCategory[0];
-
-    setData([...updatedData]);
-    setUpdate(true)
+    const res = await Category.getCategory(currentPage, size);
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {
     try {
       const res = await Category.getCategoryByid(id);
       const result = res.data;
-      console.log(result);
       setUpdate(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -71,15 +72,14 @@ const TableCategories = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Category.deleteCategory(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000
           });
+          await Category.deleteCategory(id);
           const res = await Category.getCategory(currentPage, size);
           setData(res.data.data);
 
@@ -87,10 +87,10 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
             paginationHandle(currentPage - 1);
           } else {
-            paginationHandle(res.data.currentPage)
+            paginationHandle(res.data.currentPage);
           }
         }
       } catch (e) {
@@ -107,18 +107,26 @@ const TableCategories = () => {
   };
 
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+    setCurrentPage(currentPage);
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
+  };
+
   const filteredData = searchTerm
-  ? allData.filter((category) =>
+    ? allData.filter((category) =>
       category.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  : data;
+    : data;
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -182,6 +190,9 @@ const TableCategories = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                #
+              </th>
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
@@ -210,6 +221,12 @@ const TableCategories = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {category.name}
@@ -246,7 +263,7 @@ const TableCategories = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -268,39 +285,61 @@ const TableCategories = () => {
             />
           </tbody>
         </table>
-        {totalPages > 3 ? (
-          <div className="join float-right w-40 m-2 overflow-x-scroll border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
+
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
                 <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                    }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
                 >
-                  {index + 1}
+                  {currentPage}
                 </button>
-              ))}
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
           </div>
-        ) : (
-          <div className="join float-right  m-2 border">
-            {!searchTerm &&
-              Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`join-item btn btn-outline btn-default ${index === currentPage - 1
-                      ? 'btn btn-active btn-primary'
-                      : ''
-                    }`}
-                  onClick={() => paginationHandle(index + 1, totalPages)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-          </div>
-        )}
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

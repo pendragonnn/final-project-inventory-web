@@ -48,4 +48,38 @@ const userDetails = async (req, res, next) => {
   }
 };
 
-module.exports = { userRegister, userLogin, userLogout, userDetails };
+const userEmail = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const result = await authRepository.findUserByEmail(email);
+    if (!result) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Email verification success!", result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const userResetPassword = async (req, res, next) => {
+  try {
+    const data = req.body;
+
+    const result = await authService.resetPassword(data);
+    return res.status(200).json({ message: "Password Reset Successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  userRegister,
+  userLogin,
+  userLogout,
+  userDetails,
+  userEmail,
+  userResetPassword,
+};

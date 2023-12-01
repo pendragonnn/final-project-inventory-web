@@ -1,15 +1,16 @@
 import React from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
-import supplier from "@/data/supplier";
-import { useRef } from "react";
+import Supplier from "@/data/supplier/index";
+import { useRef, useState } from "react";
 
-const ModalSupplierAdd = ({ test, addToTable }) => {
+const ModalSupplierAdd = ({ name, test, addToTable }) => {
   const modalCheckbox = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await supplier.addSupplier({
+      const res = await Supplier.addSupplier({
         name: e.target.name.value,
         address: e.target.address.value,
         phone: e.target.phone.value,
@@ -24,6 +25,8 @@ const ModalSupplierAdd = ({ test, addToTable }) => {
       }).then(() => {
         addToTable(res.data.data);
         modalCheckbox.current.checked = false;
+
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       Swal.fire({
@@ -39,9 +42,9 @@ const ModalSupplierAdd = ({ test, addToTable }) => {
 
   return (
     <>
-      {/* <label htmlFor={test} className="cursor-pointer">
+      <label htmlFor={test} className="cursor-pointer">
         {name}
-      </label> */}
+      </label>
       <input
         type="checkbox"
         id={test}
@@ -63,7 +66,7 @@ const ModalSupplierAdd = ({ test, addToTable }) => {
               </h3>
             </div>
 
-            <form action="#" onSubmit={handleSubmit}>
+            <form id="formId" action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">

@@ -41,7 +41,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
      
       // Retrieve user ID from the response
       console.log(data.data.id);
-      if (file) { // Pemeriksaan file yang dipilih
+      if (file) { 
         const itemId = responsItem.data.data.id;
 
         const formData = new FormData();

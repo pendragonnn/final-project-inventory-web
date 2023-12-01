@@ -15,7 +15,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiDocumentation));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(authRoutes);
+app.use("/api/v1", authRoutes);
 app.use("/api/v1", router);
 
 const PORT = process.env.PORT;
