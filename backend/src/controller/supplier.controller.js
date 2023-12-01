@@ -8,12 +8,12 @@ const {
 
 const allSuppliers = async (req, res) => {
   const page = req.query.page || 1;
-  const size = req.query.size || 100;
+  const size = req.query.size || 10;
   try {
     const { suppliers, dataLength } = await getAllSuppliers(page, size);
     res.status(200).json({
       data: suppliers,
-      totalItems: suppliers.length,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     });
