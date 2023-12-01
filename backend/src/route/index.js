@@ -20,6 +20,4 @@ router.use("/user", userRouter);
 router.use("/category", categoryRoutes);
 router.use("/role", roleRoutes);
 
-
-
 module.exports = router;
