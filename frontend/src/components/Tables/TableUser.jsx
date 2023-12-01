@@ -32,11 +32,12 @@ const TableUser = () => {
     fetchData();
   }, [currentPage, update]);
 
-  const handleAdd = async (newUser) => {
-    const newData = await [...data, newUser];
-    setData(newData);
-    const res = await UserData.getUsers();
+  const handleAdd = async () => {
+    const res = await Userdata.getUsers(currentPage, size);
     setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
   const handleEditData = async (updatedUser, updatedFile) => {
@@ -238,7 +239,7 @@ const TableUser = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+              <th className="max-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                 No
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
@@ -365,7 +366,7 @@ const TableUser = () => {
           )}
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -374,13 +375,13 @@ const TableUser = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -390,7 +391,7 @@ const TableUser = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -398,7 +399,7 @@ const TableUser = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -410,7 +411,7 @@ const TableUser = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}
