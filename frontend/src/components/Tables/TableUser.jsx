@@ -40,14 +40,25 @@ const TableUser = () => {
   };
 
   const handleEditData = async (updatedUser) => {
-    setData((prevData) =>
-      prevData.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-    );
-    const res = await UserData.getUsers();
-    setData(res.data.data);
+    try {
+      if (updatedUser && updatedUser.id) {
+        setData((prevData) =>
+          prevData.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user
+          )
+        );
+      } else {
+        console.error("Updated user data is invalid:", updatedUser);
+      }
+  
+      const res = await UserData.getUsers();
+      setData(res.data.data);
+    } catch (error) {
+      console.error("Error handling edit data:", error);
+    }
   };
 
-  const handleEdit = async (id, imageUrl) => {
+  const handleEdit = async (id) => {
     try {
       const res = await UserData.getUserById(id);
       const result = res.data;

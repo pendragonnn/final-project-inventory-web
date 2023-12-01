@@ -88,24 +88,78 @@ function generateNewId(existingIds) {
   return newId;
 }
 
-const editUser = async (id, userData) => {
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
-  const updatedUser = await User.update(
-    {
-      role_id: userData.role_id,
-      full_name: userData.full_name,
-      email: userData.email,
-      password: hashedPassword,
-      image_url: userData.image_url,
-    },
-    {
-      where: { id },
-      returning: true,
-    }
-  );
+const editUser = async (id, updatedFields) => {
+  try {
+    const { role_id, full_name, email, password: newPassword, image_url } = updatedFields;
 
-  return updatedUser;
+    // Find the user by primary key
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const updatedData = {};
+
+    if (role_id !== undefined) {
+      updatedData.role_id = role_id;
+    }
+
+    if (full_name !== undefined) {
+      updatedData.full_name = full_name;
+    }
+
+    if (email !== undefined && email !== user.email) {
+      updatedData.email = email;
+    }
+
+    // Check if the password is provided and not equal to the current password
+    if (newPassword !== undefined && newPassword !== user.password) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      updatedData.password = hashedPassword;
+    }
+
+    if (image_url !== undefined) {
+      updatedData.image_url = image_url;
+    }
+
+    if (Object.keys(updatedData).length === 0) {
+      // No changes to update
+      return user;
+    }
+
+    // Update the user with the new data
+    const [, [updatedUser]] = await User.update(updatedData, {
+      where: {
+        id: id,
+      },
+      returning: true,
+    });
+
+    return updatedUser;
+  } catch (error) {
+    console.error("Edit user error:", error.message);
+    throw new Error("Failed to edit user");
+  }
 };
+
+
+  // (
+  //   {
+  //     role_id: userData.role_id,
+  //     full_name: userData.full_name,
+  //     email: userData.email,
+  //     password: hashedPassword,
+  //     image_url: userData.image_url,
+  //   },
+  //   {
+  //     where: { id },
+  //     returning: true,
+  //   }
+  // );
+
+//   return updatedUsers[1][0];
+// };
 
 const deleteUser = async (id) => {
   const user = await User.destroy({
