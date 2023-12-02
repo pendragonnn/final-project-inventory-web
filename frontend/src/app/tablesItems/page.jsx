@@ -24,7 +24,7 @@ const TablesPage = () => {
   if (user) {
     return (
       <SidebarLayout>
-        <Breadcrumb pageName="Tables" />
+        <Breadcrumb pageName="Table Items" />
         <div className="flex flex-col gap-10">
           <TableItems />
         </div>

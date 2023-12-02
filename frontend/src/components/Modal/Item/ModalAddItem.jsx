@@ -11,7 +11,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
   const [file, setFile] = useState(null);
   const [stock, setStock] = useState("");
   const [stockError, setStockError] = useState("");
-  
+
   // handle stock least
   const handleStockChange = (e) => {
     const newStock = e.target.value;
@@ -54,12 +54,12 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
       const responsItem = await Item.addItem(itemWithoutImage);
       console.log(file);
-      if (file) { // Pemeriksaan file yang dipilih
+      if (file) {
+        // Pemeriksaan file yang dipilih
         const itemId = responsItem.data.data.id;
 
         const formData = new FormData();
 
- 
         formData.append("image_url", file);
 
         const responsGambar = await Item.uploadItem(itemId, formData);
@@ -91,9 +91,6 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
       });
     }
   };
-  
-
-
 
   return (
     <>
@@ -157,9 +154,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                   >
                     <option value=""></option>
                     {dataItem.map((value) => (
-                  
                       <option key={value.id} value={value.id}>
-                       
                         {value.name}
                       </option>
                     ))}
@@ -192,20 +187,19 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                       stockError && "border-red-500"
                     }`}
                     required
-                
                   />
-                   {stockError && (
-             <p className="text-danger text-sm">{stockError}</p>
-        )}
+                  {stockError && (
+                    <p className="text-danger text-sm">{stockError}</p>
+                  )}
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                   Image
+                    Image
                   </label>
                   <input
                     type="file"
                     name="image_url"
-                    enctype="multipart/form-data"  
+                    enctype="multipart/form-data"
                     key={"item-photo"}
                     accept="image/*"
                     onChange={handleFileChange}

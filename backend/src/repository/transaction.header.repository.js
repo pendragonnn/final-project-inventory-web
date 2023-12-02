@@ -2,6 +2,9 @@ const models = require("../../models")
 const TransactionsHeaders = models.TransactionHeader
 const TransactionDetail = models.TransactionDetail
 const Item = models.Item
+const User = models.User
+const Outlet = models.Outlet
+const Supplier = models.Supplier
 
 const findsTransactionHeader = async (page, size) => {
   const offset = (page - 1) * size
@@ -11,6 +14,20 @@ const findsTransactionHeader = async (page, size) => {
   const transactionHeaders = await TransactionsHeaders.findAll({
     offset: offset,
     limit: size,
+    include: [
+      {
+        model: User,
+        attributes: ["full_name"],
+      },
+      {
+        model: Outlet,
+        attributes: ["name"],
+      },
+      {
+        model: Supplier,
+        attributes: ["name"],
+      },
+    ],
   })
   return { transactionHeaders, dataLength }
 }

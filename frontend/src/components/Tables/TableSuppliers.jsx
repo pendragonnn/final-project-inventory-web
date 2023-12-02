@@ -1,65 +1,65 @@
-"use client";
-import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier";
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
-import Supplier from "@/data/supplier/index";
-import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier";
+"use client"
+import ModalAddSupplier from "../Modal/Supplier/ModalAddSupplier"
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
+import Supplier from "@/data/supplier/index"
+import ModalEditSupplier from "../Modal/Supplier/ModalEditSupplier"
 
 const TableSupplier = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
-  const [allData, setAllData] = useState([]);
-  const size = 10;
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
+  const [allData, setAllData] = useState([])
+  const size = 10
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Supplier.getSupplier(currentPage, size);
+        const res = await Supplier.getSupplier(currentPage, size)
 
-        const allRes = await Supplier.getSupplier(1, res.data.totalItems);
-        setAllData(allRes.data.data);
-        setTotalPages(res.data.totalPages);
-        setTotalItems(res.data.totalItems);
-        setData(res.data.data);
+        const allRes = await Supplier.getSupplier(1, res.data.totalItems)
+        setAllData(allRes.data.data)
+        setTotalPages(res.data.totalPages)
+        setTotalItems(res.data.totalItems)
+        setData(res.data.data)
       } catch (error) {
-        console.log("Error fetching suppliers:", error);
+        console.log("Error fetching suppliers:", error)
       }
-    };
+    }
 
-    fetchData();
-  }, [currentPage, update]);
+    fetchData()
+  }, [currentPage, update])
 
   const handleAdd = async () => {
-    const res = await Supplier.getSupplier(currentPage, size);
-    setData(res.data.data);
-    setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalItems);
-    setCurrentPage(res.data.currentPage);
-  };
+    const res = await Supplier.getSupplier(currentPage, size)
+    setData(res.data.data)
+    setTotalPages(res.data.totalPages)
+    setTotalItems(res.data.totalItems)
+    setCurrentPage(res.data.currentPage)
+  }
 
   const handleEditData = async (updatedSupplier) => {
     setData((prevData) =>
       prevData.map((supplier) =>
         supplier.id === updatedSupplier?.id ? updatedSupplier : supplier
       )
-    );
-    const res = await Supplier.getSupplier();
-    setData(res.data.data);
-  };
+    )
+    const res = await Supplier.getSupplier()
+    setData(res.data.data)
+  }
 
   const handleEdit = async (id) => {
     try {
-      const res = await Supplier.getSupplierByid(id);
-      const result = res.data;
-      setUpdate(result);
+      const res = await Supplier.getSupplierByid(id)
+      const result = res.data
+      setUpdate(result)
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error)
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -73,32 +73,32 @@ const TableSupplier = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await Supplier.deleteSupplier(id);
+          await Supplier.deleteSupplier(id)
           setData((prevData) =>
             prevData.filter((supplier) => supplier.id !== id)
-          );
+          )
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
+          })
           // await Supplier.deleteSupplier(id);
-          const res = await Supplier.getSupplier(currentPage, size);
-          setData(res.data.data);
+          const res = await Supplier.getSupplier(currentPage, size)
+          setData(res.data.data)
 
-          setTotalPages(res.data.totalPages);
-          setTotalItems(res.data.totalItems);
-          setCurrentPage(res.data.currentPage);
+          setTotalPages(res.data.totalPages)
+          setTotalItems(res.data.totalItems)
+          setCurrentPage(res.data.currentPage)
 
           if (
             res.data.totalItems % (size * res.data.totalPages) <= size &&
             currentPage > 1
           ) {
-            paginationHandle(currentPage - 1);
+            paginationHandle(currentPage - 1)
           } else {
-            paginationHandle(res.data.currentPage);
+            paginationHandle(res.data.currentPage)
           }
         }
       } catch (e) {
@@ -109,26 +109,26 @@ const TableSupplier = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage);
-  };
+    setCurrentPage(currentPage)
+  }
 
   const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1);
-  };
+    setCurrentPage(currentPage + 1)
+  }
 
   const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1);
-  };
+    setCurrentPage(currentPage - 1)
+  }
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
   const filteredData = searchTerm
     ? allData.filter(
@@ -137,7 +137,7 @@ const TableSupplier = () => {
           supplier.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
           supplier.phone.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : data;
+    : data
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -313,7 +313,7 @@ const TableSupplier = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -322,13 +322,13 @@ const TableSupplier = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -338,7 +338,7 @@ const TableSupplier = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -346,7 +346,7 @@ const TableSupplier = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -358,7 +358,7 @@ const TableSupplier = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}
@@ -369,6 +369,6 @@ const TableSupplier = () => {
         </div>
       </div>
     </div>
-  );
-};
-export default TableSupplier;
+  )
+}
+export default TableSupplier

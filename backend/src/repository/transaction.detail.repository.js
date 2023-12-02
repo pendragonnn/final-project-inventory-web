@@ -5,11 +5,22 @@ const Item = models.Item
 
 const findsTransactionDetail = async (page, size) => {
   const offset = (page - 1) * size
-  const transactionDetailsAll = await TransactionsDetail.findAll()
+  const transactionDetailsAll = await TransactionsDetail.findAll({
+    include: [
+      {
+        model: Item,
+      },
+    ],
+  })
   const dataLength = transactionDetailsAll.length
   const transactionDetails = await TransactionsDetail.findAll({
     offset: offset,
     limit: size,
+    include: [
+      {
+        model: Item,
+      },
+    ],
   })
   return { transactionDetails, dataLength }
 }

@@ -20,9 +20,8 @@ const findItems = async (page, size) => {
     ],
     offset: offset,
     limit: size,
-    order: [
-      ['id', 'DESC'],
-    ],
+    order: [["id", "DESC"]],
+    order: [["id", "DESC"]],
   });
   return { items, dataLength };
 };
@@ -82,7 +81,8 @@ const createItem = async (itemData) => {
 };
 
 const editItem = async (id, updatedFields) => {
-  const { name, description, category_id, stock, price, image_url} = updatedFields;
+  const { name, description, category_id, stock, price, image_url } =
+    updatedFields;
   const item = await Item.findByPk(id);
 
   if (!item) {
