@@ -87,7 +87,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
