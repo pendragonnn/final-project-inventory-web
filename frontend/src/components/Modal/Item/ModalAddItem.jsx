@@ -218,6 +218,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 />
               </div>
             </form>
+            
           </div>
         </div>
       </div>
