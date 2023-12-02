@@ -89,16 +89,14 @@ const TableUser = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await UserData.deleteUser(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000,
           });
-
+          await UserData.deleteUser(id);
           const res = await UserData.getUsers(currentPage, size);
           setData(res.data.data);
 
@@ -106,10 +104,7 @@ const TableUser = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (
-            res.data.totalItems % (size * res.data.totalPages) <= size &&
-            currentPage > 1
-          ) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -126,8 +121,8 @@ const TableUser = () => {
         });
       }
     });
-  };
-
+  }
+  
   const paginationHandle = async (currentPage) => {
     setCurrentPage(currentPage);
   };
