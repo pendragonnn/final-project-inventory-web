@@ -13,7 +13,7 @@ const TableOutlets = () => {
   const [totalPages, setTotalPages] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
   const [allData, setAllData] = useState([])
-  const size = 1
+  const size = 10
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +31,7 @@ const TableOutlets = () => {
       }
     }
 
-    fetchData()
+    fetchData(currentPage, update)
   }, [currentPage, update])
 
   const handleAdd = async () => {
@@ -83,7 +83,7 @@ const TableOutlets = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           })
-          await Outlet.deleteOutlet(id)
+          // await Outlet.deleteOutlet(id);
           const res = await Outlet.getOutlet(currentPage, size)
           setData(res.data.data)
 
@@ -91,7 +91,10 @@ const TableOutlets = () => {
           setTotalItems(res.data.totalItems)
           setCurrentPage(res.data.currentPage)
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
             paginationHandle(currentPage - 1)
           } else {
             paginationHandle(res.data.currentPage)
@@ -315,7 +318,7 @@ const TableOutlets = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -324,13 +327,13 @@ const TableOutlets = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -340,7 +343,7 @@ const TableOutlets = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -348,7 +351,7 @@ const TableOutlets = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -360,7 +363,7 @@ const TableOutlets = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}

@@ -20,6 +20,8 @@ const findItems = async (page, size) => {
     ],
     offset: offset,
     limit: size,
+    order: [["id", "DESC"]],
+    order: [["id", "DESC"]],
   });
   return { items, dataLength };
 };
@@ -78,25 +80,50 @@ const createItem = async (itemData) => {
   return item;
 };
 
-const editItem = async (id, itemData) => {
-  const updatedItem = await Item.update(
-    {
-      name: itemData.name,
-      description: itemData.description,
-      category_id: itemData.category_id,
-      price: itemData.price,
-      stock: itemData.stock,
-      image_url: itemData.image_url,
-    },
-    {
-      where: {
-        id,
-      },
-      returning: true,
-    }
-  );
+const editItem = async (id, updatedFields) => {
+  const { name, description, category_id, stock, price, image_url } =
+    updatedFields;
+  const item = await Item.findByPk(id);
 
-  return updatedItem;
+  if (!item) {
+    throw new Error("Item not found");
+  }
+
+  const updatedData = {};
+
+  if (name !== undefined && name !== item.name) {
+    updatedData.name = name;
+  }
+
+  if (description !== undefined) {
+    updatedData.description = description;
+  }
+  if (category_id !== undefined) {
+    updatedData.category_id = category_id;
+  }
+  if (stock !== undefined) {
+    updatedData.stock = stock;
+  }
+  if (price !== undefined) {
+    updatedData.price = price;
+  }
+  if (image_url !== undefined) {
+    updatedData.image_url = image_url;
+  }
+
+  if (Object.keys(updatedData).length === 0) {
+    // Tidak ada perubahan yang perlu diperbarui
+    return item; // Mengembalikan data outlet tanpa melakukan update
+  }
+
+  const updatedItems = await Item.update(updatedData, {
+    where: {
+      id: id,
+    },
+    returning: true,
+  });
+
+  return updatedItems[1][0];
 };
 
 const deleteItem = async (id) => {

@@ -8,6 +8,7 @@ const findOutlets = async (page, size) => {
   const outlets = await Outlets.findAll({
     offset: offset,
     limit: size,
+    order: [["id", "DESC"]],
   });
   return { outlets, dataLength };
 };

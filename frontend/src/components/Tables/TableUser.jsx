@@ -35,19 +35,27 @@ const TableUser = () => {
   const handleAdd = async (newUser) => {
     const newData = await [...data, newUser];
     setData(newData);
-    const res = await UserData.getUsers();
+    const res = await UserData.getUsers(currentPage, size);
     setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
   const handleEditData = async (updatedUser) => {
     setData((prevData) =>
-      prevData.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      prevData.map((user) =>
+        user.id === updatedUser.id ? { ...user, ...updatedUser } : user
+      )
     );
-    const res = await UserData.getUsers();
+    const res = await UserData.getUsers(currentPage, size);
     setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
-  const handleEdit = async (id, imageUrl) => {
+  const handleEdit = async (id) => {
     try {
       const res = await UserData.getUserById(id);
       const result = res.data;
@@ -81,7 +89,6 @@ const TableUser = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          await UserData.deleteUser(id);
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -89,7 +96,7 @@ const TableUser = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
-
+          await UserData.deleteUser(id);
           const res = await UserData.getUsers(currentPage, size);
           setData(res.data.data);
 
@@ -97,10 +104,7 @@ const TableUser = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (
-            res.data.totalItems % (size * res.data.totalPages) <= size &&
-            currentPage > 1
-          ) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -117,14 +121,22 @@ const TableUser = () => {
         });
       }
     });
-  };
-
+  }
+  
   const paginationHandle = async (currentPage) => {
     setCurrentPage(currentPage);
   };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1);
   };
 
   const filteredData = searchTerm
@@ -204,13 +216,16 @@ const TableUser = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
+              <th className="max-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                No
+              </th>
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
                 Photo
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Name
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Role Name
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
@@ -241,6 +256,11 @@ const TableUser = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <div className="p-2.5 xl:p-5">
                       <img
@@ -294,7 +314,7 @@ const TableUser = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -322,19 +342,60 @@ const TableUser = () => {
             />
           )}
         </table>
-        <div className="join float-right m-2">
-          {!searchTerm &&
-            Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`join-item btn btn-outline btn-default ${
-                  index === currentPage - 1 ? "btn btn-active btn-primary" : ""
-                }`}
-                onClick={() => paginationHandle(index + 1, totalPages)}
-              >
-                {index + 1}
-              </button>
-            ))}
+        <div className="items-center float-right">
+          {currentPage !== 1 && !searchTerm && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
+
+          <div className="join m-2 ">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className="join-item btn btn-outline btn-default"
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
+                <button
+                  key={currentPage}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className="join-item btn btn-outline btn-default"
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {currentPage !== totalPages && !searchTerm && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
         </div>
       </div>
     </div>

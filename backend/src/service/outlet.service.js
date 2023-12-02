@@ -50,11 +50,11 @@ const editOutletById = async (id, newOutlet) => {
     const outletPhone = await findOutletByPhone(newOutlet.phone);
 
     if (outletName && outletName.id !== id) {
-      throw new Error("Outlet Name Already Added");
+      throw new Error("Outlet Name Is Already");
     }
 
     if (outletPhone && outletPhone.id !== id) {
-      throw new Error("Outlet Phone Already Added");
+      throw new Error("Outlet Phone Is  Already ");
     }
 
     const updatedOutlet = await editOutlet(id, newOutlet);
@@ -64,9 +64,20 @@ const editOutletById = async (id, newOutlet) => {
   }
 };
 
+const deleteOutletById = async (id) => {
+  try {
+    await getOutletById(id);
+
+    await deleteOutlet(id);
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   getAllOutlets,
   getOutletById,
   insertOutlet,
   editOutletById,
+  deleteOutletById,
 };

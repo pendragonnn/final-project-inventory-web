@@ -17,12 +17,16 @@ const TableCategories = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory(currentPage, size);
-      const allRes = await Category.getCategory(1, res.data.totalItems);
-      setAllData(allRes.data.data);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
-      setData(res.data.data);
+      try {
+        const res = await Category.getCategory(currentPage, size);
+        const allRes = await Category.getCategory(1, res.data.totalItems);
+        setAllData(allRes.data.data);
+        setTotalPages(res.data.totalPages);
+        setTotalItems(res.data.totalItems);
+        setData(res.data.data);
+      } catch (error) {
+        console.log("Error fetching categories:", error)
+      }
     };
 
     fetchData();
@@ -37,14 +41,13 @@ const TableCategories = () => {
   };
 
   const handleEditData = async (updatedCategory) => {
-    let updatedData = [...data];
-    const indexToUpdate = updatedData.findIndex(
-      (category) => category.id === updatedCategory[0].id
+    setData((prevData) =>
+      prevData.map((category) =>
+        category.id === updatedCategory?.id ? updatedCategory : category
+      )
     );
-
-    updatedData[indexToUpdate] = updatedCategory[0];
-
-    setData([...updatedData]);
+    const res = await Category.getCategory(currentPage, size);
+    setData(res.data.data);
   };
 
   const handleEdit = async (id) => {
@@ -84,7 +87,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -121,8 +124,8 @@ const TableCategories = () => {
 
   const filteredData = searchTerm
     ? allData.filter((category) =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : data;
 
   return (
@@ -187,6 +190,9 @@ const TableCategories = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                #
+              </th>
               <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
@@ -215,6 +221,12 @@ const TableCategories = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {category.name}
@@ -251,7 +263,7 @@ const TableCategories = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -274,7 +286,7 @@ const TableCategories = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -283,13 +295,13 @@ const TableCategories = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -299,7 +311,7 @@ const TableCategories = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -307,7 +319,7 @@ const TableCategories = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -319,7 +331,7 @@ const TableCategories = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}

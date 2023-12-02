@@ -52,11 +52,11 @@ const DetailReportIsuing = () => {
               {console.log("value transaction detail", value)}
               <div className="flex-1 text-center flex flex-col items-center">
                 <div className="w-40 h-40 rounded-full bg-black overflow-hidden">
-                  <Image
-                    src={`/${value.Item.image_url}`}
+                  <image
+                    src={`uploads/item/${value.Item.image_url}`}
                     alt={value.Item.image_url}
-                    width={100}
-                    height={100}
+                    // width={100}
+                    // height={100}
                     className="object-cover w-full h-full block"
                   />
                 </div>

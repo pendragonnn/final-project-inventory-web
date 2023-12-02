@@ -37,8 +37,7 @@ const authenticateToken = async (req, res, next) => {
       req.path.startsWith("/category") ||
       req.path.startsWith("/supplier") ||
       req.path.startsWith("/transaction-header") ||
-      req.path.startsWith("/transaction-detail") ||
-      req.path.startsWith("/user")
+      req.path.startsWith("/transaction-detail")
     ) {
       next()
     } else if (

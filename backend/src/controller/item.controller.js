@@ -10,12 +10,12 @@ const {
 
 const allItems = async (req, res) => {
   const page = req.query.page || 1;
-  const size = req.query.size || 100;
+  const size = req.query.size || 10;
   try {
     const { items, dataLength } = await getAllItems(page, size);
     res.status(200).json({
       data: items,
-      totalItems: items.length,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     });
