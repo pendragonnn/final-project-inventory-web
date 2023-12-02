@@ -21,6 +21,7 @@ const findItems = async (page, size) => {
     offset: offset,
     limit: size,
     order: [["id", "DESC"]],
+    order: [["id", "DESC"]],
   });
   return { items, dataLength };
 };

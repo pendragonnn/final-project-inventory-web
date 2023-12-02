@@ -7,9 +7,13 @@ const headers = {
   Authorization: `Bearer ${token}`,
 };
 
-const getItem = async () => {
+const getItem = async (page, size) => {
   const result = await axios.get("http://localhost:8000/api/v1/item", {
     headers: headers,
+    params: {
+      page: page,
+      size: size
+    }
   });
 
   return result;
