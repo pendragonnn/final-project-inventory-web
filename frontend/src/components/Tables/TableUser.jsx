@@ -42,58 +42,14 @@ const TableUser = () => {
     setCurrentPage(res.data.currentPage);
   };
 
-  const handleEditData = async (updatedUser, updatedFile) => {
-    try {
-      if (updatedUser && updatedUser.id) {
-        // Update the user data in the local state
+  const handleEditData = async (updatedUser) => {
         setData((prevData) =>
           prevData.map((user) =>
             user.id === updatedUser.id ? { ...user, ...updatedUser } : user
           )
         );
-  
-        // Fetch the updated data from the server
         const res = await UserData.getUsers();
-        setData(res.data.data);
-  
-        // Check if there are changes in the image file or image URL
-        const isImageChanged =
-          updatedFile ||
-          (updatedUser.image_url && updatedUser.image_url !== res.data?.data?.image_url);
-  
-        if (isImageChanged) {
-          // Fetch the updated data after editing the image
-          const img = await UserData.getUser(updatedUser.id);
-          setData((prevData) =>
-            prevData.map((user) =>
-              user.id === img.data.data.id ? img.data.data : user
-            )
-          );
-  
-          // Upload the new image
-          const imageResponse = await UserData.getUsers(
-            updatedUser.id,
-            updatedFile
-          );
-  
-          // Update the user data in the local state with the new image URL
-          setData((prevData) =>
-            prevData.map((user) =>
-              user.id === updatedUser.id
-                ? { ...user, image_url: imageResponse.data.data.image_url }
-                : user
-            )
-          );
-         
-  
-          console.log("Image updated:", imageResponse);
-        }
-      } else {
-        console.error("Updated user data is invalid:", updatedUser);
-      }
-    } catch (error) {
-      console.error("Error handling edit data:", error);
-    }
+        setData(res.data.data)
   };
   
   
