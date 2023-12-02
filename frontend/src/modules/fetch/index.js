@@ -25,43 +25,33 @@ async function getTransactionHeader(page, size) {
   }
 }
 
-// async function getTransactionHeaderWithOutlet(page, size) {
-//   const payload = {
-//     page: page,
-//     size: size,
-//   }
-
-//   try {
-//     const res = await instance.get(`/transaction-header`, { params: payload })
-
-//     // // Filter data where outlet_id is not null
-//     // const filteredData = res.data.data.filter(
-//     //   (transaction) => transaction.outlet_id !== null
-//     // )
-
-//     return res.data
-//   } catch (err) {
-//     throw new Error(err.response.data)
-//   }
-// }
-
-async function getTransactionHeaderWithSupplier(page, size, supplierId) {
+async function getTransactionHeaderReceiving(page, size) {
   const payload = {
     page: page,
     size: size,
   }
 
   try {
-    const res = await instance.get(`/transaction-header`, {
+    const res = await instance.get(`/transaction-header/receiving`, {
       params: payload,
     })
+    return res.data
+  } catch (err) {
+    throw new Error(err.response.data)
+  }
+}
 
-    // Filter data based on outletId
-    const filteredData = res.data.filter(
-      (transaction) => transaction.supplier_id === supplierId
-    )
+async function getTransactionHeaderIsuing(page, size) {
+  const payload = {
+    page: page,
+    size: size,
+  }
 
-    return filteredData
+  try {
+    const res = await instance.get(`/transaction-header/isuing`, {
+      params: payload,
+    })
+    return res.data
   } catch (err) {
     throw new Error(err.response.data)
   }
@@ -97,9 +87,9 @@ async function deleteTransactionHeader(id) {
 module.exports = {
   createTransactionHeader,
   getTransactionHeader,
+  getTransactionHeaderReceiving,
+  getTransactionHeaderIsuing,
   getTransactionHeaderById,
   getTransactionDetailById,
   deleteTransactionHeader,
-  // getTransactionHeaderWithOutlet,
-  getTransactionHeaderWithSupplier,
 }

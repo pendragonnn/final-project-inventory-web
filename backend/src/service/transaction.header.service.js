@@ -1,9 +1,8 @@
 const {
   findsTransactionHeader,
   findTransactionHeadertById,
-  // findTransactionHeadertByUserId,
-  // findTransactionHeadertByOutletId,
-  // findTransactionHeadertBySupplierId,
+  findsTransactionHeaderIsuing,
+  findsTransactionHeaderReceiving,
   createTransactionHeader,
   deleteTransactionHeader,
   editTransactionHeader,
@@ -12,6 +11,16 @@ const {
 const getAllTransactionHeader = async (page, size) => {
   const transactionHeader = await findsTransactionHeader(page, size)
   return transactionHeader
+}
+
+const getTransactionHeaderReceiving = async (page, size) => {
+  const transactionReceiving = await findsTransactionHeaderReceiving(page, size)
+  return transactionReceiving
+}
+
+const getTransactionHeaderIsuing = async (page, size) => {
+  const transactionIsuing = await findsTransactionHeaderIsuing(page, size)
+  return transactionIsuing
 }
 
 const getTransactionHeaderById = async (id) => {
@@ -63,6 +72,8 @@ const deleteTransactionHeaderById = async (id) => {
 module.exports = {
   getAllTransactionHeader,
   getTransactionHeaderById,
+  getTransactionHeaderReceiving,
+  getTransactionHeaderIsuing,
   insertTransactionHeader,
   editTransactionHeaderById,
   deleteTransactionHeaderById,

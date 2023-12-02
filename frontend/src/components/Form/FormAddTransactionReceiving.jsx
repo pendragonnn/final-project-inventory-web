@@ -67,7 +67,7 @@ const FormAddTransactionReceiving = ({
                   <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
                     <input
                       type="text"
-                      className="font-medium text-black dark:text-white w-full text-center"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
                       required
                       readOnly
                       name="item_id"
@@ -77,7 +77,7 @@ const FormAddTransactionReceiving = ({
                   <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
                     <input
                       type="text"
-                      className="font-medium text-black dark:text-white w-full text-center"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark text-center"
                       required
                       readOnly
                       name="quantity"
@@ -127,6 +127,7 @@ const FormAddTransactionReceiving = ({
               <div className="relative">
                 <input
                   type="date"
+                  required
                   name="transaction_date"
                   className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                 />

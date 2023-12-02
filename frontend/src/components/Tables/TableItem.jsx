@@ -26,8 +26,7 @@ const TableItems = () => {
       try {
         const res = await Item.getItem(currentPage, size);
         const allRes = await Item.getItem(1, res.data.totalItems);
-        // const image = await item.getItemImageUrl(imgUrl);
-        // setItemImageUrl(image.data.data);
+
         setTotalPages(res.data.totalPages);
         setTotalItems(res.data.totalItems);
         setAllData(allRes.data.data);
@@ -158,6 +157,22 @@ const TableItems = () => {
       )
     : data;
 
+  // Fungsi untuk mengonversi harga ke format IDR
+  const formatIDR = (price) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(price);
+  };
+
+  // Fungsi untuk mengonversi harga ke format IDR
+  const formatIDR = (price) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(price);
+  };
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -226,12 +241,15 @@ const TableItems = () => {
                 <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                   #
                 </th>
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                <center>
+                  <th className="min-w-[150px]  py-4 px-4 font-medium text-black dark:text-white ">
+                    Image
+                  </th>
+                </center>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                   Name
                 </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Image
-                </th>
+
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                   description
                 </th>
@@ -274,10 +292,6 @@ const TableItems = () => {
                         ? key + 1
                         : (currentPage - 1) * size + key + 1}
                     </td>
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <h5 className="font-medium text-black dark:text-white"></h5>
-                      <p className="text-sm">{item.name}</p>
-                    </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <div
                         className="p-2.5 xl:p-5 w-20 h-20 cursor-pointer"
@@ -285,10 +299,15 @@ const TableItems = () => {
                       >
                         <img
                           src={`uploads/item/${item.image_url}`}
-                          className="object-cover ml-[-3rem] w-full h-full rounded-full "
+                          className="object-cover  w-full h-full rounded-full "
                         />
                       </div>
                     </td>
+                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                      <h5 className="font-medium text-black dark:text-white"></h5>
+                      <p className="text-black dark:text-white">{item.name}</p>
+                    </td>
+
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
                         {item.description}
@@ -300,17 +319,41 @@ const TableItems = () => {
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">{item.price}</p>
+                      <p className="text-black dark:text-white">
+                        {formatIDR(item.price)}
+                      </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={
                           item.stock < 10
-                            ? "text-danger"
+                            ? "text-danger flex "
                             : "text-black dark:text-white"
                         }
                       >
-                        {item.stock < 10 ? `${item.stock}` : item.stock}
+                        {item.stock < 10
+                          ? `${item.stock} 
+`
+                          : item.stock}
+
+                        {item.stock < 10 ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6 ml-2"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                            />
+                          </svg>
+                        ) : (
+                          ""
+                        )}
                       </p>
                     </td>
 

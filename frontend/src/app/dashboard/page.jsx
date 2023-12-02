@@ -1,104 +1,146 @@
-"use client";
-import React from "react";
-import ChartOne from "@/components/Charts/ChartOne";
-import ChartThree from "@/components/Charts/ChartThree";
-import ChartTwo from "@/components/Charts/ChartTwo";
-import ChatCard from "@/components/Chat/ChatCard";
-import TableOne from "@/components/Tables/TableOne";
-import CardDataStats from "@/components/CardDataStats";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
-import Loader from "@/components/common/Loader";
-import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
-import user from "@/data/user";
-import category from "@/data/category";
-import item from "@/data/item";
-import supplier from "@/data/supplier";
-import outlet from "@/data/outlet";
+"use client"
+import React from "react"
+// import ChartOne from "@/components/Charts/ChartOne";
+// import ChartThree from "@/components/Charts/ChartThree";
+// import ChartTwo from "@/components/Charts/ChartTwo";
+// import ChatCard from "@/components/Chat/ChatCard";
+// import TableOne from "@/components/Tables/TableOne";
+import CardDataStats from "@/components/CardDataStats"
+import Sidebar from "@/components/Sidebar"
+import Header from "@/components/Header"
+import Loader from "@/components/common/Loader"
+import dynamic from "next/dynamic"
+import { useState, useEffect } from "react"
+import user from "@/data/user"
+import category from "@/data/category"
+import item from "@/data/item"
+import supplier from "@/data/supplier"
+import outlet from "@/data/outlet"
+import {
+  getTransactionHeaderReceiving,
+  getTransactionHeaderIsuing,
+} from "@/modules/fetch/index"
 const MapOne = dynamic(() => import("@/components/Maps/MapOne"), {
   ssr: false,
-});
+})
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [totalUser, setTotalUser] = useState([]);
-  const [totalCategory, setTotalCategory] = useState([]);
-  const [totalItem, setTotalItem] = useState([]);
-  const [totalSupplier, setTotalSupplier] = useState([]);
-  const [totalOutlet, setTotalOutlet] = useState([]);
-  const [totalTransaction, setTotalTransaction] = useState([]);
+  const [loading, setLoading] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [totalUser, setTotalUser] = useState([])
+  const [totalCategory, setTotalCategory] = useState([])
+  const [totalItem, setTotalItem] = useState([])
+  const [totalSupplier, setTotalSupplier] = useState([])
+  const [totalOutlet, setTotalOutlet] = useState([])
+  const [totalTransactionReceiving, setTotalTransactionReceiving] = useState([])
+  const [totalTransactionIsuing, setTotalTransactionIsuing] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await user.getUsers();
-        setTotalUser(res.data.data);
+        const res = await user.getUsers()
+        const allRes = await user.getUsers(1, res.data.totalItems)
+        setTotalUser(allRes.data.totalItems)
       } catch (error) {
-        console.log("Error fetching user", error);
+        console.log("Error fetching user", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await category.getCategory();
-        setTotalCategory(res.data.data);
+        const res = await category.getCategory()
+        const allRes = await category.getCategory(1, res.data.totalItems)
+        setTotalCategory(allRes.data.totalItems)
       } catch (error) {
-        console.log("Error fetching category", error);
+        console.log("Error fetching category", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await item.getItem();
-        setTotalItem(res.data.data);
+        const res = await item.getItem()
+        const allRes = await item.getItem(1, res.data.totalItems)
+        setTotalItem(allRes.data.totalItems)
       } catch (error) {
-        console.log("Error fetching category", error);
+        console.log("Error fetching category", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await supplier.getSupplier();
-        setTotalSupplier(res.data.data);
+        const res = await supplier.getSupplier()
+        const allRes = await supplier.getSupplier(1, res.data.totalItems)
+        setTotalSupplier(allRes.data.totalItems)
       } catch (error) {
-        console.log("Error fetching category", error);
+        console.log("Error fetching category", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await outlet.getOutlet();
-        setTotalOutlet(res.data.data);
+        const res = await outlet.getOutlet()
+        const allRes = await outlet.getOutlet(1, res.data.totalItems)
+        setTotalOutlet(allRes.data.totalItems)
       } catch (error) {
-        console.log("Error fetching category", error);
+        console.log("Error fetching category", error)
       }
-    };
-    fetchData();
-  }, []);
-
-  const countTotalUsers = totalUser.length;
-  const countTotalCategory = totalCategory.length;
-  const countTotalItem = totalItem.length;
-  const countTotalSupplier = totalSupplier.length;
-  const countTotalOutlet = totalOutlet.length;
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
+    const fetchData = async () => {
+      const res = await getTransactionHeaderReceiving()
+      const allRes = await getTransactionHeaderReceiving(1, res.totalItems)
+      setTotalTransactionReceiving(allRes.totalItems)
+    }
+
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getTransactionHeaderReceiving()
+      const allRes = await getTransactionHeaderReceiving(1, res.totalItems)
+      setTotalTransactionReceiving(allRes.totalItems)
+    }
+
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getTransactionHeaderIsuing()
+      const allRes = await getTransactionHeaderIsuing(1, res.totalItems)
+      setTotalTransactionIsuing(allRes.totalItems)
+    }
+
+    fetchData()
+  }, [])
+
+  const countTotalUsers = totalUser
+  const countTotalCategory = totalCategory
+  const countTotalItem = totalItem
+  const countTotalSupplier = totalSupplier
+  const countTotalOutlet = totalOutlet
+  const countTotalTransactionReceiving = totalTransactionReceiving
+  const countTotalTransactionIsuing = totalTransactionIsuing
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000)
+  }, [])
   return (
     <>
       {loading ? (
@@ -119,12 +161,7 @@ const Dashboard = () => {
             <main>
               <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-                  <CardDataStats
-                    title="Total Users"
-                    total={countTotalUsers}
-                    rate="0.95%"
-                    levelDown
-                  >
+                  <CardDataStats title="Total Users" total={countTotalUsers}>
                     <svg
                       className="fill-primary dark:fill-white"
                       width="22"
@@ -147,59 +184,83 @@ const Dashboard = () => {
                       />
                     </svg>
                   </CardDataStats>
-                  <CardDataStats
-                    title="Total Items"
-                    total={countTotalItem}
-                    rate="0.43%"
-                    levelUp
-                  >
+                  <CardDataStats title="Total Items" total={countTotalItem}>
                     <svg
-                      className="fill-primary dark:fill-white"
-                      width="22"
-                      height="16"
-                      viewBox="0 0 22 16"
-                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 22 22"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="text-primary dark:fill-white"
+                      width="22"
                     >
                       <path
-                        d="M11 15.1156C4.19376 15.1156 0.825012 8.61876 0.687512 8.34376C0.584387 8.13751 0.584387 7.86251 0.687512 7.65626C0.825012 7.38126 4.19376 0.918762 11 0.918762C17.8063 0.918762 21.175 7.38126 21.3125 7.65626C21.4156 7.86251 21.4156 8.13751 21.3125 8.34376C21.175 8.61876 17.8063 15.1156 11 15.1156ZM2.26876 8.00001C3.02501 9.27189 5.98126 13.5688 11 13.5688C16.0188 13.5688 18.975 9.27189 19.7313 8.00001C18.975 6.72814 16.0188 2.43126 11 2.43126C5.98126 2.43126 3.02501 6.72814 2.26876 8.00001Z"
-                        fill=""
-                      />
-                      <path
-                        d="M11 10.9219C9.38438 10.9219 8.07812 9.61562 8.07812 8C8.07812 6.38438 9.38438 5.07812 11 5.07812C12.6156 5.07812 13.9219 6.38438 13.9219 8C13.9219 9.61562 12.6156 10.9219 11 10.9219ZM11 6.625C10.2437 6.625 9.625 7.24375 9.625 8C9.625 8.75625 10.2437 9.375 11 9.375C11.7563 9.375 12.375 8.75625 12.375 8C12.375 7.24375 11.7563 6.625 11 6.625Z"
-                        fill=""
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
                       />
                     </svg>
                   </CardDataStats>
                   <CardDataStats
                     title="Total Categories"
                     total={countTotalCategory}
-                    rate="2.59%"
-                    levelUp
                   >
                     <svg
-                      className="fill-primary dark:fill-white"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 22 22"
-                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 22 22"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="text-primary dark:fill-white"
+                      width="22"
                     >
                       <path
-                        d="M21.1063 18.0469L19.3875 3.23126C19.2157 1.71876 17.9438 0.584381 16.3969 0.584381H5.56878C4.05628 0.584381 2.78441 1.71876 2.57816 3.23126L0.859406 18.0469C0.756281 18.9063 1.03128 19.7313 1.61566 20.3844C2.20003 21.0375 2.99066 21.3813 3.85003 21.3813H18.1157C18.975 21.3813 19.8 21.0031 20.35 20.3844C20.9 19.7656 21.2094 18.9063 21.1063 18.0469ZM19.2157 19.3531C18.9407 19.6625 18.5625 19.8344 18.15 19.8344H3.85003C3.43753 19.8344 3.05941 19.6625 2.78441 19.3531C2.50941 19.0438 2.37191 18.6313 2.44066 18.2188L4.12503 3.43751C4.19378 2.71563 4.81253 2.16563 5.56878 2.16563H16.4313C17.1532 2.16563 17.7719 2.71563 17.875 3.43751L19.5938 18.2531C19.6282 18.6656 19.4907 19.0438 19.2157 19.3531Z"
-                        fill=""
-                      />
-                      <path
-                        d="M14.3345 5.29375C13.922 5.39688 13.647 5.80938 13.7501 6.22188C13.7845 6.42813 13.8189 6.63438 13.8189 6.80625C13.8189 8.35313 12.547 9.625 11.0001 9.625C9.45327 9.625 8.1814 8.35313 8.1814 6.80625C8.1814 6.6 8.21577 6.42813 8.25015 6.22188C8.35327 5.80938 8.07827 5.39688 7.66577 5.29375C7.25327 5.19063 6.84077 5.46563 6.73765 5.87813C6.6689 6.1875 6.63452 6.49688 6.63452 6.80625C6.63452 9.2125 8.5939 11.1719 11.0001 11.1719C13.4064 11.1719 15.3658 9.2125 15.3658 6.80625C15.3658 6.49688 15.3314 6.1875 15.2626 5.87813C15.1595 5.46563 14.747 5.225 14.3345 5.29375Z"
-                        fill=""
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
                       />
                     </svg>
                   </CardDataStats>
                   <CardDataStats
                     title="Total Suppliers"
                     total={countTotalSupplier}
-                    rate="4.35%"
-                    levelUp
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 22 22"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="text-primary dark:fill-white"
+                      width="22"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                      />
+                    </svg>
+                  </CardDataStats>
+                  <CardDataStats title="Total Outlets" total={countTotalOutlet}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 22 22"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="text-primary dark:fill-white"
+                      width="22"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"
+                      />
+                    </svg>
+                  </CardDataStats>
+                  <CardDataStats
+                    title="Total Transaction Receiving"
+                    total={countTotalTransactionReceiving}
                   >
                     <svg
                       className="fill-primary dark:fill-white"
@@ -224,10 +285,8 @@ const Dashboard = () => {
                     </svg>
                   </CardDataStats>
                   <CardDataStats
-                    title="Total Outlets"
-                    total={countTotalOutlet}
-                    rate="4.35%"
-                    levelUp
+                    title="Total Transaction Issuing"
+                    total={countTotalTransactionIsuing}
                   >
                     <svg
                       className="fill-primary dark:fill-white"
@@ -252,19 +311,16 @@ const Dashboard = () => {
                     </svg>
                   </CardDataStats>
                 </div>
-              
               </div>
-              <div className="overflow-hidden w-full md:w-2/3 mx-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                <div className="relative z-20 h-60 md:h-80 overflow-hidden rounded-t-md">
-                  <img
-                    src="/images/dashboard/inventory.jpg"
-                    alt="Inventory"
-                    className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-105"
-                    style={{
-                      boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
-                    }}
-                  />
-                </div>
+              <div className="overflow-hidden w-full md:w-2/3 mx-auto rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-60 md:h-80 mb-10 ">
+                <img
+                  src="/images/dashboard/inventory.jpg"
+                  alt="Inventory"
+                  className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-105"
+                  style={{
+                    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                  }}
+                />
               </div>
             </main>
             {/* <!-- ===== Main Content End ===== --> */}
@@ -273,6 +329,6 @@ const Dashboard = () => {
         </div>
       )}
     </>
-  );
-};
-export default Dashboard;
+  )
+}
+export default Dashboard
