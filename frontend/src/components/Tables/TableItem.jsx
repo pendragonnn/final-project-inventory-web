@@ -1,16 +1,16 @@
-"use client"
-import Swal from "sweetalert2"
-import { useEffect, useState } from "react"
-import ModalAddItem from "../Modal/Item/ModalAddItem"
-import ModalEditItem from "../Modal/Item/ModalEditItem"
-import Item from "@/data/item/index"
-import item from "@/data/item/index"
-import ModalImageItem from "@/components/Modal/Item/ModalImageItem"
+"use client";
+import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import ModalAddItem from "../Modal/Item/ModalAddItem";
+import ModalEditItem from "../Modal/Item/ModalEditItem";
+import Item from "@/data/item/index";
+import item from "@/data/item/index";
+import ModalImageItem from "@/components/Modal/Item/ModalImageItem";
 
 const TableItems = () => {
-  const [data, setData] = useState([])
-  const [update, setUpdate] = useState(null)
-  const [image, setItemImageUrl] = useState(null)
+  const [data, setData] = useState([]);
+  const [update, setUpdate] = useState(null);
+  const [image, setItemImageUrl] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,48 +24,46 @@ const TableItems = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Item.getItem(currentPage, size)
-        const allRes = await Item.getItem(1, res.data.totalItems)
-        // const image = await item.getItemImageUrl(imgUrl);
-        // setItemImageUrl(image.data.data);
-        setTotalPages(res.data.totalPages)
-        setTotalItems(res.data.totalItems)
-        setAllData(allRes.data.data)
-        setData(res.data.data)
+        const res = await Item.getItem(currentPage, size);
+        const allRes = await Item.getItem(1, res.data.totalItems);
+      
+        setTotalPages(res.data.totalPages);
+        setTotalItems(res.data.totalItems);
+        setAllData(allRes.data.data);
+        setData(res.data.data);
       } catch (error) {
-        console.log("Error fetching items: ", error)
+        console.log("Error fetching items: ", error);
       }
-    }
+    };
 
-    fetchData()
-  }, [currentPage, update])
-
+    fetchData();
+  }, [currentPage, update]);
 
   const handleAdd = async () => {
-    const res = await Item.getItem(currentPage, size)
-    setData(res.data.data)
-    setTotalPages(res.data.totalPages)
-    setTotalItems(res.data.totalItems)
-    setCurrentPage(res.data.currentPage)
-  }
+    const res = await Item.getItem(currentPage, size);
+    setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
+  };
 
   const handleEditData = async (updatedItem) => {
     setData((prevData) =>
       prevData.map((item) => (item.id === updatedItem?.id ? updatedItem : item))
-    )
-    const res = await Item.getItem(currentPage, size)
-    setData(res.data.data)
-  }
+    );
+    const res = await Item.getItem(currentPage, size);
+    setData(res.data.data);
+  };
 
   const handleEdit = async (id) => {
     try {
-      const res = await Item.getItemByid(id)
-      const result = res.data
-      setUpdate(result)
+      const res = await Item.getItemByid(id);
+      const result = res.data;
+      setUpdate(result);
     } catch (error) {
-      console.error("Error fetching data:", error)
+      console.error("Error fetching data:", error);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -79,29 +77,29 @@ const TableItems = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          setData((prevData) => prevData.filter((item) => item.id !== id))
+          setData((prevData) => prevData.filter((item) => item.id !== id));
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          })
-          await Item.deleteItem(id)
-          const res = await Item.getItem(currentPage, size)
-          setData(res.data.data)
+          });
+          await Item.deleteItem(id);
+          const res = await Item.getItem(currentPage, size);
+          setData(res.data.data);
 
-          setTotalPages(res.data.totalPages)
-          setTotalItems(res.data.totalItems)
-          setCurrentPage(res.data.currentPage)
+          setTotalPages(res.data.totalPages);
+          setTotalItems(res.data.totalItems);
+          setCurrentPage(res.data.currentPage);
 
           if (
             res.data.totalItems % (size * res.data.totalPages) <= size &&
             currentPage > 1
           ) {
-            paginationHandle(currentPage - 1)
+            paginationHandle(currentPage - 1);
           } else {
-            paginationHandle(res.data.currentPage)
+            paginationHandle(res.data.currentPage);
           }
         }
       } catch (e) {
@@ -112,47 +110,52 @@ const TableItems = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   const openModal = (imageUrl) => {
-    setModalOpen(true)
-    setImageModalUrl(imageUrl)
-  }
+    setModalOpen(true);
+    setImageModalUrl(imageUrl);
+  };
 
   const closeModal = () => {
-    setModalOpen(false)
-  }
+    setModalOpen(false);
+  };
 
   // pagination
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+    setCurrentPage(currentPage);
+  };
 
   const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1)
-  }
+    setCurrentPage(currentPage + 1);
+  };
 
   const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1)
-  }
+    setCurrentPage(currentPage - 1);
+  };
 
   // filter
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value)
-  }
+    setSearchTerm(event.target.value);
+  };
 
   const filteredData = searchTerm
     ? allData.filter(
         (item) =>
           item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.Category?.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-          item.price.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.stock.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
+          item.Category?.name
+            .toLowerCase()
+            .includes(searchTerm.toLocaleLowerCase()) ||
+          item.price
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          item.stock.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : data
+    : data;
 
   return (
     <>
@@ -222,12 +225,15 @@ const TableItems = () => {
                 <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                   #
                 </th>
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  Name
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+               <center>
+               <th className="min-w-[150px]  py-4 px-4 font-medium text-black dark:text-white ">
                   Image
                 </th>
+               </center>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Name
+                </th>
+
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                   description
                 </th>
@@ -270,10 +276,6 @@ const TableItems = () => {
                         ? key + 1
                         : (currentPage - 1) * size + key + 1}
                     </td>
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <h5 className="font-medium text-black dark:text-white"></h5>
-                      <p className="text-sm">{item.name}</p>
-                    </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <div
                         className="p-2.5 xl:p-5 w-20 h-20 cursor-pointer"
@@ -281,10 +283,15 @@ const TableItems = () => {
                       >
                         <img
                           src={`uploads/item/${item.image_url}`}
-                          className="object-cover ml-[-3rem] w-full h-full rounded-full "
+                          className="object-cover  w-full h-full rounded-full "
                         />
                       </div>
                     </td>
+                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                      <h5 className="font-medium text-black dark:text-white"></h5>
+                      <p className="text-sm">{item.name}</p>
+                    </td>
+
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
                         {item.description}
@@ -299,12 +306,37 @@ const TableItems = () => {
                       <p className="text-black dark:text-white">{item.price}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p
+                        className={
+                          item.stock < 10
+                            ? "text-danger flex "
+                            : "text-black dark:text-white"
+                        }
+                      >
+                        {item.stock < 10
+                          ? `${item.stock} 
+`
+                          : item.stock}
 
-
-                    <p className={item.stock < 10 ? "text-danger" : "text-black dark:text-white"}>
-                   {item.stock < 10 ? `${item.stock}` : item.stock}
-  </p>
-
+                        {item.stock < 10 ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6 ml-2"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                            />
+                          </svg>
+                        ) : (
+                          ""
+                        )}
+                      </p>
                     </td>
 
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -423,6 +455,6 @@ const TableItems = () => {
         <ModalImageItem imageUrl={imageModal} closeModal={closeModal} />
       )}
     </>
-  )
-}
-export default TableItems
+  );
+};
+export default TableItems;
