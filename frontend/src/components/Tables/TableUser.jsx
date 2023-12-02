@@ -51,7 +51,6 @@ const TableUser = () => {
             user.id === updatedUser.id ? { ...user, ...updatedUser } : user
           )
         );
-        const res = await UserData.getUsers();
 
         // Fetch the updated data from the server
         const res = await UserData.getUsers();
@@ -61,10 +60,7 @@ const TableUser = () => {
         const isImageChanged =
           updatedFile ||
           (updatedUser.image_url &&
-            updatedUser.image_url !== data?.data?.image_url);
-
-        updatedUser.image_url &&
-          updatedUser.image_url !== res.data?.data?.image_url;
+            updatedUser.image_url !== res.data?.data?.image_url);
 
         if (isImageChanged) {
           // Fetch the updated data after editing the image
@@ -141,6 +137,7 @@ const TableUser = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
+            timer: 2000,
           });
 
           const res = await UserData.getUsers(currentPage, size);
