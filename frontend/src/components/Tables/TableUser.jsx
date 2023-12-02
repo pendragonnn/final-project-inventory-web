@@ -224,7 +224,7 @@ const TableUser = () => {
                 No
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-16">
-                Photo
+                Image
               </th>
               <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                 Name
