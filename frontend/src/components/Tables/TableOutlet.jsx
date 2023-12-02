@@ -83,7 +83,6 @@ const TableOutlets = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           })
-          // await Outlet.deleteOutlet(id);
           const res = await Outlet.getOutlet(currentPage, size)
           setData(res.data.data)
 
@@ -137,8 +136,6 @@ const TableOutlets = () => {
           outlet.phone.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : data
-
-  // console.log("filtered data", filteredData)
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">

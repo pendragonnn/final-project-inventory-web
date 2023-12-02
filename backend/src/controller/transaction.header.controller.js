@@ -1,6 +1,8 @@
 const {
   getAllTransactionHeader,
   getTransactionHeaderById,
+  getTransactionHeaderReceiving,
+  getTransactionHeaderIsuing,
   insertTransactionHeader,
   deleteTransactionHeaderById,
   editTransactionHeaderById,
@@ -29,6 +31,46 @@ const allTransactionHeader = async (req, res) => {
     res.status(200).json({
       data: transactionHeaders,
       totalItems: transactionHeaders.length,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(dataLength / (size === "all" ? dataLength : size)), // Adjust totalPages calculation
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+const alltransactionReceiving = async (req, res) => {
+  const page = req.query.page || 1
+  const size = req.query.size || 10
+
+  try {
+    const { transactionReceiving, dataLength } =
+      await getTransactionHeaderReceiving(page, size)
+
+    res.status(200).json({
+      data: transactionReceiving,
+      totalItems: dataLength,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(dataLength / size),
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+const alltransactionIsuing = async (req, res) => {
+  const page = req.query.page || 1
+  const size = req.query.size || 10
+
+  try {
+    const { transactionIsuing, dataLength } = await getTransactionHeaderIsuing(
+      page,
+      size
+    )
+
+    res.status(200).json({
+      data: transactionIsuing,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     })
@@ -99,53 +141,6 @@ const postTransactionHeader = async (req, res) => {
   }
 }
 
-// const postTransactionHeader = async (req, res) => {
-//   try {
-//     const newTransactionHeaderData = req.body
-
-//     const transactionHeader = await insertTransactionHeader(
-//       newTransactionHeaderData
-//     )
-
-//     const allTransactionDetail = []
-
-//     const detail = newTransactionHeaderData.Detail
-//     for (let i of detail) {
-//       const item = await getItemById(i.item_id)
-
-//       // Cek apakah kuantitas melebihi stok
-//       if (i.quantity > item.stock && transactionHeader.outlet_id !== null) {
-//         return res.send("A")
-//       }
-//     }
-
-//     for (let i of detail) {
-//       const transactiondetail = await insertTransactionDetail(
-//         i,
-//         transactionHeader.id
-//       )
-
-//       if (transactionHeader.outlet_id !== null) {
-//         await decreaseStock(i.quantity, i.item_id)
-//       } else {
-//         await increaseStock(i.quantity, i.item_id)
-//       }
-
-//       allTransactionDetail.push(transactiondetail)
-//     }
-
-//     res.status(200).json({
-//       data: {
-//         ...transactionHeader.dataValues,
-//         Detail: allTransactionDetail,
-//       },
-//       message: "Berhasil menambahkan header transaksi",
-//     })
-//   } catch (error) {
-//     res.status(500).json({ message: error.message })
-//   }
-// }
-
 const updateTransactionHeader = async (req, res) => {
   const transactionHeaderId = req.params.id
   const transactionHeaderData = req.body
@@ -187,6 +182,8 @@ const removeTransactionHeader = async (req, res) => {
 
 module.exports = {
   allTransactionHeader,
+  alltransactionReceiving,
+  alltransactionIsuing,
   transactionHeaderById,
   postTransactionHeader,
   updateTransactionHeader,

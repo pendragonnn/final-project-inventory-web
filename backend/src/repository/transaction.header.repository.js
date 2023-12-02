@@ -5,15 +5,18 @@ const Item = models.Item
 const User = models.User
 const Outlet = models.Outlet
 const Supplier = models.Supplier
+const { Op } = require("sequelize")
 
 const findsTransactionHeader = async (page, size) => {
   const offset = (page - 1) * size
-  console.log("test")
   const transactionHeadersAll = await TransactionsHeaders.findAll()
   const dataLength = transactionHeadersAll.length
   const transactionHeaders = await TransactionsHeaders.findAll({
     offset: offset,
     limit: size,
+    attributes: {
+      exclude: ["outlet_id"], // Exclude the 'outlet_id' field
+    },
     include: [
       {
         model: User,
@@ -28,8 +31,97 @@ const findsTransactionHeader = async (page, size) => {
         attributes: ["name"],
       },
     ],
+    where: {
+      supplier_id: {
+        [Op.ne]: null, // Memastikan supplier_id tidak sama dengan null
+      },
+    },
   })
   return { transactionHeaders, dataLength }
+}
+
+const findsTransactionHeaderReceiving = async (page, size) => {
+  const offset = (page - 1) * size
+
+  // Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
+  const dataLength = await TransactionsHeaders.count({
+    where: {
+      supplier_id: {
+        [Op.ne]: null,
+      },
+    },
+  })
+
+  const transactionReceiving = await TransactionsHeaders.findAll({
+    offset: offset,
+    limit: size,
+    attributes: {
+      exclude: ["outlet_id"],
+    },
+    include: [
+      {
+        model: User,
+        attributes: ["full_name"],
+      },
+      {
+        model: Outlet,
+        attributes: ["name"],
+      },
+      {
+        model: Supplier,
+        attributes: ["name"],
+      },
+    ],
+    where: {
+      supplier_id: {
+        [Op.ne]: null,
+      },
+    },
+  })
+
+  return { transactionReceiving, dataLength }
+}
+
+const findsTransactionHeaderIsuing = async (page, size) => {
+  const offset = (page - 1) * size
+
+  // Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
+  const dataLength = await TransactionsHeaders.count({
+    where: {
+      outlet_id: {
+        [Op.ne]: null,
+      },
+    },
+  })
+
+  const transactionIsuing = await TransactionsHeaders.findAll({
+    offset: offset,
+    limit: size,
+    attributes: {
+      exclude: ["supplier_id"],
+    },
+    include: [
+      {
+        model: User,
+        attributes: ["full_name"],
+      },
+      {
+        model: Outlet,
+        attributes: ["name"],
+      },
+      {
+        model: Supplier,
+        attributes: ["name"],
+      },
+    ],
+    where: {
+      outlet_id: {
+        [Op.ne]: null,
+      },
+    },
+  })
+
+  return { transactionIsuing, dataLength }
 }
 
 const findTransactionHeadertById = async (id) => {
@@ -46,33 +138,6 @@ const findTransactionHeadertById = async (id) => {
     ],
     where: {
       id,
-    },
-  })
-  return transactionHeader
-}
-
-const findTransactionHeadertByUserId = async (user_id) => {
-  const transactionHeader = await TransactionsHeaders.findOne({
-    where: {
-      user_id,
-    },
-  })
-  return transactionHeader
-}
-
-const findTransactionHeadertByOutletId = async (outlet_id) => {
-  const transactionHeader = await TransactionsHeaders.findOne({
-    where: {
-      outlet_id,
-    },
-  })
-  return transactionHeader
-}
-
-const findTransactionHeadertBySupplierId = async (supplier_id) => {
-  const transactionHeader = await TransactionsHeaders.findOne({
-    where: {
-      supplier_id,
     },
   })
   return transactionHeader
@@ -170,9 +235,8 @@ const deleteTransactionHeader = async (id) => {
 module.exports = {
   findsTransactionHeader,
   findTransactionHeadertById,
-  findTransactionHeadertByUserId,
-  findTransactionHeadertByOutletId,
-  findTransactionHeadertBySupplierId,
+  findsTransactionHeaderIsuing,
+  findsTransactionHeaderReceiving,
   createTransactionHeader,
   editTransactionHeader,
   deleteTransactionHeader,

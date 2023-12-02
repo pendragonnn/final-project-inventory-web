@@ -36,7 +36,6 @@ const TransactionHeader = () => {
 
       if (data) {
         if (data === "Quantity must not exceed stock") {
-          // Lakukan sesuatu di sini, misalnya menampilkan pesan kesalahan pada pengguna
           Swal.fire({
             icon: "error",
             title: data,
@@ -45,7 +44,6 @@ const TransactionHeader = () => {
             customClass: "swal-custom",
           })
         } else {
-          // Tampilkan pesan sukses jika tidak ada pesan kesalahan
           Swal.fire({
             icon: "success",
             title: data.message,
@@ -57,7 +55,6 @@ const TransactionHeader = () => {
       }
       setItemTemporary([])
     } catch (err) {
-      // const errorMessage = err.message || "Terjadi kesalahan"
       Swal.fire({
         icon: "error",
         title: err.message,
@@ -122,7 +119,6 @@ const TransactionHeader = () => {
     setUserId(idUser)
 
     if (!role) {
-      // Ubah kondisi role agar sesuai dengan string '2'
       router.push("/dashboard")
     }
   }, [])

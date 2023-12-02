@@ -64,10 +64,10 @@ const FormAddTransactionIsuing = ({
             <tbody>
               {itemTemporary.map((value, i) => (
                 <tr key={i} className="">
-                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
+                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark">
                     <input
                       type="text"
-                      className="font-medium text-black dark:text-white w-full text-center"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
                       required
                       readOnly
                       name="item_id"
@@ -77,7 +77,7 @@ const FormAddTransactionIsuing = ({
                   <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
                     <input
                       type="text"
-                      className="font-medium text-black dark:text-white w-full text-center"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
                       required
                       readOnly
                       name="quantity"

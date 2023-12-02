@@ -1,64 +1,64 @@
-"use client";
-import ModalAddCategory from "../Modal/Category/ModalAddCategory";
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
-import Category from "@/data/category/index";
-import ModalEditCategory from "../Modal/Category/ModalEditCategory";
+"use client"
+import ModalAddCategory from "../Modal/Category/ModalAddCategory"
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
+import Category from "@/data/category/index"
+import ModalEditCategory from "../Modal/Category/ModalEditCategory"
 
 const TableCategories = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
-  const [allData, setAllData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const size = 10;
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
+  const [allData, setAllData] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const size = 10
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Category.getCategory(currentPage, size);
-        const allRes = await Category.getCategory(1, res.data.totalItems);
-        setAllData(allRes.data.data);
-        setTotalPages(res.data.totalPages);
-        setTotalItems(res.data.totalItems);
-        setData(res.data.data);
+        const res = await Category.getCategory(currentPage, size)
+        const allRes = await Category.getCategory(1, res.data.totalItems)
+        setAllData(allRes.data.data)
+        setTotalPages(res.data.totalPages)
+        setTotalItems(res.data.totalItems)
+        setData(res.data.data)
       } catch (error) {
         console.log("Error fetching categories:", error)
       }
-    };
+    }
 
-    fetchData();
-  }, [currentPage, update]);
+    fetchData()
+  }, [currentPage, update])
 
   const handleAdd = async () => {
-    const res = await Category.getCategory(currentPage, size);
-    setData(res.data.data);
-    setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalItems);
-    setCurrentPage(res.data.currentPage);
-  };
+    const res = await Category.getCategory(currentPage, size)
+    setData(res.data.data)
+    setTotalPages(res.data.totalPages)
+    setTotalItems(res.data.totalItems)
+    setCurrentPage(res.data.currentPage)
+  }
 
   const handleEditData = async (updatedCategory) => {
     setData((prevData) =>
       prevData.map((category) =>
         category.id === updatedCategory?.id ? updatedCategory : category
       )
-    );
-    const res = await Category.getCategory(currentPage, size);
-    setData(res.data.data);
-  };
+    )
+    const res = await Category.getCategory(currentPage, size)
+    setData(res.data.data)
+  }
 
   const handleEdit = async (id) => {
     try {
-      const res = await Category.getCategoryByid(id);
-      const result = res.data;
-      setUpdate(result);
+      const res = await Category.getCategoryByid(id)
+      const result = res.data
+      setUpdate(result)
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error)
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -78,19 +78,22 @@ const TableCategories = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
-          await Category.deleteCategory(id);
-          const res = await Category.getCategory(currentPage, size);
-          setData(res.data.data);
+          })
+          await Category.deleteCategory(id)
+          const res = await Category.getCategory(currentPage, size)
+          setData(res.data.data)
 
-          setTotalPages(res.data.totalPages);
-          setTotalItems(res.data.totalItems);
-          setCurrentPage(res.data.currentPage);
+          setTotalPages(res.data.totalPages)
+          setTotalItems(res.data.totalItems)
+          setCurrentPage(res.data.currentPage)
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
-            paginationHandle(currentPage - 1);
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
+            paginationHandle(currentPage - 1)
           } else {
-            paginationHandle(res.data.currentPage);
+            paginationHandle(res.data.currentPage)
           }
         }
       } catch (e) {
@@ -101,32 +104,32 @@ const TableCategories = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage);
-  };
+    setCurrentPage(currentPage)
+  }
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
   const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1);
-  };
+    setCurrentPage(currentPage + 1)
+  }
 
   const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1);
-  };
+    setCurrentPage(currentPage - 1)
+  }
 
   const filteredData = searchTerm
     ? allData.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    : data;
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -222,7 +225,6 @@ const TableCategories = () => {
                   }
                 >
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-
                     {currentPage === 1
                       ? key + 1
                       : (currentPage - 1) * size + key + 1}
@@ -342,6 +344,6 @@ const TableCategories = () => {
         </div>
       </div>
     </div>
-  );
-};
-export default TableCategories;
+  )
+}
+export default TableCategories

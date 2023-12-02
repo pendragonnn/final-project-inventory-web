@@ -7,8 +7,8 @@ import Swal from "sweetalert2"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {
-  getTransactionHeader,
   deleteTransactionHeader,
+  getTransactionHeaderIsuing,
 } from "@/modules/fetch/index"
 import Cookies from "js-cookie"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
@@ -27,11 +27,10 @@ const ReportIsuing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getTransactionHeader(currentPage, size)
+        const res = await getTransactionHeaderIsuing(currentPage, size)
         setData(res.data)
 
-        const allRes = await getTransactionHeader(1, res.totalItems)
-        console.log("total items", res.totalItems)
+        const allRes = await getTransactionHeaderIsuing(1, res.totalItems)
         setAllData(allRes.data)
         setTotalPages(res.totalPages)
         setTotalItems(res.totalItems)
@@ -76,19 +75,22 @@ const ReportIsuing = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           })
-          // await deleteTransactionHeader(id)
-          // const res = await getTransactionHeader(currentPage, size)
-          // setData(res.data)
+          const res = await getTransactionHeaderIsuing(currentPage, size)
+          console.log("res", res.data)
+          setData(res.data)
 
-          // setTotalPages(res.totalPages)
-          // setTotalItems(res.totalItems)
-          // setCurrentPage(res.currentPage)
+          setTotalPages(res.totalPages)
+          setTotalItems(res.totalItems)
+          setCurrentPage(res.currentPage)
 
-          // if (res.totalItems % (size * res.totalPages) <= size) {
-          //   paginationHandle(currentPage - 1)
-          // } else {
-          //   paginationHandle(res.currentPage)
-          // }
+          if (
+            res.totalItems % (size * res.totalPages) <= size &&
+            currentPage > 1
+          ) {
+            paginationHandle(currentPage - 1)
+          } else {
+            paginationHandle(res.currentPage)
+          }
         }
       } catch (e) {
         Swal.fire({
@@ -101,12 +103,6 @@ const ReportIsuing = () => {
         })
       }
     })
-  }
-
-  function formatDate(isoDate) {
-    const date = new Date(isoDate)
-    const options = { day: "numeric", month: "long", year: "numeric" }
-    return date.toLocaleDateString("id-ID", options)
   }
 
   const paginationHandle = async (currentPage) => {
@@ -125,19 +121,25 @@ const ReportIsuing = () => {
     setSearchTerm(event.target.value)
   }
 
-  const withoutSupplier = allData.filter((value) => value.outlet_id !== null)
+  function formatDate(isoDate) {
+    const date = new Date(isoDate)
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return date.toLocaleDateString("id-ID", options)
+  }
 
+  const searchByTransactionDate = (data, searchTerm) => {
+    return data.filter((transaction) => {
+      const formattedDate = formatDate(transaction.transaction_date)
+      return formattedDate.toLowerCase().includes(searchTerm.toLowerCase())
+    })
+  }
+
+  // Contoh penggunaan pada filteredData
   const filteredData = searchTerm
-    ? withoutSupplier.filter((transaction) => {
-        transaction?.User?.full_name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      })
-    : data
-        .filter((value) => value.outlet_id !== null)
-        .sort(
-          (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
-        )
+    ? searchByTransactionDate(allData, searchTerm)
+    : data.sort(
+        (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
+      )
 
   if (user) {
     return (
@@ -154,10 +156,10 @@ const ReportIsuing = () => {
           totalPages={totalPages}
           searchTerm={searchTerm}
           handleSearchChange={handleSearchChange}
-          // filterData={filterData}
           filteredData={filteredData}
           allData={allData}
           size={size}
+          router={router}
         />
       </SidebarLayout>
     )
