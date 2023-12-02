@@ -199,7 +199,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup>
               {/* <!-- Menu Item Dashboard --> */}
 
-              {isTokenExist && isRoleExist == "1" && (
+              {isTokenExist && (isRoleExist == "1" || isRoleExist == "3") && (
                 <li>
                   <Link
                     href="/tablesUsers"
