@@ -42,23 +42,23 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         full_name: newFullName,
         email: newEmail,
         password: newPassword,
-        image_url: newImageUrl,
+      
       } = formData;
   
-      if (
-        data?.data?.role_id !== newRole ||
-        data?.data?.full_name !== newFullName ||
-        data?.data?.email !== newEmail ||
-        data?.data?.password !== newPassword ||
-        data?.data?.image_url !== newImageUrl
-      ) {
-        const userResponse = await UserData.updateUser(data.data.id, {
-          role_id: newRole,
-          full_name: newFullName,
-          email: newEmail,
-          password: newPassword,
-          // image_url: newImageUrl,
-        });
+      const hasChanges =
+      data?.data?.role_id !== newRole ||
+      data?.data?.full_name !== newFullName ||
+      data?.data?.email !== newEmail ||
+      data?.data?.password !== newPassword 
+     
+    if (hasChanges) {
+      const userResponse = await UserData.updateUser(data.data.id, {
+        role_id: newRole,
+        full_name: newFullName,
+        email: newEmail,
+        password: newPassword,
+        
+      });
   
         console.log(userResponse);
         console.log(data.data.id);
@@ -80,8 +80,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
             password: "",
             image_url: null,
           });
-          setFile(null);
-  
+          setFile(null);          setFile(null);
+
           // Check if a new file is selected
           if (file) {
             // Create FormData to handle file upload
@@ -91,7 +91,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
             formData.append("email", newEmail);
             formData.append("password", newPassword);
             formData.append("image_url", file);
-  
+
             // Make a POST request to upload image for the user
             UserData.uploadImage(data?.data?.id, formData)
               .then(() => {
@@ -109,9 +109,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       }
     } catch (error) {
       console.error("Error:", error.message);
-  
       let errorMessage = "An error occurred. Please try again."; // Default error message
-  
+      
       if (
         error.response &&
         error.response.data &&
@@ -119,7 +118,6 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       ) {
         errorMessage = error.response.data.message;
       }
-  
       Swal.fire({
         position: "bottom-end",
         icon: "error",
@@ -127,6 +125,36 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
+      });
+    }    // Check if a new file is selected
+    if (file) {
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("role_id", e.target.role_id.value);
+      formData.append("full_name", e.target.full_name.value);
+      formData.append("email", e.target.email.value);
+      formData.append("password", e.target.password.value);
+      formData.append("image_url", file);
+
+      // Make a POST request to upload image for the user
+      const imageResponse = await UserData.uploadImage(
+        data?.data?.id,
+        formData
+      );
+      console.log(imageResponse);
+      Swal.fire({
+        position: "bottom-end",
+        icon: "success",
+        title: imageResponse.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      }).then(() => {
+        addToTable(imageResponse.data.data);
+        modalCheckbox.current.checked = false;
+        document.getElementById("formId").reset();
+        setFile(null)
+         e.target.reset();
       });
     }
   };
