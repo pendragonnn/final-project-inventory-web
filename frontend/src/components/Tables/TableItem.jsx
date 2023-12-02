@@ -52,7 +52,12 @@ const TableItems = () => {
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalItems);
     setCurrentPage(res.data.currentPage);
+    
   };
+  useEffect(() => {
+   
+    setUpdate(null);
+  }, [data]);
 
   const handleEditData = async (updatedItem) => {
     setData((prevData) =>
