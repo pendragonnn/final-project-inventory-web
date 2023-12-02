@@ -276,12 +276,12 @@ const TableItems = () => {
                     </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <div
-                        className="p-2.5 xl:p-5  cursor-pointer"
+                        className="p-2.5 xl:p-5 w-20 h-20 cursor-pointer"
                         onClick={() => openModal(item.image_url)}
                       >
                         <img
                           src={`uploads/item/${item.image_url}`}
-                          className="w-15 ml-[-2rem] h-10 rounded-full"
+                          className="object-cover ml-[-3rem] w-full h-full rounded-full "
                         />
                       </div>
                     </td>
