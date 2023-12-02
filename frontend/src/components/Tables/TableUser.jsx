@@ -117,6 +117,7 @@ const TableUser = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
+            timer: 2000
           });
 
           const res = await UserData.getUsers(currentPage, size);
