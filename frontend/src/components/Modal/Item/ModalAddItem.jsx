@@ -12,8 +12,6 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
   const [stock, setStock] = useState("");
   const [stockError, setStockError] = useState("");
   
-
-
   // handle stock least
   const handleStockChange = (e) => {
     const newStock = e.target.value;
@@ -25,7 +23,6 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
       setStockError("");
     }
   };
-
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -77,6 +74,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(responsItem.data.data);
         modalCheckbox.current.checked = false;
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       console.error(e.response);
@@ -120,7 +118,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
               </h3>
             </div>
 
-            <form action="#" onSubmit={handleSubmit}>
+            <form id="formId" action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
@@ -149,7 +147,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
                 </div>
 
                 <div>
-                  <label className="mb-2">Category</label>
+                  <label className="mb-2 text-black">Category</label>
                   <select
                     className="mt-3 mb-5 select select-bordered text-black  w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white"
                     name="category_id"

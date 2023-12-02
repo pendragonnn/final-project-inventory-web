@@ -15,7 +15,7 @@ const allItems = async (req, res) => {
     const { items, dataLength } = await getAllItems(page, size);
     res.status(200).json({
       data: items,
-      totalItems: items.length,
+      totalItems: dataLength,
       currentPage: parseInt(page),
       totalPages: Math.ceil(dataLength / size),
     });
