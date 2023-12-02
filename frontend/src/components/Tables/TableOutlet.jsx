@@ -130,11 +130,11 @@ const TableOutlets = () => {
 
   const filteredData = searchTerm
     ? allData.filter(
-        (outlet) =>
-          outlet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          outlet.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          outlet.phone.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      (outlet) =>
+        outlet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        outlet.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        outlet.phone.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : data
 
   return (
@@ -241,11 +241,10 @@ const TableOutlets = () => {
                   }
                 >
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                    {/* ... isi dengan kode yang sudah ada */}
+                    {currentPage === 1
+                      ? key + 1
+                      : (currentPage - 1) * size + key + 1}
                   </td>
-                  {currentPage === 1
-                    ? key + 1
-                    : (currentPage - 1) * size + key + 1}
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {outlet.name}
