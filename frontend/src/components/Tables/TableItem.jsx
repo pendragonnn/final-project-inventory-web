@@ -18,6 +18,7 @@ const TableItems = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [allData, setAllData] = useState([]);
+
   const size = 10;
 
   useEffect(() => {
@@ -38,6 +39,7 @@ const TableItems = () => {
 
     fetchData();
   }, [currentPage, update]);
+
 
   const handleAdd = async () => {
     const res = await Item.getItem(currentPage, size);
@@ -147,7 +149,10 @@ const TableItems = () => {
   const filteredData = searchTerm
     ? allData.filter(
         (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.Category?.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+          item.price.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.stock.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
       )
     : data;
 
@@ -213,7 +218,7 @@ const TableItems = () => {
               </div>
             </div>
           </div>
-          <table className="w-full table-auto">
+          <table className="max-w-full overflow-x-auto w-full">
             <thead>
               <tr className="bg-bodydark text-left dark:bg-meta-4">
                 <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
@@ -274,10 +279,10 @@ const TableItems = () => {
                       <p className="text-sm">{item.name}</p>
                     </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <div className="p-2.5 xl:p-5  cursor-pointer" onClick={() => openModal(item.image_url)}>
+                      <div className="p-2.5 xl:p-3 w-20 h-20  cursor-pointer rounded-full" onClick={() => openModal(item.image_url)}>
                         <img
                           src={`uploads/item/${item.image_url}`}
-                          className="w-15 ml-[-2rem] h-10 rounded-full"
+                          className="ml-[-3rem] object-cover w-full h-full rounded-full"
 
                         />
                       </div>
@@ -298,7 +303,9 @@ const TableItems = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 
 
-                      <p className="text-black dark:text-white">{item.stock}</p>
+                    <p className={item.stock < 10 ? "text-danger" : "text-black dark:text-white"}>
+                   {item.stock < 10 ? `${item.stock}` : item.stock}
+  </p>
 
                     </td>
 
