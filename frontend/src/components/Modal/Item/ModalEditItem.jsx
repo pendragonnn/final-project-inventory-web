@@ -9,26 +9,9 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
   const [dataItem, setDataItem] = useState([]);
   const [file, setFile] = useState(null);
-  const [stock, setStock] = useState("");
-  const [stockError, setStockError] = useState("");
 
-  const handleStockChange = (e) => {
-    const newStock = e.target.value;
-    setStock(newStock);
 
-    if (newStock !== "" && parseInt(newStock, 10) < 10) {
-      setStockError("Stock must be at least 10.");
-    } else {
-      
-      setStockError("");
-    }
 
-    // Set value in formData
-    setFormData((prevData) => ({
-      ...prevData,
-      stock: newStock,
-    }));
-  };
 
   const [formData, setFormData] = useState({
     name: data?.data?.name || "",
@@ -50,6 +33,14 @@ const ModalEditItem = ({ data, test, addToTable }) => {
     });
   }, [data]);
 
+  const handleStockChange = (e) => {
+  const newStock = e.target.value;
+  setFormData((prevData) => ({
+    ...prevData,
+    stock: newStock,
+  }));
+};
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
     const { name, value } = e.target;
@@ -62,19 +53,14 @@ const ModalEditItem = ({ data, test, addToTable }) => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await Category.getCategory();
-      setDataItem(res.data.data);
+      const allRes = await Category.getCategory(1, res.data.totalItems);
+      setDataItem(allRes.data.data);
     };
 
     fetchData();
   }, []);
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -251,7 +237,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                         })
                       }
                     >
-                      <option value="">Select a category</option>
+                    
                       {dataItem.map((value) => (
                         <option key={value.id} value={value.id}>
                           {value.name}
@@ -284,14 +270,13 @@ const ModalEditItem = ({ data, test, addToTable }) => {
                     type="number"
                     name="stock"
                     placeholder="Enter Stock"
-                    value={formData.stock}
                     onChange={handleStockChange}
+                    value={formData.stock}
+                
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
                   />
-                  {stockError && (
-                    <p className="text-sm text-danger">{stockError}</p>
-                  )}
+               
                 </div>
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">

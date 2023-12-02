@@ -29,15 +29,6 @@ module.exports = {
           key: "id",
         },
       },
-      // item_id: {
-      //   type: Sequelize.STRING,
-      //   references: {
-      //     model: {
-      //       tableName: "Items",
-      //     },
-      //     key: "id",
-      //   },
-      // },
       supplier_id: {
         type: Sequelize.STRING,
         references: {

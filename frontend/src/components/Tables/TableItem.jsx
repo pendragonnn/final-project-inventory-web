@@ -18,6 +18,7 @@ const TableItems = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [allData, setAllData] = useState([]);
+
   const size = 10;
 
   useEffect(() => {
@@ -210,7 +211,7 @@ const TableItems = () => {
               </div>
             </div>
           </div>
-          <table className="w-full table-auto">
+          <table className="max-w-full overflow-x-auto w-full">
             <thead>
               <tr className="bg-bodydark text-left dark:bg-meta-4">
                 <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
@@ -234,7 +235,6 @@ const TableItems = () => {
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   Stock
                 </th>
-
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Actions
                 </th>
@@ -294,15 +294,7 @@ const TableItems = () => {
                       <p className="text-black dark:text-white">{item.price}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p
-                        className={
-                          item.stock < 10
-                            ? "text-danger"
-                            : "text-black dark:text-white"
-                        }
-                      >
-                        {item.stock < 10 ? "danger" : item.stock}
-                      </p>
+                      <p className="text-black dark:text-white">{item.stock}</p>
                     </td>
 
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

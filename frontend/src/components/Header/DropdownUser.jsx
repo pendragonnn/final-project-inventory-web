@@ -1,58 +1,57 @@
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import Swal from "sweetalert2";
-import Cookies from "js-cookie";
-import auth from "@/data/auth";
-import user from "@/data/user";
-import axios from "axios";
+import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
+import Swal from "sweetalert2"
+import Cookies from "js-cookie"
+import auth from "@/data/auth"
+import user from "@/data/user"
+import axios from "axios"
 
 const DropdownUser = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [data, setData] = useState(null);
-  const router = useRouter();
-  const trigger = useRef(null);
-  const dropdown = useRef(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [data, setData] = useState(null)
+  const router = useRouter()
+  const trigger = useRef(null)
+  const dropdown = useRef(null)
 
   useEffect(() => {
     const clickHandler = ({ target }) => {
-      if (!dropdown.current) return;
+      if (!dropdown.current) return
       if (
         !dropdownOpen ||
         dropdown.current.contains(target) ||
         trigger.current.contains(target)
       )
-        return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
-  });
+        return
+      setDropdownOpen(false)
+    }
+    document.addEventListener("click", clickHandler)
+    return () => document.removeEventListener("click", clickHandler)
+  })
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
-      if (!dropdownOpen || keyCode !== 27) return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
-  });
+      if (!dropdownOpen || keyCode !== 27) return
+      setDropdownOpen(false)
+    }
+    document.addEventListener("keydown", keyHandler)
+    return () => document.removeEventListener("keydown", keyHandler)
+  })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const id = Cookies.get("userId");
-        const res = await user.getUserById(id);
-        setData(res.data.data);
-        
+        const id = Cookies.get("userId")
+        const res = await user.getUserById(id)
+        setData(res.data.data)
       } catch (e) {
-        console.error("error while fetching data", e);
+        console.error("error while fetching data", e)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleLogout = () => {
     Swal.fire({
@@ -67,7 +66,7 @@ const DropdownUser = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          const token = Cookies.get("token");
+          const token = Cookies.get("token")
           const res = await axios.delete(
             "http://localhost:8000/api/v1/logout",
             {
@@ -76,15 +75,15 @@ const DropdownUser = () => {
                 Authorization: `Bearer ${token}`,
               },
             }
-          );
+          )
 
-          Cookies.remove("token");
-          Cookies.remove("role");
-          Cookies.remove("userId");
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("sidebar-expanded");
-          localStorage.removeItem("isLoggedIn", false);
-          localStorage.removeItem("color-theme");
+          Cookies.remove("token")
+          Cookies.remove("role")
+          Cookies.remove("userId")
+          localStorage.removeItem("isLoggedIn")
+          localStorage.removeItem("sidebar-expanded")
+          localStorage.removeItem("isLoggedIn", false)
+          localStorage.removeItem("color-theme")
 
           Swal.fire({
             position: "bottom-end",
@@ -93,8 +92,8 @@ const DropdownUser = () => {
             showConfirmButton: false,
             timer: 1000,
             customClass: "swal-custom-auth-success",
-          });
-          router.push("/");
+          })
+          router.push("/")
         }
       } catch (e) {
         Swal.fire({
@@ -104,10 +103,10 @@ const DropdownUser = () => {
           showConfirmButton: false,
           timer: 3000,
           customClass: "swal-custom-auth-error",
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="relative">
@@ -139,7 +138,7 @@ const DropdownUser = () => {
         {data?.image_url == null && (
           <span className="avatar online placeholder h-12 w-12">
             <div className="bg-sidebar dark:bg-white text-neutral-content rounded-full">
-              <span className="text-3xl">{data?.full_name[0]}</span>
+              <span className="text-3xl">{data?.full_name}</span>
             </div>
           </span>
         )}
@@ -249,6 +248,6 @@ const DropdownUser = () => {
       </div>
       {/* <!-- Dropdown End --> */}
     </div>
-  );
-};
-export default DropdownUser;
+  )
+}
+export default DropdownUser
