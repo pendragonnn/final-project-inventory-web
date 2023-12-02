@@ -17,15 +17,15 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-    
-        const res = await Category.getCategory();
-        const allRes = await Category.getCategory(1, res.data.totalItems);
-        setDataItem(allRes.data.data);
-     
+      const res = await Category.getCategory();
+      const allRes = await Category.getCategory(1, res.data.totalItems);
+      setDataItem(allRes.data.data);
     };
-  
+
     fetchData();
   }, []);
+  
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
