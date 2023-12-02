@@ -87,7 +87,7 @@ const TableCategories = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -286,7 +286,7 @@ const TableCategories = () => {
           </tbody>
         </table>
         <div className="items-center float-right">
-          {currentPage !== 1 && (
+          {currentPage !== 1 && !searchTerm && (
             <button
               className="btn btn-outline btn-default"
               onClick={() => onPaginationPrevious(currentPage)}
@@ -295,13 +295,13 @@ const TableCategories = () => {
             </button>
           )}
 
-          <div className="join m-2 border">
+          <div className="join m-2 ">
             {!searchTerm && (
               <>
                 {currentPage > 1 && (
                   <button
                     key={currentPage - 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage - 1, totalPages)
                     }
@@ -311,7 +311,7 @@ const TableCategories = () => {
                 )}
                 <button
                   key={currentPage}
-                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  className="join-item btn btn-outline btn-default btn-active btn-primary"
                   onClick={() => paginationHandle(currentPage, totalPages)}
                 >
                   {currentPage}
@@ -319,7 +319,7 @@ const TableCategories = () => {
                 {currentPage !== totalPages && (
                   <button
                     key={currentPage + 1}
-                    className={`join-item btn btn-outline btn-default`}
+                    className="join-item btn btn-outline btn-default"
                     onClick={() =>
                       paginationHandle(currentPage + 1, totalPages)
                     }
@@ -331,7 +331,7 @@ const TableCategories = () => {
             )}
           </div>
 
-          {currentPage !== totalPages && (
+          {currentPage !== totalPages && !searchTerm && (
             <button
               className="join-item btn btn-outline btn-default"
               onClick={() => onPaginationNext(currentPage)}

@@ -34,7 +34,7 @@ const ImageModal = ({ imageUrl, closeModal }) => {
               <img
                 className="h-full w-full "
                 src={`/uploads/item/${imageUrl}`}
-                alt="User Profile"
+                alt="Image Item"
               />
             </div>
           </div>
