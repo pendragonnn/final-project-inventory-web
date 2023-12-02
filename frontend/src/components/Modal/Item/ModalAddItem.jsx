@@ -11,14 +11,6 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
   const [file, setFile] = useState(null);
   const [stock, setStock] = useState("");
   const [stockError, setStockError] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category_id: "",
-    price: "",
-    stock: "",
-    image_url: null,
-  });
   
   // handle stock least
   const handleStockChange = (e) => {
@@ -38,14 +30,11 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await Category.getCategory();
-        setDataItem(res.data.data);
-      } catch (error) {
-        console.error("Error fetching category data:", error);
-      }
+      const res = await Category.getCategory();
+      setDataItem(res.data.data);
     };
-    fetchData()
+
+    fetchData();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -85,16 +74,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
       }).then(() => {
         addToTable(responsItem.data.data);
         modalCheckbox.current.checked = false;
-        setFormData({
-          name: "",
-          description: "",
-          category_id: "",
-          price: "",
-          stock: "",
-          image_url: null,
-        });
-        setFile(null); 
-        fetchData();
+        document.getElementById("formId").reset();
       });
     } catch (e) {
       console.error(e.response);
