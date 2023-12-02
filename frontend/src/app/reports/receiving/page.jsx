@@ -130,7 +130,14 @@ const ReportsReceiving = () => {
   const searchByTransactionDate = (data, searchTerm) => {
     return data.filter((transaction) => {
       const formattedDate = formatDate(transaction.transaction_date)
-      return formattedDate.toLowerCase().includes(searchTerm.toLowerCase())
+      const fullName = transaction?.User?.full_name?.toLowerCase()
+      const outlet = transaction?.Supplier?.name?.toLowerCase()
+
+      return (
+        formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fullName?.includes(searchTerm.toLowerCase()) ||
+        outlet?.includes(searchTerm.toLowerCase())
+      )
     })
   }
 
