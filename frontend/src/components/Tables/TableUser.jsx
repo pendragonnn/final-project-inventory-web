@@ -43,16 +43,17 @@ const TableUser = () => {
   };
 
   const handleEditData = async (updatedUser) => {
-        setData((prevData) =>
-          prevData.map((user) =>
-            user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-          )
-        );
-        const res = await UserData.getUsers();
-        setData(res.data.data)
+    setData((prevData) =>
+      prevData.map((user) =>
+        user.id === updatedUser.id ? { ...user, ...updatedUser } : user
+      )
+    );
+    const res = await UserData.getUsers(currentPage, size);
+    setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
-  
-  
 
   const handleEdit = async (id) => {
     try {
@@ -95,7 +96,7 @@ const TableUser = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000
+            timer: 2000,
           });
 
           const res = await UserData.getUsers(currentPage, size);
@@ -145,8 +146,8 @@ const TableUser = () => {
 
   const filteredData = searchTerm
     ? allData.filter((user) =>
-      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : data;
 
   const openModal = () => {
