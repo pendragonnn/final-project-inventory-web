@@ -61,20 +61,17 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Category.getCategory();
-      setDataItem(res.data.data);
+    
+        const res = await Category.getCategory();
+        const allRes = await Category.getCategory(1, res.data.totalItems);
+        setDataItem(allRes.data.data);
+     
     };
-
+  
     fetchData();
   }, []);
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
