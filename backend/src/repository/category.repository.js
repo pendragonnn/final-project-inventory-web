@@ -2,14 +2,17 @@ const models = require("../../models");
 const Category = models.Category;
 
 const findCategories = async (page, size) => {
-  const offset = (page-1) * size
-  const categoriesAll = await Category.findAll()
-  const dataLength = categoriesAll.length
+  const offset = (page - 1) * size;
+  const categoriesAll = await Category.findAll();
+  const dataLength = categoriesAll.length;
   const categories = await Category.findAll({
     offset: offset,
-    limit: size
-  })
-  return { categories, dataLength }
+    limit: size,
+    order: [
+      ['id', 'DESC'],
+    ],
+  });
+  return { categories, dataLength };
 };
 
 const findCategoryById = async (id) => {
