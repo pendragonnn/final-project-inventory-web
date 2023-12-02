@@ -32,12 +32,22 @@ const TableUser = () => {
     fetchData();
   }, [currentPage, update]);
 
-  const handleAdd = async () => {
-    const res = await Userdata.getUsers(currentPage, size);
-    setData(res.data.data);
-    setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalItems);
-    setCurrentPage(res.data.currentPage);
+  // const handleAdd = async (newUser) => {
+  //   const newData = await [...data, newUser];
+  //   setData(newData);
+  //   const res = await Userdata.getUsers(currentPage, size);
+  //   setData(res.data.data);
+  //   setTotalPages(res.data.totalPages);
+  //   setTotalItems(res.data.totalItems);
+  //   setCurrentPage(res.data.currentPage);
+  // };
+  const handleAdd = async (newUser) => {
+    try {
+      const newData = [...data, newUser];
+      setData(newData);
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
   };
 
   const handleEditData = async (updatedUser, updatedFile) => {
@@ -48,13 +58,14 @@ const TableUser = () => {
             user.id === updatedUser.id ? updatedUser : user
           )
         );
-        const res = await UserData.getUsers()
+        const res = await UserData.getUsers();
         setData(res.data.data);
         // Check if there are changes in the image file or image URL
         const isImageChanged =
           updatedFile ||
-          (updatedUser.image_url && updatedUser.image_url !== data?.data?.image_url);
-  
+          (updatedUser.image_url &&
+            updatedUser.image_url !== data?.data?.image_url);
+
         if (isImageChanged) {
           // If there are changes, you can handle the image update logic here
           // For example, trigger an image update API call
@@ -72,7 +83,6 @@ const TableUser = () => {
       console.error("Error handling edit data:", error);
     }
   };
-  
 
   const handleEdit = async (id) => {
     try {
@@ -164,8 +174,8 @@ const TableUser = () => {
 
   const filteredData = searchTerm
     ? allData.filter((user) =>
-      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : data;
 
   const openModal = () => {
