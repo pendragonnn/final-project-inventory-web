@@ -45,9 +45,7 @@ const transactionHeaderById = async (req, res) => {
     )
 
     if (!transactionHeader) {
-      return res
-        .status(404)
-        .json({ message: "Transaction Header Not Found" })
+      return res.status(404).json({ message: "Transaction Header Not Found" })
     }
 
     res.status(200).json({ data: transactionHeader })
@@ -60,20 +58,19 @@ const postTransactionHeader = async (req, res) => {
   try {
     const newTransactionHeaderData = req.body
 
-    const detail = newTransactionHeaderData.Detail
-    for (let i of detail) {
-      const item = await getItemById(i.item_id)
-      if (i.quantity > item.stock) {
-        res.send("Quantity must not exceed stock")
-        throw error()
-      }
-    }
-
     const transactionHeader = await insertTransactionHeader(
       newTransactionHeaderData
     )
 
     const allTransactionDetail = []
+
+    const detail = newTransactionHeaderData.Detail
+    for (let i of detail) {
+      const item = await getItemById(i.item_id)
+      if (i.quantity > item.stock && transactionHeader.outlet_id != null) {
+        return res.send("Quantity must not exceed stock")
+      }
+    }
 
     for (let i of detail) {
       const transactiondetail = await insertTransactionDetail(
@@ -95,12 +92,59 @@ const postTransactionHeader = async (req, res) => {
         ...transactionHeader.dataValues,
         Detail: allTransactionDetail,
       },
-      message: "Successful Adding Transaction Header",
+      message: "Successful Added Transaction Header",
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
+
+// const postTransactionHeader = async (req, res) => {
+//   try {
+//     const newTransactionHeaderData = req.body
+
+//     const transactionHeader = await insertTransactionHeader(
+//       newTransactionHeaderData
+//     )
+
+//     const allTransactionDetail = []
+
+//     const detail = newTransactionHeaderData.Detail
+//     for (let i of detail) {
+//       const item = await getItemById(i.item_id)
+
+//       // Cek apakah kuantitas melebihi stok
+//       if (i.quantity > item.stock && transactionHeader.outlet_id !== null) {
+//         return res.send("A")
+//       }
+//     }
+
+//     for (let i of detail) {
+//       const transactiondetail = await insertTransactionDetail(
+//         i,
+//         transactionHeader.id
+//       )
+
+//       if (transactionHeader.outlet_id !== null) {
+//         await decreaseStock(i.quantity, i.item_id)
+//       } else {
+//         await increaseStock(i.quantity, i.item_id)
+//       }
+
+//       allTransactionDetail.push(transactiondetail)
+//     }
+
+//     res.status(200).json({
+//       data: {
+//         ...transactionHeader.dataValues,
+//         Detail: allTransactionDetail,
+//       },
+//       message: "Berhasil menambahkan header transaksi",
+//     })
+//   } catch (error) {
+//     res.status(500).json({ message: error.message })
+//   }
+// }
 
 const updateTransactionHeader = async (req, res) => {
   const transactionHeaderId = req.params.id

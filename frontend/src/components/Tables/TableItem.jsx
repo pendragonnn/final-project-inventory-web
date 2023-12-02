@@ -1,15 +1,15 @@
-"use client";
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
-import ModalAddItem from "../Modal/Item/ModalAddItem";
-import ModalEditItem from "../Modal/Item/ModalEditItem";
-import Item from "@/data/item/index";
-import item from "@/data/item/index";
+"use client"
+import Swal from "sweetalert2"
+import { useEffect, useState } from "react"
+import ModalAddItem from "../Modal/Item/ModalAddItem"
+import ModalEditItem from "../Modal/Item/ModalEditItem"
+import Item from "@/data/item/index"
+import item from "@/data/item/index"
 import ModalImageItem from "@/components/Modal/Item/ModalImageItem"
 
 const TableItems = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(null);
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(null)
   const [image, setItemImageUrl] = useState(null)
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
@@ -24,50 +24,48 @@ const TableItems = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Item.getItem(currentPage, size);
-        const allRes = await Item.getItem(1, res.data.totalItems);
+        const res = await Item.getItem(currentPage, size)
+        const allRes = await Item.getItem(1, res.data.totalItems)
         // const image = await item.getItemImageUrl(imgUrl);
         // setItemImageUrl(image.data.data);
-        setTotalPages(res.data.totalPages);
-        setTotalItems(res.data.totalItems);
-        setAllData(allRes.data.data);
+        setTotalPages(res.data.totalPages)
+        setTotalItems(res.data.totalItems)
+        setAllData(allRes.data.data)
         setData(res.data.data)
       } catch (error) {
         console.log("Error fetching items: ", error)
       }
-    };
+    }
 
-    fetchData();
-  }, [currentPage, update]);
+    fetchData()
+  }, [currentPage, update])
 
 
   const handleAdd = async () => {
-    const res = await Item.getItem(currentPage, size);
-    setData(res.data.data);
-    setTotalPages(res.data.totalPages);
-    setTotalItems(res.data.totalItems);
-    setCurrentPage(res.data.currentPage);
-  };
+    const res = await Item.getItem(currentPage, size)
+    setData(res.data.data)
+    setTotalPages(res.data.totalPages)
+    setTotalItems(res.data.totalItems)
+    setCurrentPage(res.data.currentPage)
+  }
 
   const handleEditData = async (updatedItem) => {
     setData((prevData) =>
-      prevData.map((item) =>
-        item.id === updatedItem?.id ? updatedItem : item
-      )
-    );
-    const res = await Item.getItem(currentPage, size);
-    setData(res.data.data);
-  };
+      prevData.map((item) => (item.id === updatedItem?.id ? updatedItem : item))
+    )
+    const res = await Item.getItem(currentPage, size)
+    setData(res.data.data)
+  }
 
   const handleEdit = async (id) => {
     try {
-      const res = await Item.getItemByid(id);
-      const result = res.data;
-      setUpdate(result);
+      const res = await Item.getItemByid(id)
+      const result = res.data
+      setUpdate(result)
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error)
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -81,26 +79,29 @@ const TableItems = () => {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          setData((prevData) => prevData.filter((item) => item.id !== id));
+          setData((prevData) => prevData.filter((item) => item.id !== id))
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-          });
-          await Item.deleteItem(id);
-          const res = await Item.getItem(currentPage, size);
-          setData(res.data.data);
+          })
+          await Item.deleteItem(id)
+          const res = await Item.getItem(currentPage, size)
+          setData(res.data.data)
 
-          setTotalPages(res.data.totalPages);
-          setTotalItems(res.data.totalItems);
-          setCurrentPage(res.data.currentPage);
+          setTotalPages(res.data.totalPages)
+          setTotalItems(res.data.totalItems)
+          setCurrentPage(res.data.currentPage)
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
-            paginationHandle(currentPage - 1);
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
+            paginationHandle(currentPage - 1)
           } else {
-            paginationHandle(res.data.currentPage);
+            paginationHandle(res.data.currentPage)
           }
         }
       } catch (e) {
@@ -111,22 +112,19 @@ const TableItems = () => {
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
-        });
-
+        })
       }
-    });
-  };
+    })
+  }
 
   const openModal = (imageUrl) => {
-    setModalOpen(true);
-    setImageModalUrl(imageUrl);
-
-  };
+    setModalOpen(true)
+    setImageModalUrl(imageUrl)
+  }
 
   const closeModal = () => {
-    setModalOpen(false);
-
-  };
+    setModalOpen(false)
+  }
 
   // pagination
   const paginationHandle = async (currentPage) => {
@@ -134,17 +132,17 @@ const TableItems = () => {
   }
 
   const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1);
-  };
+    setCurrentPage(currentPage + 1)
+  }
 
   const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1);
-  };
+    setCurrentPage(currentPage - 1)
+  }
 
   // filter
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
   const filteredData = searchTerm
     ? allData.filter(
@@ -154,7 +152,7 @@ const TableItems = () => {
           item.price.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.stock.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
       )
-    : data;
+    : data
 
   return (
     <>
@@ -242,7 +240,6 @@ const TableItems = () => {
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   Stock
                 </th>
-
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Actions
                 </th>
@@ -258,18 +255,17 @@ const TableItems = () => {
                     Data not found.
                   </td>
                 </tr>
-
               ) : (
-
                 filteredData.map((item, key) => (
-                  <tr key={key}
+                  <tr
+                    key={key}
                     className={
                       key === filteredData.length - 1
                         ? ""
                         : "border-b border-stroke dark:border-strokedark"
-                    }>
+                    }
+                  >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-
                       {currentPage === 1
                         ? key + 1
                         : (currentPage - 1) * size + key + 1}
@@ -279,11 +275,13 @@ const TableItems = () => {
                       <p className="text-sm">{item.name}</p>
                     </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <div className="p-2.5 xl:p-3 w-20 h-20  cursor-pointer rounded-full" onClick={() => openModal(item.image_url)}>
+                      <div
+                        className="p-2.5 xl:p-5  cursor-pointer"
+                        onClick={() => openModal(item.image_url)}
+                      >
                         <img
                           src={`uploads/item/${item.image_url}`}
-                          className="ml-[-3rem] object-cover w-full h-full rounded-full"
-
+                          className="w-15 ml-[-2rem] h-10 rounded-full"
                         />
                       </div>
                     </td>
@@ -354,8 +352,8 @@ const TableItems = () => {
                       </div>
                     </td>
                   </tr>
-                )
-                ))}
+                ))
+              )}
               <ModalEditItem
                 data={update}
                 test={"edit"}
@@ -418,16 +416,13 @@ const TableItems = () => {
               </button>
             )}
           </div>
-
         </div>
-
-
       </div>
 
       {isModalOpen && (
         <ModalImageItem imageUrl={imageModal} closeModal={closeModal} />
       )}
     </>
-  );
-};
-export default TableItems;
+  )
+}
+export default TableItems
