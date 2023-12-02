@@ -27,6 +27,12 @@ const DetailReportIsuing = () => {
     }).format(price)
   }
 
+  function formatDate(isoDate) {
+    const date = new Date(isoDate)
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return date.toLocaleDateString("id-ID", options)
+  }
+
   if (!data) {
     return <p>Loading...</p>
   }
@@ -43,17 +49,20 @@ const DetailReportIsuing = () => {
         <div className="flex flex-col gap-y-5 rounded-sm divide-y divide-stroke dark:divide-strokedark bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           {data.TransactionDetails.map((value) => (
             <div className="flex p-10 gap-20" key={value.id}>
+              {console.log("value transaction detail", value)}
               <div className="flex-1 text-center flex flex-col items-center">
                 <div className="w-40 h-40 rounded-full bg-black overflow-hidden">
                   <Image
                     src={`/${value.Item.image_url}`}
-                    alt={value.Item.name}
+                    alt={value.Item.image_url}
                     width={100}
                     height={100}
                     className="object-cover w-full h-full block"
                   />
                 </div>
                 <div className="w-full flex flex-col gap-5 mt-5">
+                  console.log("Image URL:", `uploads/item/$
+                  {value.Item.image_url}`);
                   <p>{value.Item.name}</p>
                   <p>{value.Item.description}</p>
                 </div>
@@ -68,7 +77,7 @@ const DetailReportIsuing = () => {
                 <p>User : {data.user_id}</p>
                 <p>Outlet : {data.outlet_id}</p>
                 <p>Information : {data.information}</p>
-                <p>Transaction Date : {data.transaction_date}</p>
+                <p>Transaction Date : {formatDate(data.transaction_date)}</p>
               </div>
             </div>
           ))}

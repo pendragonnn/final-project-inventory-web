@@ -14,21 +14,34 @@ import Cookies from "js-cookie"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 
 const ReportIsuing = () => {
-  const [data, setData] = useState([])
-  const router = useRouter()
   const [user, setUser] = useState(null)
+  const [data, setData] = useState([])
+  const [allData, setAllData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
   const [searchTerm, setSearchTerm] = useState("")
+  const size = 10
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getTransactionHeader()
-      setData(res.data)
+      try {
+        const res = await getTransactionHeader(currentPage, size)
+        setData(res.data)
+
+        const allRes = await getTransactionHeader(1, res.totalItems)
+        console.log("total items", res.totalItems)
+        setAllData(allRes.data)
+        setTotalPages(res.totalPages)
+        setTotalItems(res.totalItems)
+      } catch (error) {
+        console.log("Error Fetching data", error)
+      }
     }
 
     fetchData()
-  }, [])
+  }, [currentPage, size]) // Sertakan dependensi dalam array dependensi
 
   useEffect(() => {
     const role = Cookies.get("role")
@@ -63,6 +76,19 @@ const ReportIsuing = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           })
+          // await deleteTransactionHeader(id)
+          // const res = await getTransactionHeader(currentPage, size)
+          // setData(res.data)
+
+          // setTotalPages(res.totalPages)
+          // setTotalItems(res.totalItems)
+          // setCurrentPage(res.currentPage)
+
+          // if (res.totalItems % (size * res.totalPages) <= size) {
+          //   paginationHandle(currentPage - 1)
+          // } else {
+          //   paginationHandle(res.currentPage)
+          // }
         }
       } catch (e) {
         Swal.fire({
@@ -77,12 +103,6 @@ const ReportIsuing = () => {
     })
   }
 
-  const filterData = data
-    .filter((value) => value.outlet_id !== null)
-    .sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date))
-
-  console.log(filterData)
-
   function formatDate(isoDate) {
     const date = new Date(isoDate)
     const options = { day: "numeric", month: "long", year: "numeric" }
@@ -93,26 +113,51 @@ const ReportIsuing = () => {
     setCurrentPage(currentPage)
   }
 
-  // const handleSearchChange = (event) => {
-  //   setSearchTerm(event.target.value)
-  // }
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1)
+  }
 
-  // const filteredData = data.filter((user) => {
-  //   return user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-  // })
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1)
+  }
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const withoutSupplier = allData.filter((value) => value.outlet_id !== null)
+
+  const filteredData = searchTerm
+    ? withoutSupplier.filter((transaction) => {
+        transaction?.User?.full_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      })
+    : data
+        .filter((value) => value.outlet_id !== null)
+        .sort(
+          (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
+        )
 
   if (user) {
     return (
       <SidebarLayout>
         <Breadcrumb pageName="Report Isuing" />
         <TableReportIsuing
-          filterData={filterData}
           formatDate={formatDate}
           handleDelete={handleDelete}
           user={user}
           paginationHandle={paginationHandle}
-          // handleSearchChange={handleSearchChange}
-          // filteredData={filteredData}
+          onPaginationNext={onPaginationNext}
+          onPaginationPrevious={onPaginationPrevious}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          searchTerm={searchTerm}
+          handleSearchChange={handleSearchChange}
+          // filterData={filterData}
+          filteredData={filteredData}
+          allData={allData}
+          size={size}
         />
       </SidebarLayout>
     )

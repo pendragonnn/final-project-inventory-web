@@ -20,7 +20,7 @@ const { error } = require("../schema/category.schema")
 
 const allTransactionHeader = async (req, res) => {
   const page = req.query.page || 1
-  const size = req.query.size || 1000
+  const size = req.query.size || 10
   try {
     const { transactionHeaders, dataLength } = await getAllTransactionHeader(
       page,

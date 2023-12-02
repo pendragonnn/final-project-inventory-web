@@ -55,7 +55,7 @@ const TransactionHeader = () => {
           })
         }
       }
-      // setItemTemporary([])
+      setItemTemporary([])
     } catch (err) {
       // const errorMessage = err.message || "Terjadi kesalahan"
       Swal.fire({

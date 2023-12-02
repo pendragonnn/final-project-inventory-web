@@ -30,8 +30,22 @@ const logout = async () => {
   return result;
 };
 
+const verifyEmail = async (data) => {
+  const result = await axios.post("http://localhost:8000/api/v1/verify", data);
+
+  return result;
+};
+
+const resetPassword = async (data) => {
+  const result = await axios.post("http://localhost:8000/api/v1/reset", data);
+
+  return result;
+};
+
 export default {
   register,
   login,
   logout,
+  verifyEmail,
+  resetPassword,
 };

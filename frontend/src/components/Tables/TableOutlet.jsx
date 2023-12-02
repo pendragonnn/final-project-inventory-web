@@ -9,11 +9,22 @@ const TableOutlets = () => {
   const [data, setData] = useState([])
   const [update, setUpdate] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalItems, setTotalItems] = useState(0)
+  const [allData, setAllData] = useState([])
+  const size = 1
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Outlet.getOutlet()
+        const res = await Outlet.getOutlet(currentPage, size)
+        console.log("res", res)
+
+        const allRes = await Outlet.getOutlet(1, res.data.totalItems)
+        setAllData(allRes.data.data)
+        setTotalPages(res.data.totalPages)
+        setTotalItems(res.data.totalItems)
         setData(res.data.data)
       } catch (error) {
         console.log("Error fetching outlets:", error)
@@ -21,13 +32,14 @@ const TableOutlets = () => {
     }
 
     fetchData()
-  }, [])
+  }, [currentPage, update])
 
-  const handleAdd = async (newOutlet) => {
-    const newData = [...data, newOutlet]
-    setData(newData)
-    const res = await Outlet.getOutlet()
+  const handleAdd = async () => {
+    const res = await Outlet.getOutlet(currentPage, size)
     setData(res.data.data)
+    setTotalPages(res.data.totalPages)
+    setTotalItems(res.data.totalItems)
+    setCurrentPage(res.data.currentPage)
   }
 
   const handleEditData = async (updatedOutlet) => {
@@ -45,7 +57,6 @@ const TableOutlets = () => {
       const res = await Outlet.getOutletByid(id)
       const result = res.data
       setUpdate(result)
-      console.log(update)
     } catch (error) {
       console.error("Error fetching data:", error)
     }
@@ -72,6 +83,19 @@ const TableOutlets = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           })
+          await Outlet.deleteOutlet(id)
+          const res = await Outlet.getOutlet(currentPage, size)
+          setData(res.data.data)
+
+          setTotalPages(res.data.totalPages)
+          setTotalItems(res.data.totalItems)
+          setCurrentPage(res.data.currentPage)
+
+          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+            paginationHandle(currentPage - 1)
+          } else {
+            paginationHandle(res.data.currentPage)
+          }
         }
       } catch (e) {
         Swal.fire({
@@ -86,18 +110,32 @@ const TableOutlets = () => {
     })
   }
 
+  const paginationHandle = async (currentPage) => {
+    setCurrentPage(currentPage)
+  }
+
+  const onPaginationNext = async (currentPage) => {
+    setCurrentPage(currentPage + 1)
+  }
+
+  const onPaginationPrevious = async (currentPage) => {
+    setCurrentPage(currentPage - 1)
+  }
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
   }
 
-  const filteredData = data.filter((outlet) => {
-    // Ubah property di bawah sesuai dengan property data outlet Anda yang ingin Anda cari
-    return (
-      outlet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      outlet.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      outlet.phone.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })
+  const filteredData = searchTerm
+    ? allData.filter(
+        (outlet) =>
+          outlet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          outlet.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          outlet.phone.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data
+
+  // console.log("filtered data", filteredData)
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -165,13 +203,16 @@ const TableOutlets = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-bodydark text-left dark:bg-meta-4">
-              <th className="min-w-[220px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+              <th className="min-w-[1px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
+                #
+              </th>
+              <th className="min-w-[150px] py-4 px-4 font-medium text-black  dark:text-white xl:pl-11">
                 Name
               </th>
-              <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                Adress
+              <th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
+                Address
               </th>
-              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+              <th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
                 Phone
               </th>
               <th className="py-4 px-4 font-medium text-black dark:text-white">
@@ -199,6 +240,12 @@ const TableOutlets = () => {
                       : "border-b border-stroke dark:border-strokedark"
                   }
                 >
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    {/* ... isi dengan kode yang sudah ada */}
+                  </td>
+                  {currentPage === 1
+                    ? key + 1
+                    : (currentPage - 1) * size + key + 1}
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {outlet.name}
@@ -245,7 +292,7 @@ const TableOutlets = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
-                          stroke="currentColor"
+                          stroke="red"
                           class="w-6 h-6"
                         >
                           <path
@@ -267,6 +314,61 @@ const TableOutlets = () => {
             />
           </tbody>
         </table>
+        <div className="items-center float-right">
+          {currentPage !== 1 && (
+            <button
+              className="btn btn-outline btn-default"
+              onClick={() => onPaginationPrevious(currentPage)}
+            >
+              &laquo;
+            </button>
+          )}
+
+          <div className="join m-2 border">
+            {!searchTerm && (
+              <>
+                {currentPage > 1 && (
+                  <button
+                    key={currentPage - 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage - 1, totalPages)
+                    }
+                  >
+                    {currentPage - 1}
+                  </button>
+                )}
+                <button
+                  key={currentPage}
+                  className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                  onClick={() => paginationHandle(currentPage, totalPages)}
+                >
+                  {currentPage}
+                </button>
+                {currentPage !== totalPages && (
+                  <button
+                    key={currentPage + 1}
+                    className={`join-item btn btn-outline btn-default`}
+                    onClick={() =>
+                      paginationHandle(currentPage + 1, totalPages)
+                    }
+                  >
+                    {currentPage + 1}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {currentPage !== totalPages && (
+            <button
+              className="join-item btn btn-outline btn-default"
+              onClick={() => onPaginationNext(currentPage)}
+            >
+              &raquo;
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

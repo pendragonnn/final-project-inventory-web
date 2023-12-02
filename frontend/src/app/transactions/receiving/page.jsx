@@ -41,6 +41,7 @@ const TransactionHeader = () => {
         timer: 2000,
         customClass: "swal-custom",
       })
+      setItemTemporary([])
     } catch (err) {
       // const errorMessage = err.message || "Terjadi kesalahan"
       Swal.fire({
