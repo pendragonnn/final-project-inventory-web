@@ -74,7 +74,9 @@ const TableSupplier = () => {
       try {
         if (result.isConfirmed) {
           await Supplier.deleteSupplier(id);
-          setData((prevData) => prevData.filter((supplier) => supplier.id !== id));
+          setData((prevData) =>
+            prevData.filter((supplier) => supplier.id !== id)
+          );
           Swal.fire({
             position: "bottom-end",
             title: "Deleted!",
@@ -82,7 +84,7 @@ const TableSupplier = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
-          await Supplier.deleteSupplier(id);
+          // await Supplier.deleteSupplier(id);
           const res = await Supplier.getSupplier(currentPage, size);
           setData(res.data.data);
 
@@ -90,7 +92,10 @@ const TableSupplier = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -235,7 +240,6 @@ const TableSupplier = () => {
                   }
                 >
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-
                     {currentPage === 1
                       ? key + 1
                       : (currentPage - 1) * size + key + 1}
