@@ -32,48 +32,64 @@ const TableUser = () => {
     fetchData();
   }, [currentPage, update]);
 
-  // const handleAdd = async (newUser) => {
-  //   const newData = await [...data, newUser];
-  //   setData(newData);
-  //   const res = await Userdata.getUsers(currentPage, size);
-  //   setData(res.data.data);
-  //   setTotalPages(res.data.totalPages);
-  //   setTotalItems(res.data.totalItems);
-  //   setCurrentPage(res.data.currentPage);
-  // };
   const handleAdd = async (newUser) => {
-    try {
-      const newData = [...data, newUser];
-      setData(newData);
-    } catch (error) {
-      console.error("Error adding data:", error);
-    }
+    const newData = await [...data, newUser];
+    setData(newData);
+    const res = await UserData.getUsers(currentPage, size);
+    setData(res.data.data);
+    setTotalPages(res.data.totalPages);
+    setTotalItems(res.data.totalItems);
+    setCurrentPage(res.data.currentPage);
   };
 
   const handleEditData = async (updatedUser, updatedFile) => {
     try {
       if (updatedUser && updatedUser.id) {
+        // Update the user data in the local state
         setData((prevData) =>
           prevData.map((user) =>
-            user.id === updatedUser.id ? updatedUser : user
+            user.id === updatedUser.id ? { ...user, ...updatedUser } : user
           )
         );
         const res = await UserData.getUsers();
+
+        // Fetch the updated data from the server
+        const res = await UserData.getUsers();
         setData(res.data.data);
+
         // Check if there are changes in the image file or image URL
         const isImageChanged =
           updatedFile ||
           (updatedUser.image_url &&
             updatedUser.image_url !== data?.data?.image_url);
 
+        updatedUser.image_url &&
+          updatedUser.image_url !== res.data?.data?.image_url;
+
         if (isImageChanged) {
-          // If there are changes, you can handle the image update logic here
-          // For example, trigger an image update API call
-          const imageResponse = await UserData.getUsers()(
+          // Fetch the updated data after editing the image
+          const img = await UserData.getUser(updatedUser.id);
+          setData((prevData) =>
+            prevData.map((user) =>
+              user.id === img.data.data.id ? img.data.data : user
+            )
+          );
+
+          // Upload the new image
+          const imageResponse = await UserData.getUsers(
             updatedUser.id,
             updatedFile
           );
-          setData(imageResponse.data.data);
+
+          // Update the user data in the local state with the new image URL
+          setData((prevData) =>
+            prevData.map((user) =>
+              user.id === updatedUser.id
+                ? { ...user, image_url: imageResponse.data.data.image_url }
+                : user
+            )
+          );
+
           console.log("Image updated:", imageResponse);
         }
       } else {

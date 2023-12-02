@@ -84,7 +84,7 @@ const TableSupplier = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
-          await Supplier.deleteSupplier(id);
+          // await Supplier.deleteSupplier(id);
           const res = await Supplier.getSupplier(currentPage, size);
           setData(res.data.data);
 
@@ -92,7 +92,10 @@ const TableSupplier = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
