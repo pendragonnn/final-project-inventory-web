@@ -32,8 +32,10 @@ const TableUser = () => {
     fetchData();
   }, [currentPage, update]);
 
-  const handleAdd = async () => {
-    const res = await Userdata.getUsers(currentPage, size);
+  const handleAdd = async (newUser) => {
+    const newData = await [...data, newUser];
+    setData(newData);
+    const res = await UserData.getUsers(currentPage, size);
     setData(res.data.data);
     setTotalPages(res.data.totalPages);
     setTotalItems(res.data.totalItems);
@@ -115,6 +117,7 @@ const TableUser = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
+            timer: 2000
           });
 
           const res = await UserData.getUsers(currentPage, size);
