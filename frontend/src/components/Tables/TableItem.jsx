@@ -5,12 +5,12 @@ import ModalAddItem from "../Modal/Item/ModalAddItem";
 import ModalEditItem from "../Modal/Item/ModalEditItem";
 import Item from "@/data/item/index";
 import item from "@/data/item/index";
-import ModalImageItem from "@/components/Modal/Item/ModalImageItem"
+import ModalImageItem from "@/components/Modal/Item/ModalImageItem";
 
 const TableItems = () => {
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
-  const [image, setItemImageUrl] = useState(null)
+  const [image, setItemImageUrl] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModal, setImageModalUrl] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,9 +30,9 @@ const TableItems = () => {
         setTotalPages(res.data.totalPages);
         setTotalItems(res.data.totalItems);
         setAllData(allRes.data.data);
-        setData(res.data.data)
+        setData(res.data.data);
       } catch (error) {
-        console.log("Error fetching items: ", error)
+        console.log("Error fetching items: ", error);
       }
     };
 
@@ -49,9 +49,7 @@ const TableItems = () => {
 
   const handleEditData = async (updatedItem) => {
     setData((prevData) =>
-      prevData.map((item) =>
-        item.id === updatedItem?.id ? updatedItem : item
-      )
+      prevData.map((item) => (item.id === updatedItem?.id ? updatedItem : item))
     );
     const res = await Item.getItem(currentPage, size);
     setData(res.data.data);
@@ -95,7 +93,10 @@ const TableItems = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -110,7 +111,6 @@ const TableItems = () => {
           timer: 2000,
           customClass: "swal-custom",
         });
-
       }
     });
   };
@@ -118,18 +118,16 @@ const TableItems = () => {
   const openModal = (imageUrl) => {
     setModalOpen(true);
     setImageModalUrl(imageUrl);
-
   };
 
   const closeModal = () => {
     setModalOpen(false);
-
   };
 
   // pagination
   const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+    setCurrentPage(currentPage);
+  };
 
   const onPaginationNext = async (currentPage) => {
     setCurrentPage(currentPage + 1);
@@ -145,9 +143,8 @@ const TableItems = () => {
   };
 
   const filteredData = searchTerm
-    ? allData.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+    ? allData.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : data;
 
@@ -253,18 +250,17 @@ const TableItems = () => {
                     Data not found.
                   </td>
                 </tr>
-
               ) : (
-
                 filteredData.map((item, key) => (
-                  <tr key={key}
+                  <tr
+                    key={key}
                     className={
                       key === filteredData.length - 1
                         ? ""
                         : "border-b border-stroke dark:border-strokedark"
-                    }>
+                    }
+                  >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-
                       {currentPage === 1
                         ? key + 1
                         : (currentPage - 1) * size + key + 1}
@@ -274,11 +270,13 @@ const TableItems = () => {
                       <p className="text-sm">{item.name}</p>
                     </td>
                     <td className="border-b  border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <div className="p-2.5 xl:p-5  cursor-pointer" onClick={() => openModal(item.image_url)}>
+                      <div
+                        className="p-2.5 xl:p-5  cursor-pointer"
+                        onClick={() => openModal(item.image_url)}
+                      >
                         <img
                           src={`uploads/item/${item.image_url}`}
                           className="w-15 ml-[-2rem] h-10 rounded-full"
-
                         />
                       </div>
                     </td>
@@ -296,10 +294,15 @@ const TableItems = () => {
                       <p className="text-black dark:text-white">{item.price}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-
-
-                      <p className="text-black dark:text-white">{item.stock}</p>
-
+                      <p
+                        className={
+                          item.stock < 10
+                            ? "text-danger"
+                            : "text-black dark:text-white"
+                        }
+                      >
+                        {item.stock < 10 ? "danger" : item.stock}
+                      </p>
                     </td>
 
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -347,8 +350,8 @@ const TableItems = () => {
                       </div>
                     </td>
                   </tr>
-                )
-                ))}
+                ))
+              )}
               <ModalEditItem
                 data={update}
                 test={"edit"}
@@ -411,10 +414,7 @@ const TableItems = () => {
               </button>
             )}
           </div>
-
         </div>
-
-
       </div>
 
       {isModalOpen && (
