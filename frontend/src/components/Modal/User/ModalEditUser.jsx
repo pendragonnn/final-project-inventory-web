@@ -1,112 +1,136 @@
-import React, { useRef, useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import UserData from "@/data/user/index";
+import React from "react";
+import { useRef, useEffect, useState } from "react";
+import Category from "@/data/category/index";
 
-const ModalEditUser = ({ data, test, addToTable }) => {
+import Item from "@/data/item/index";
+
+const ModalEditItem = ({ data, test, addToTable }) => {
   const modalCheckbox = useRef(null);
+  const [dataItem, setDataItem] = useState([]);
   const [file, setFile] = useState(null);
+  const [stock, setStock] = useState("");
+  const [stockError, setStockError] = useState("");
+
+  const handleStockChange = (e) => {
+    const newStock = e.target.value;
+    setStock(newStock);
+
+    if (newStock !== "" && parseInt(newStock, 10) < 10) {
+      setStockError("Stock must be at least 10.");
+    } else {
+      
+      setStockError("");
+    }
+
+    // Set value in formData
+    setFormData((prevData) => ({
+      ...prevData,
+      stock: newStock,
+    }));
+  };
 
   const [formData, setFormData] = useState({
-    role_id: data?.data?.role_id || "",
-    full_name: data?.data?.full_name || "",
-    email: data?.data?.email || "",
-    password: data?.data?.password || "",
+    name: data?.data?.name || "",
+    description: data?.data?.description || "",
+    category_id: data?.data?.category_id || "",
+    price: data?.data?.price || "",
+    stock: data?.data?.stock || "",
     image_url: data?.data?.image_url || "",
   });
 
   useEffect(() => {
     setFormData({
-      role_id: data?.data?.role_id || "",
-      full_name: data?.data?.full_name || "",
-      email: data?.data?.email || "",
-      password: data?.data?.password || "",
+      name: data?.data?.name || "",
+      description: data?.data?.description || "",
+      category_id: data?.data?.category_id || "",
+      price: data?.data?.price || "",
+      stock: data?.data?.stock || "",
       image_url: data?.data?.image_url || "",
     });
   }, [data]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setFormData({
-      ...formData,
-      image_url: null,
-    });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await Category.getCategory();
+      setDataItem(res.data.data);
+    };
+
+    fetchData();
+  }, []);
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const {
-        role_id: newRole,
-        full_name: newFullName,
-        email: newEmail,
-        password: newPassword,
+        name: newName,
+        description: newDescription,
+        category_id: newcategory_id,
+        price: newPrice,
+        stock: newStock,
+        image_url: newImageUrl,
       } = formData;
-
-      const hasChanges =
-        data?.data?.role_id !== newRole ||
-        data?.data?.full_name !== newFullName ||
-        data?.data?.email !== newEmail ||
-        data?.data?.password !== newPassword;
-
-      if (hasChanges) {
-        const userResponse = await UserData.updateUser(data.data.id, {
-          role_id: newRole,
-          full_name: newFullName,
-          email: newEmail,
-          password: newPassword,
+      if (
+        data?.data?.name !== newName ||
+        data?.data?.description !== newDescription ||
+        data?.data?.category_id !== newcategory_id ||
+        data?.data?.price !== newPrice ||
+        data?.data?.stock !== newStock ||
+        data?.data?.image_url !== newImageUrl
+      ) {
+        const itemResponse = await Item.updateItem(data.data.id, {
+          name: newName,
+          description: newDescription,
+          category_id: newcategory_id,
+          price: newPrice,
+          stock: newStock,
+          image_url: newImageUrl,
         });
 
-        console.log(userResponse);
+        console.log(itemResponse);
         console.log(data.data.id);
         Swal.fire({
           position: "bottom-end",
           icon: "success",
-          title: userResponse.data.message,
+          title: itemResponse.data.message || imageResponse,
           showConfirmButton: false,
           timer: 2000,
           customClass: "swal-custom",
         }).then(() => {
-          addToTable(userResponse.data.data);
+          addToTable(itemResponse.data.data);
           modalCheckbox.current.checked = false;
 
           setFormData({
-            role_id: "",
-            full_name: "",
-            email: "",
-            password: "",
-            image_url: null,
+            name: "",
+            description: "",
+            category_id: "",
+            price: "",
+            stock: "",
+            image_url: "",
           });
-          setFile(null);
-          setFile(null);
-
-          // Check if a new file is selected
-          if (file) {
-            // Create FormData to handle file upload
-            const formData = new FormData();
-            formData.append("role_id", newRole);
-            formData.append("full_name", newFullName);
-            formData.append("email", newEmail);
-            formData.append("password", newPassword);
-            formData.append("image_url", file);
-
-            // Make a POST request to upload image for the user
-            UserData.uploadImage(data?.data?.id, formData)
-              .then(() => {
-                addToTable(imageResponse.data.data);
-                modalCheckbox.current.checked = false;
-                document.getElementById("formId").reset();
-                setFile(null);
-                e.target.reset();
-              })
-              .catch((imageError) => {
-                console.error("Image Upload Error:", imageError.message);
-              });
-          }
         });
       }
     } catch (error) {
       console.error("Error:", error.message);
+
       let errorMessage = "An error occurred. Please try again."; // Default error message
 
       if (
@@ -116,6 +140,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
       ) {
         errorMessage = error.response.data.message;
       }
+
       Swal.fire({
         position: "bottom-end",
         icon: "error",
@@ -124,21 +149,21 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       });
-    } // Check if a new file is selected
+    }
+
+    // Check if a new file is selected
     if (file) {
       // Create FormData to handle file upload
       const formData = new FormData();
-      formData.append("role_id", e.target.role_id.value);
-      formData.append("full_name", e.target.full_name.value);
-      formData.append("email", e.target.email.value);
-      formData.append("password", e.target.password.value);
+      formData.append("name", e.target.name.value);
+      formData.append("description", e.target.description.value);
+      formData.append("category_id", e.target.category_id.value);
+      formData.append("price", e.target.price.value);
+      formData.append("stock", e.target.stock.value);
       formData.append("image_url", file);
 
       // Make a POST request to upload image for the user
-      const imageResponse = await UserData.uploadImage(
-        data?.data?.id,
-        formData
-      );
+      const imageResponse = await Item.uploadItem(data?.data?.id, formData);
       console.log(imageResponse);
       Swal.fire({
         position: "bottom-end",
@@ -147,12 +172,6 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
-      }).then(() => {
-        addToTable(imageResponse.data.data);
-        modalCheckbox.current.checked = false;
-        document.getElementById("formId").reset();
-        setFile(null);
-        e.target.reset();
       });
     }
   };
@@ -176,123 +195,141 @@ const ModalEditUser = ({ data, test, addToTable }) => {
           <div className="rounded-sm bg-white dark:bg-boxdark">
             <div className=" py-4 px-6.5 ">
               <h3 className="font-medium text-black dark:text-white">
-                Edit User
+                Edit data Item
               </h3>
             </div>
 
-            <form id="formId" action="#" onSubmit={handleSubmit}>
+            <form action="#" onSubmit={handleSubmit}>
               <div className="p-6.5 text-start">
-                <div className="mb-4.5">
-                  <label className="block text-black dark:text-white">
-                    Role
-                  </label>
-                  <label
-                    htmlFor="countries"
-                    className="block  text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Select an option
-                  </label>
-                  <select
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    name="role_id"
-                    value={formData.role_id}
-                    onChange={(e) =>
-                      setFormData({ ...formData, role_id: e.target.value })
-                    }
-                  >
-                    <option value="1">Admin</option>
-                    <option value="2">Staff</option>
-                    <option value="3">Manager</option>
-                  </select>
-                </div>
-
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
                     Name
                   </label>
                   <input
                     type="text"
-                    name="full_name"
-                    value={formData.full_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, full_name: e.target.value })
-                    }
-                    placeholder="Enter full name"
+                    name="name"
+                    placeholder="Enter  name"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Email
+                    description
                   </label>
                   <input
                     type="text"
-                    name="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder="Enter Email"
+                    name="description"
+                    placeholder="Enter description"
                     className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4.5">
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
+                    value={formData.description}
                     onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
+                      setFormData({ ...formData, description: e.target.value })
                     }
-                    placeholder="password"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     required
-                    hidden
                   />
                 </div>
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Profile Photo
+                    Category
+                  </label>
+                  {dataItem.length > 0 && (
+                    <select
+                      className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
+                      name="category_id"
+                      value={formData.category_id}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          category_id: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select a category</option>
+                      {dataItem.map((value) => (
+                        <option key={value.id} value={value.id}>
+                          {value.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    name="price"
+                    placeholder="Enter price"
+                    value={formData.price}
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Stock
+                  </label>
+                  <input
+                    type="number"
+                    name="stock"
+                    placeholder="Enter Stock"
+                    value={formData.stock}
+                    onChange={handleStockChange}
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required
+                  />
+                  {stockError && (
+                    <p className="text-sm text-danger">{stockError}</p>
+                  )}
+                </div>
+                <div className="mb-4.5">
+                  <label className="mb-2.5 block text-black dark:text-white">
+                    Image
                   </label>
                   {data?.data?.image_url && (
                     <div className="mb-3">
                       <img
-                        src={`/uploads/user/${data.data.image_url}`}
-                        alt="User Profile"
+                        src={`/uploads/item/${data.data.image_url}`}
+                        alt="Item Image"
                         className="w-200 h-200 mb-2"
                       />
                       <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Photo is already uploaded. To replace it, choose a new
-                        photo below.
+                        image is already uploaded. To replace it, choose a new
+                        image below.
                       </p>
                     </div>
                   )}
                   <input
                     type="file"
                     name="image_url"
-                    key={"user-photo"}
+                    placeholder="Enter Image"
                     accept="image/*"
-                    defaultValue={null}
                     onChange={handleFileChange}
-                    className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required={!data?.data?.image_url} // Make it required only if no existing image
+                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    required={!data?.data?.image_url}
                   />
                   {!data?.data?.image_url && (
                     <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
-                      No photo uploaded. Please choose a photo.
+                      No image uploaded. Please choose a photo.
                     </p>
                   )}
                 </div>
 
                 <input
                   type="submit"
-                  value={"Update"}
-                  className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
+                  value={"Edit"}
+                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
                 />
               </div>
             </form>
@@ -303,4 +340,4 @@ const ModalEditUser = ({ data, test, addToTable }) => {
   );
 };
 
-export default ModalEditUser;
+export default ModalEditItem;

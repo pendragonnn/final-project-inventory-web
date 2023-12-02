@@ -51,17 +51,16 @@ const TableUser = () => {
             user.id === updatedUser.id ? { ...user, ...updatedUser } : user
           )
         );
-
+  
         // Fetch the updated data from the server
         const res = await UserData.getUsers();
         setData(res.data.data);
-
+  
         // Check if there are changes in the image file or image URL
         const isImageChanged =
           updatedFile ||
-          (updatedUser.image_url &&
-            updatedUser.image_url !== res.data?.data?.image_url);
-
+          (updatedUser.image_url && updatedUser.image_url !== res.data?.data?.image_url);
+  
         if (isImageChanged) {
           // Fetch the updated data after editing the image
           const img = await UserData.getUser(updatedUser.id);
@@ -70,13 +69,13 @@ const TableUser = () => {
               user.id === img.data.data.id ? img.data.data : user
             )
           );
-
+  
           // Upload the new image
           const imageResponse = await UserData.getUsers(
             updatedUser.id,
             updatedFile
           );
-
+  
           // Update the user data in the local state with the new image URL
           setData((prevData) =>
             prevData.map((user) =>
@@ -85,7 +84,8 @@ const TableUser = () => {
                 : user
             )
           );
-
+         
+  
           console.log("Image updated:", imageResponse);
         }
       } else {
@@ -95,6 +95,8 @@ const TableUser = () => {
       console.error("Error handling edit data:", error);
     }
   };
+  
+  
 
   const handleEdit = async (id) => {
     try {
@@ -137,7 +139,7 @@ const TableUser = () => {
             text: "Your file has been deleted.",
             icon: "success",
             customClass: "swal-custom-delete",
-            timer: 2000,
+            timer: 2000
           });
 
           const res = await UserData.getUsers(currentPage, size);
@@ -187,8 +189,8 @@ const TableUser = () => {
 
   const filteredData = searchTerm
     ? allData.filter((user) =>
-        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : data;
 
   const openModal = () => {

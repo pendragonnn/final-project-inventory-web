@@ -33,13 +33,6 @@ const TableOutlets = () => {
     fetchData(currentPage, update);
   }, [currentPage, update]);
 
-  // const handleAdd = async (newOutlet) => {
-  //   const newData = [...data, newOutlet];
-  //   setData(newData);
-  //   const res = await Outlet.getOutlet();
-  //   setData(res.data.data);
-  // };
-
   const handleAdd = async () => {
     const res = await Outlet.getOutlet(currentPage, size);
     setData(res.data.data);
@@ -89,7 +82,7 @@ const TableOutlets = () => {
             icon: "success",
             customClass: "swal-custom-delete",
           });
-          await Outlet.deleteOutlet(id);
+          // await Outlet.deleteOutlet(id);
           const res = await Outlet.getOutlet(currentPage, size);
           setData(res.data.data);
 
@@ -97,7 +90,7 @@ const TableOutlets = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size) {
+          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
