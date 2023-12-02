@@ -64,9 +64,20 @@ const editOutletById = async (id, newOutlet) => {
   }
 };
 
+const deleteOutletById = async (id) => {
+  try {
+    await getOutletById(id);
+
+    await deleteOutlet(id);
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   getAllOutlets,
   getOutletById,
   insertOutlet,
   editOutletById,
+  deleteOutletById,
 };
