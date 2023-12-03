@@ -18,6 +18,7 @@ const TransactionHeader = () => {
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
   const [itemTemporary, setItemTemporary] = useState([])
+  // const [totalOutlet, setTotalOutlet] = useState
   const router = useRouter()
 
   const handleSubmit = async (e) => {
@@ -96,19 +97,28 @@ const TransactionHeader = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Item.getItem()
-      setDataItem(res.data.data)
+      try {
+        const res = await Item.getItem()
+        const allRes = await Item.getItem(1, res.data.totalItems)
+        setDataItem(allRes.data.data)
+      } catch (error) {
+        console.log("Error fetching category", error)
+      }
     }
-
     fetchData()
   }, [])
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Outlet.getOutlet()
-      setDataOutlet(res.data.data)
+      try {
+        const res = await Outlet.getOutlet()
+        const allRes = await Outlet.getOutlet(1, res.data.totalItems)
+        setDataOutlet(allRes.data.data)
+        setD
+      } catch (error) {
+        console.log("Error fetching category", error)
+      }
     }
-
     fetchData()
   }, [])
 

@@ -85,19 +85,28 @@ const TransactionHeader = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Item.getItem()
-      setDataItem(res.data.data)
+      try {
+        const res = await Item.getItem()
+        const allRes = await Item.getItem(1, res.data.totalItems)
+        setDataItem(allRes.data.data)
+      } catch (error) {
+        console.log("Error fetching category", error)
+      }
     }
-
     fetchData()
   }, [])
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Supplier.getSupplier()
-      setDataSupplier(res.data.data)
+      try {
+        const res = await Supplier.getSupplier()
+        const allRes = await Supplier.getSupplier(1, res.data.totalItems)
+        setDataSupplier(allRes.data.data)
+        setD
+      } catch (error) {
+        console.log("Error fetching category", error)
+      }
     }
-
     fetchData()
   }, [])
 

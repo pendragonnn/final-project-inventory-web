@@ -171,6 +171,61 @@ const TableReportReceiving = ({
               )}
             </tbody>
           </table>
+          <div className="items-center float-right">
+            {currentPage !== 1 && (
+              <button
+                className="btn btn-outline btn-default"
+                onClick={() => onPaginationPrevious(currentPage)}
+              >
+                &laquo;
+              </button>
+            )}
+
+            <div className="join m-2 border">
+              {!searchTerm && (
+                <>
+                  {currentPage > 1 && (
+                    <button
+                      key={currentPage - 1}
+                      className={`join-item btn btn-outline btn-default`}
+                      onClick={() =>
+                        paginationHandle(currentPage - 1, totalPages)
+                      }
+                    >
+                      {currentPage - 1}
+                    </button>
+                  )}
+                  <button
+                    key={currentPage}
+                    className={`join-item btn btn-outline btn-default btn-active btn-primary`}
+                    onClick={() => paginationHandle(currentPage, totalPages)}
+                  >
+                    {currentPage}
+                  </button>
+                  {currentPage !== totalPages && (
+                    <button
+                      key={currentPage + 1}
+                      className={`join-item btn btn-outline btn-default`}
+                      onClick={() =>
+                        paginationHandle(currentPage + 1, totalPages)
+                      }
+                    >
+                      {currentPage + 1}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+
+            {currentPage !== totalPages && (
+              <button
+                className="join-item btn btn-outline btn-default"
+                onClick={() => onPaginationNext(currentPage)}
+              >
+                &raquo;
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>

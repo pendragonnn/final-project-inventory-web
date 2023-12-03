@@ -8,7 +8,7 @@ const {
 
 const allOutlets = async (req, res) => {
   const page = req.query.page || 1
-  const size = req.query.size || 1
+  const size = req.query.size || 10
   try {
     const { outlets, dataLength } = await getAllOutlets(page, size)
     res.status(200).json({
