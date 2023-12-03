@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import UserData from "@/data/user/index";
@@ -35,31 +34,29 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const {
         role_id: newRole,
         full_name: newFullName,
         email: newEmail,
         password: newPassword,
-      
       } = formData;
-  
+
       const hasChanges =
-      data?.data?.role_id !== newRole ||
-      data?.data?.full_name !== newFullName ||
-      data?.data?.email !== newEmail ||
-      data?.data?.password !== newPassword 
-     
-    if (hasChanges) {
-      const userResponse = await UserData.updateUser(data.data.id, {
-        role_id: newRole,
-        full_name: newFullName,
-        email: newEmail,
-        password: newPassword,
-        
-      });
-  
+        data?.data?.role_id !== newRole ||
+        data?.data?.full_name !== newFullName ||
+        data?.data?.email !== newEmail ||
+        data?.data?.password !== newPassword;
+
+      if (hasChanges) {
+        const userResponse = await UserData.updateUser(data.data.id, {
+          role_id: newRole,
+          full_name: newFullName,
+          email: newEmail,
+          password: newPassword,
+        });
+
         console.log(userResponse);
         console.log(data.data.id);
         Swal.fire({
@@ -72,7 +69,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         }).then(() => {
           addToTable(userResponse.data.data);
           modalCheckbox.current.checked = false;
-  
+
           setFormData({
             role_id: "",
             full_name: "",
@@ -80,7 +77,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
             password: "",
             image_url: null,
           });
-          setFile(null);          setFile(null);
+          setFile(null);
+          setFile(null);
 
           // Check if a new file is selected
           if (file) {
@@ -96,10 +94,10 @@ const ModalEditUser = ({ data, test, addToTable }) => {
             UserData.uploadImage(data?.data?.id, formData)
               .then(() => {
                 addToTable(imageResponse.data.data);
-                  modalCheckbox.current.checked = false;
-                  document.getElementById("formId").reset();
-                  setFile(null);
-                  e.target.reset();
+                modalCheckbox.current.checked = false;
+                document.getElementById("formId").reset();
+                setFile(null);
+                e.target.reset();
               })
               .catch((imageError) => {
                 console.error("Image Upload Error:", imageError.message);
@@ -110,7 +108,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
     } catch (error) {
       console.error("Error:", error.message);
       let errorMessage = "An error occurred. Please try again."; // Default error message
-      
+
       if (
         error.response &&
         error.response.data &&
@@ -126,7 +124,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         timer: 2000,
         customClass: "swal-custom",
       });
-    }    // Check if a new file is selected
+    } // Check if a new file is selected
     if (file) {
       // Create FormData to handle file upload
       const formData = new FormData();
@@ -153,12 +151,12 @@ const ModalEditUser = ({ data, test, addToTable }) => {
         addToTable(imageResponse.data.data);
         modalCheckbox.current.checked = false;
         document.getElementById("formId").reset();
-        setFile(null)
-         e.target.reset();
+        setFile(null);
+        e.target.reset();
       });
     }
   };
-  
+
   return (
     <>
       <input
