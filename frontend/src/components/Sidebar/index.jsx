@@ -1,64 +1,64 @@
-import React, { useEffect, useRef, useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import SidebarLinkGroup from "./SidebarLinkGroup"
-import Cookies from "js-cookie"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import SidebarLinkGroup from "./SidebarLinkGroup";
+import Cookies from "js-cookie";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const router = useRouter()
-  const [isTokenExist, setTokenExist] = useState(false)
-  const [isRoleExist, setRoleExist] = useState(null)
-  const pathname = usePathname()
-  const trigger = useRef(null)
-  const sidebar = useRef(null)
-  let storedSidebarExpanded = "true"
+  const router = useRouter();
+  const [isTokenExist, setTokenExist] = useState(false);
+  const [isRoleExist, setRoleExist] = useState(null);
+  const pathname = usePathname();
+  const trigger = useRef(null);
+  const sidebar = useRef(null);
+  let storedSidebarExpanded = "true";
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
-  )
+  );
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    const role = Cookies.get("role")
+    const token = Cookies.get("token");
+    const role = Cookies.get("role");
 
-    if (!token || !role) router.push("/forbidden")
-    setTokenExist(!!token)
-    setRoleExist(role)
-  }, [])
+    if (!token || !role) router.push("/forbidden");
+    setTokenExist(!!token);
+    setRoleExist(role);
+  }, []);
 
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
-      if (!sidebar.current || !trigger.current) return
+      if (!sidebar.current || !trigger.current) return;
       if (
         !sidebarOpen ||
         sidebar.current.contains(target) ||
         trigger.current.contains(target)
       )
-        return
-      setSidebarOpen(false)
-    }
-    document.addEventListener("click", clickHandler)
-    return () => document.removeEventListener("click", clickHandler)
-  })
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
+  });
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
-      if (!sidebarOpen || keyCode !== 27) return
-      setSidebarOpen(false)
-    }
-    document.addEventListener("keydown", keyHandler)
-    return () => document.removeEventListener("keydown", keyHandler)
-  })
+      if (!sidebarOpen || keyCode !== 27) return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", keyHandler);
+    return () => document.removeEventListener("keydown", keyHandler);
+  });
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString())
+    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded")
+      document.querySelector("body")?.classList.add("sidebar-expanded");
     } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded")
+      document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
-  }, [sidebarExpanded])
+  }, [sidebarExpanded]);
   return (
     <aside
       ref={sidebar}
@@ -155,31 +155,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       "bg-graydark dark:bg-meta-4"
                     }`}
                   >
-                    <svg
-                      className="fill-current"
-                      width="18"
-                      height="19"
-                      viewBox="0 0 18 19"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_130_9756)">
-                        <path
-                          d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                          fill=""
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_130_9756">
-                          <rect
-                            width="18"
-                            height="18"
-                            fill="white"
-                            transform="translate(0 0.052124)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+</svg>
+
                     Users
                   </Link>
                 </li>
@@ -196,29 +175,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       }`}
                     >
                       <svg
-                        className="fill-current"
-                        width="18"
-                        height="19"
-                        viewBox="0 0 18 19"
-                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
                       >
-                        <g clipPath="url(#clip0_130_9756)">
-                          <path
-                            d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                            fill=""
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_130_9756">
-                            <rect
-                              width="18"
-                              height="18"
-                              fill="white"
-                              transform="translate(0 0.052124)"
-                            />
-                          </clipPath>
-                        </defs>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+                        />
                       </svg>
                       Categories
                     </Link>
@@ -233,29 +201,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       }`}
                     >
                       <svg
-                        className="fill-current"
-                        width="18"
-                        height="19"
-                        viewBox="0 0 18 19"
-                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
                       >
-                        <g clipPath="url(#clip0_130_9756)">
-                          <path
-                            d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                            fill=""
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_130_9756">
-                            <rect
-                              width="18"
-                              height="18"
-                              fill="white"
-                              transform="translate(0 0.052124)"
-                            />
-                          </clipPath>
-                        </defs>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                        />
                       </svg>
                       Items
                     </Link>
@@ -270,29 +227,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       }`}
                     >
                       <svg
-                        className="fill-current"
-                        width="18"
-                        height="19"
-                        viewBox="0 0 18 19"
-                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
                       >
-                        <g clipPath="url(#clip0_130_9756)">
-                          <path
-                            d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                            fill=""
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_130_9756">
-                            <rect
-                              width="18"
-                              height="18"
-                              fill="white"
-                              transform="translate(0 0.052124)"
-                            />
-                          </clipPath>
-                        </defs>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"
+                        />
                       </svg>
                       Outlets
                     </Link>
@@ -307,29 +253,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       }`}
                     >
                       <svg
-                        className="fill-current"
-                        width="18"
-                        height="19"
-                        viewBox="0 0 18 19"
-                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
                       >
-                        <g clipPath="url(#clip0_130_9756)">
-                          <path
-                            d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                            fill=""
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_130_9756">
-                            <rect
-                              width="18"
-                              height="18"
-                              fill="white"
-                              transform="translate(0 0.052124)"
-                            />
-                          </clipPath>
-                        </defs>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                        />
                       </svg>
                       Suppliers
                     </Link>
@@ -353,39 +288,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 "bg-graydark dark:bg-meta-4"
                               }`}
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 sidebarExpanded
                                   ? handleClick()
-                                  : setSidebarExpanded(true)
+                                  : setSidebarExpanded(true);
                               }}
                             >
                               <svg
-                                className="fill-current"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 18 18"
-                                fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-6 h-6"
                               >
                                 <path
-                                  d="M1.43425 7.5093H2.278C2.44675 7.5093 2.55925 7.3968 2.58737 7.31243L2.98112 6.32805H5.90612L6.27175 7.31243C6.328 7.48118 6.46862 7.5093 6.58112 7.5093H7.453C7.76237 7.48118 7.87487 7.25618 7.76237 7.03118L5.428 1.4343C5.37175 1.26555 5.3155 1.23743 5.14675 1.23743H3.88112C3.76862 1.23743 3.59987 1.29368 3.57175 1.4343L1.153 7.08743C1.0405 7.2843 1.20925 7.5093 1.43425 7.5093ZM4.47175 2.98118L5.3155 5.17493H3.59987L4.47175 2.98118Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M10.1249 2.5031H16.8749C17.2124 2.5031 17.5218 2.22185 17.5218 1.85623C17.5218 1.4906 17.2405 1.20935 16.8749 1.20935H10.1249C9.7874 1.20935 9.47803 1.4906 9.47803 1.85623C9.47803 2.22185 9.75928 2.5031 10.1249 2.5031Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.8749 6.21558H10.1249C9.7874 6.21558 9.47803 6.49683 9.47803 6.86245C9.47803 7.22808 9.75928 7.50933 10.1249 7.50933H16.8749C17.2124 7.50933 17.5218 7.22808 17.5218 6.86245C17.5218 6.49683 17.2124 6.21558 16.8749 6.21558Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.875 11.1656H1.77187C1.43438 11.1656 1.125 11.4469 1.125 11.8125C1.125 12.1781 1.40625 12.4594 1.77187 12.4594H16.875C17.2125 12.4594 17.5219 12.1781 17.5219 11.8125C17.5219 11.4469 17.2125 11.1656 16.875 11.1656Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.875 16.1156H1.77187C1.43438 16.1156 1.125 16.3969 1.125 16.7625C1.125 17.1281 1.40625 17.4094 1.77187 17.4094H16.875C17.2125 17.4094 17.5219 17.1281 17.5219 16.7625C17.5219 16.3969 17.2125 16.1156 16.875 16.1156Z"
-                                  fill="white"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
                                 />
                               </svg>
                               Transactions
@@ -440,7 +360,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </div>
                             {/* <!-- Dropdown Menu End --> */}
                           </React.Fragment>
-                        )
+                        );
                       }}
                     </SidebarLinkGroup>
 
@@ -460,39 +380,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 "bg-graydark dark:bg-meta-4"
                               }`}
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 sidebarExpanded
                                   ? handleClick()
-                                  : setSidebarExpanded(true)
+                                  : setSidebarExpanded(true);
                               }}
                             >
                               <svg
-                                className="fill-current"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 18 18"
-                                fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-6 h-6"
                               >
                                 <path
-                                  d="M1.43425 7.5093H2.278C2.44675 7.5093 2.55925 7.3968 2.58737 7.31243L2.98112 6.32805H5.90612L6.27175 7.31243C6.328 7.48118 6.46862 7.5093 6.58112 7.5093H7.453C7.76237 7.48118 7.87487 7.25618 7.76237 7.03118L5.428 1.4343C5.37175 1.26555 5.3155 1.23743 5.14675 1.23743H3.88112C3.76862 1.23743 3.59987 1.29368 3.57175 1.4343L1.153 7.08743C1.0405 7.2843 1.20925 7.5093 1.43425 7.5093ZM4.47175 2.98118L5.3155 5.17493H3.59987L4.47175 2.98118Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M10.1249 2.5031H16.8749C17.2124 2.5031 17.5218 2.22185 17.5218 1.85623C17.5218 1.4906 17.2405 1.20935 16.8749 1.20935H10.1249C9.7874 1.20935 9.47803 1.4906 9.47803 1.85623C9.47803 2.22185 9.75928 2.5031 10.1249 2.5031Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.8749 6.21558H10.1249C9.7874 6.21558 9.47803 6.49683 9.47803 6.86245C9.47803 7.22808 9.75928 7.50933 10.1249 7.50933H16.8749C17.2124 7.50933 17.5218 7.22808 17.5218 6.86245C17.5218 6.49683 17.2124 6.21558 16.8749 6.21558Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.875 11.1656H1.77187C1.43438 11.1656 1.125 11.4469 1.125 11.8125C1.125 12.1781 1.40625 12.4594 1.77187 12.4594H16.875C17.2125 12.4594 17.5219 12.1781 17.5219 11.8125C17.5219 11.4469 17.2125 11.1656 16.875 11.1656Z"
-                                  fill=""
-                                />
-                                <path
-                                  d="M16.875 16.1156H1.77187C1.43438 16.1156 1.125 16.3969 1.125 16.7625C1.125 17.1281 1.40625 17.4094 1.77187 17.4094H16.875C17.2125 17.4094 17.5219 17.1281 17.5219 16.7625C17.5219 16.3969 17.2125 16.1156 16.875 16.1156Z"
-                                  fill="white"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"
                                 />
                               </svg>
                               Reports
@@ -547,7 +452,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </div>
                             {/* <!-- Dropdown Menu End --> */}
                           </React.Fragment>
-                        )
+                        );
                       }}
                     </SidebarLinkGroup>
                   </li>
@@ -561,6 +466,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         {/* <!-- Sidebar Menu --> */}
       </div>
     </aside>
-  )
-}
-export default Sidebar
+  );
+};
+export default Sidebar;

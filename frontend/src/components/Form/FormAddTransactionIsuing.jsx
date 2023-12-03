@@ -1,4 +1,4 @@
-import ModalDeleteTransaction from "../Modal/Transaction/ModalDeleteTransaction"
+import ModalDeleteTransaction from "../Modal/Transaction/ModalDeleteTransaction";
 
 const FormAddTransactionIsuing = ({
   handleSubmit,
@@ -144,7 +144,7 @@ const FormAddTransactionIsuing = ({
         </button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default FormAddTransactionIsuing
+export default FormAddTransactionIsuing;

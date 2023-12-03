@@ -166,12 +166,6 @@ const TableItems = () => {
   };
 
   // Fungsi untuk mengonversi harga ke format IDR
-  const formatIDR = (price) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(price);
-  };
 
   return (
     <>

@@ -8,6 +8,7 @@ const findSuppliers = async (page, size) => {
   const suppliers = await Suppliers.findAll({
     offset: offset,
     limit: size,
+    order: [["id", "DESC"]],
   });
   return { suppliers, dataLength };
 };
