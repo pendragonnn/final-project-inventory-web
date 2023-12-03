@@ -229,6 +229,6 @@ const TableReportIsuing = ({
         </div>
       </div>
     </>
-  )
-}
-export default TableReportIsuing
+  );
+};
+export default TableReportIsuing;

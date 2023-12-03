@@ -38,7 +38,7 @@ const FormTemporaryItem = ({ handleAdd, dataItem }) => {
         </button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default FormTemporaryItem
+export default FormTemporaryItem;

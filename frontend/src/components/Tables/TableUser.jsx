@@ -8,7 +8,7 @@ import UserData from "@/data/user/index";
 import Cookies from "js-cookie";
 
 const TableUser = () => {
-  const role = Cookies.get("role")
+  const role = Cookies.get("role");
   const [data, setData] = useState([]);
   const [update, setUpdate] = useState(null);
   const [userImageUrl, setUserImageUrl] = useState("");
@@ -106,7 +106,10 @@ const TableUser = () => {
           setTotalItems(res.data.totalItems);
           setCurrentPage(res.data.currentPage);
 
-          if (res.data.totalItems % (size * res.data.totalPages) <= size && currentPage > 1) {
+          if (
+            res.data.totalItems % (size * res.data.totalPages) <= size &&
+            currentPage > 1
+          ) {
             paginationHandle(currentPage - 1);
           } else {
             paginationHandle(res.data.currentPage);
@@ -123,7 +126,7 @@ const TableUser = () => {
         });
       }
     });
-  }
+  };
 
   const paginationHandle = async (currentPage) => {
     setCurrentPage(currentPage);
@@ -143,8 +146,8 @@ const TableUser = () => {
 
   const filteredData = searchTerm
     ? allData.filter((user) =>
-      user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : data;
 
   const openModal = () => {
@@ -188,6 +191,7 @@ const TableUser = () => {
               />
             </label>
           )}
+          {role === "3" && <div></div>}
           <div className="relative">
             <input
               type="text"
