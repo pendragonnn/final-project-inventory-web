@@ -195,6 +195,7 @@ const createTransactionDetail = async (transsactionDetailData, header_id) => {
       header_id: header_id,
       item_id: transsactionDetailData.item_id,
       quantity: transsactionDetailData.quantity,
+      price_item: transsactionDetailData.price_item,
     })
 
     return transactionDetail

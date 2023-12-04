@@ -42,13 +42,6 @@ const findTransactionDetailtById = async (id) => {
     },
   })
 
-  // const dataItem = transactionDetail.item_id
-  // const item = await Item.findOne({
-  //   where: {
-  //     dataItem,
-  //   },
-  // })
-
   return transactionDetail
 }
 

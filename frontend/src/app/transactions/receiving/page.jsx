@@ -31,6 +31,7 @@ const TransactionHeader = () => {
         Detail: itemTemporary.map((e) => ({
           item_id: e.item_id,
           quantity: parseInt(e.quantity),
+          price_item: parseInt(e.price_item),
         })),
       })
 
@@ -60,6 +61,7 @@ const TransactionHeader = () => {
       item_id: dataItem[e.target.a.value].id,
       item_name: dataItem[e.target.a.value].name,
       quantity: parseInt(e.target.b.value),
+      price_item: parseInt(e.target.c.value),
     }
 
     const existingItemIndex = itemTemporary.findIndex(
@@ -126,15 +128,22 @@ const TransactionHeader = () => {
           <Breadcrumb pageName="Transaction Receiving" />
           <div className="">
             <div className=" ">
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 ">
-                <FormTemporaryItem handleAdd={handleAdd} dataItem={dataItem} />
-                <FormAddTransactionReceiving
-                  handleSubmit={handleSubmit}
-                  userId={userId}
-                  dataSupplier={dataSupplier}
-                  itemTemporary={itemTemporary}
-                  handleDelete={handleDelete}
-                />
+              <div className="flex flex-col gap-5 lg:flex-row">
+                <div className="lg:flex-[0.7]">
+                  <FormTemporaryItem
+                    handleAdd={handleAdd}
+                    dataItem={dataItem}
+                  />
+                </div>
+                <div className="lg:flex-[1.3]">
+                  <FormAddTransactionReceiving
+                    handleSubmit={handleSubmit}
+                    userId={userId}
+                    dataSupplier={dataSupplier}
+                    itemTemporary={itemTemporary}
+                    handleDelete={handleDelete}
+                  />
+                </div>
               </div>
             </div>
           </div>

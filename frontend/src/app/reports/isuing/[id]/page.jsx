@@ -38,7 +38,7 @@ const DetailReportIsuing = () => {
   }
 
   const totalTransaction = data.TransactionDetails.reduce(
-    (total, value) => total + value.Item.price * value.quantity,
+    (total, value) => total + value.price_item * value.quantity,
     0
   )
 
@@ -128,7 +128,7 @@ const DetailReportIsuing = () => {
                       Price
                     </p>
                     <p className="font-bold dark:text-white">
-                      {formatIDR(value.Item.price)}
+                      {formatIDR(value.price_item)}
                     </p>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ const DetailReportIsuing = () => {
                       Total Price
                     </p>
                     <p className="font-bold dark:text-white">
-                      {formatIDR(value.Item.price * value.quantity)}
+                      {formatIDR(value.price_item * value.quantity)}
                     </p>
                   </div>
                 </div>

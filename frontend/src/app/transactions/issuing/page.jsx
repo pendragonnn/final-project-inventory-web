@@ -22,6 +22,18 @@ const TransactionHeader = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // Cek apakah itemTemporary tidak kosong
+    if (itemTemporary.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Must add item",
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      })
+      return // Keluar dari fungsi jika itemTemporary kosong
+    }
+
     try {
       const data = await createTransactionHeader({
         user_id: e.target.user_id.value,
@@ -31,8 +43,12 @@ const TransactionHeader = () => {
         Detail: itemTemporary.map((e) => ({
           item_id: e.item_id,
           quantity: parseInt(e.quantity),
+          price_item: parseInt(e.price_item),
         })),
       })
+      if (!itemTemporary) {
+        console.log("data tidak ada")
+      }
 
       if (data) {
         if (data === "Quantity must not exceed stock") {
@@ -71,6 +87,7 @@ const TransactionHeader = () => {
       item_id: dataItem[e.target.a.value].id,
       item_name: dataItem[e.target.a.value].name,
       quantity: parseInt(e.target.b.value),
+      price_item: parseInt(e.target.c.value),
     }
 
     const existingItemIndex = itemTemporary.findIndex(
@@ -136,15 +153,22 @@ const TransactionHeader = () => {
           <Breadcrumb pageName="Transaction Isuing" />
           <div className="">
             <div className=" ">
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 ">
-                <FormTemporaryItem handleAdd={handleAdd} dataItem={dataItem} />
-                <FormAddTransactionIsuing
-                  handleSubmit={handleSubmit}
-                  userId={userId}
-                  dataOutlet={dataOutlet}
-                  itemTemporary={itemTemporary}
-                  handleDelete={handleDelete}
-                />
+              <div className="flex flex-col gap-5 lg:flex-row">
+                <div className="lg:flex-[0.7]">
+                  <FormTemporaryItem
+                    handleAdd={handleAdd}
+                    dataItem={dataItem}
+                  />
+                </div>
+                <div className="lg:flex-[1.3]">
+                  <FormAddTransactionIsuing
+                    handleSubmit={handleSubmit}
+                    userId={userId}
+                    dataOutlet={dataOutlet}
+                    itemTemporary={itemTemporary}
+                    handleDelete={handleDelete}
+                  />
+                </div>
               </div>
             </div>
           </div>
