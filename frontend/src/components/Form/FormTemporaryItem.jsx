@@ -47,12 +47,13 @@ const FormTemporaryItem = ({ handleAdd, dataItem }) => {
         {selectedItem && (
           <div>
             <label className="mb-2.5 block text-black dark:text-white">
-              Price
+              Price per item
             </label>
             <input
               type="text"
               value={selectedItemPrice}
               readOnly
+              name="c"
               className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
             />
           </div>
@@ -63,7 +64,7 @@ const FormTemporaryItem = ({ handleAdd, dataItem }) => {
           className="flex justify-center rounded bg-primary p-3 font-medium text-gray"
           disabled={!selectedItem}
         >
-          Add Transaction
+          Add Item
         </button>
       </div>
     </form>

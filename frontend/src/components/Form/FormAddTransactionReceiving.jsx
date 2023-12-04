@@ -1,4 +1,4 @@
-import ModalDeleteTransaction from "../Modal/Transaction/ModalDeleteTransaction";
+import ModalDeleteTransaction from "../Modal/Transaction/ModalDeleteTransaction"
 
 const FormAddTransactionReceiving = ({
   handleSubmit,
@@ -57,6 +57,9 @@ const FormAddTransactionReceiving = ({
                   Quantity
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white ">
+                  Price per item
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white ">
                   Action
                 </th>
               </tr>
@@ -64,24 +67,34 @@ const FormAddTransactionReceiving = ({
             <tbody>
               {itemTemporary.map((value, i) => (
                 <tr key={i} className="">
-                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
+                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark">
                     <input
                       type="text"
-                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark text-center"
                       required
                       readOnly
                       name="item_id"
                       value={value.item_name}
                     />
                   </td>
-                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
+                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark w-[10px]">
                     <input
                       type="text"
-                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark text-center"
+                      className="w-full rounded border-[1.5px] border-none py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
                       required
                       readOnly
                       name="quantity"
                       value={value.quantity}
+                    />
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark ">
+                    <input
+                      type="text"
+                      className="w-full rounded border-[1.5px] border-none bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary text-center active:border-primary disabled:cursor-default disabled:bg-whiter  dark:bg-boxdark dark:disabled:bg-graydark"
+                      required
+                      readOnly
+                      name="price"
+                      value={value.price_item}
                     />
                   </td>
                   <td className="border-b border-[#eee] py-5 px-5 dark:border-strokedark">
@@ -144,7 +157,7 @@ const FormAddTransactionReceiving = ({
         </button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default FormAddTransactionReceiving;
+export default FormAddTransactionReceiving

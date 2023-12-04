@@ -1,46 +1,46 @@
-"use client";
+"use client"
 
-import SidebarLayout from "@/app/sidebar-layout";
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { getTransactionDetailById } from "@/modules/fetch/index";
-import Image from "next/image";
+import SidebarLayout from "@/app/sidebar-layout"
+import { useParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
+import { getTransactionDetailById } from "@/modules/fetch/index"
+import Image from "next/image"
 
 const DetailReportReceiving = () => {
-  const { id } = useParams();
-  const [data, setData] = useState(null);
+  const { id } = useParams()
+  const [data, setData] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getTransactionDetailById(id);
-      setData(res.data);
-    };
+      const res = await getTransactionDetailById(id)
+      setData(res.data)
+    }
 
-    fetchData();
-  }, [id]);
+    fetchData()
+  }, [id])
 
   // Fungsi untuk mengonversi harga ke format IDR
   const formatIDR = (price) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
-    }).format(price);
-  };
+    }).format(price)
+  }
 
   function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    return date.toLocaleDateString("id-ID", options);
+    const date = new Date(isoDate)
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return date.toLocaleDateString("id-ID", options)
   }
 
   if (!data) {
-    return <p>Loading...</p>;
+    return <p>Loading...</p>
   }
 
   const totalTransaction = data.TransactionDetails.reduce(
     (total, value) => total + value.Item.price * value.quantity,
     0
-  );
+  )
 
   return (
     <SidebarLayout>
@@ -206,7 +206,7 @@ const DetailReportReceiving = () => {
                     </div>
                     <div>
                       <p className="font-medium text-[#858592] dark:text-stroke">
-                        Supplier Id
+                        Supplier id
                       </p>
                       <p className="font-bold dark:text-white">
                         {data.supplier_id}
@@ -276,7 +276,7 @@ const DetailReportReceiving = () => {
         </div>
       </div>
     </SidebarLayout>
-  );
-};
+  )
+}
 
-export default DetailReportReceiving;
+export default DetailReportReceiving

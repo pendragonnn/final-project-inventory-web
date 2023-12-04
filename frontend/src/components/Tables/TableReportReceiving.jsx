@@ -171,7 +171,6 @@ const TableReportReceiving = ({
               )}
             </tbody>
           </table>
-
           <div className="items-center float-right">
             {currentPage !== 1 && (
               <button
@@ -230,7 +229,7 @@ const TableReportReceiving = ({
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default TableReportReceiving;
+export default TableReportReceiving

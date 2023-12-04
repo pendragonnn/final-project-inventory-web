@@ -1,27 +1,39 @@
-"use client";
+"use client"
 
-import SidebarLayout from "@/app/sidebar-layout";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Swal from "sweetalert2";
-import { createTransactionHeader } from "@/modules/fetch/index";
-import Outlet from "@/data/outlet/index";
-import Item from "@/data/item/index";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-import FormTemporaryItem from "@/components/Form/FormTemporaryItem";
-import FormAddTransactionIsuing from "@/components/Form/FormAddTransactionIsuing";
+import SidebarLayout from "@/app/sidebar-layout"
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
+import Swal from "sweetalert2"
+import { createTransactionHeader } from "@/modules/fetch/index"
+import Outlet from "@/data/outlet/index"
+import Item from "@/data/item/index"
+import { useEffect, useState } from "react"
+import Cookies from "js-cookie"
+import { useRouter } from "next/navigation"
+import FormTemporaryItem from "@/components/Form/FormTemporaryItem"
+import FormAddTransactionIsuing from "@/components/Form/FormAddTransactionIsuing"
 
 const TransactionHeader = () => {
-  const [dataItem, setDataItem] = useState([]);
-  const [dataOutlet, setDataOutlet] = useState([]);
-  const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [itemTemporary, setItemTemporary] = useState([]);
-  const router = useRouter();
+  const [dataItem, setDataItem] = useState([])
+  const [dataOutlet, setDataOutlet] = useState([])
+  const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [itemTemporary, setItemTemporary] = useState([])
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    // Cek apakah itemTemporary tidak kosong
+    if (itemTemporary.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Must add item",
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: "swal-custom",
+      })
+      return // Keluar dari fungsi jika itemTemporary kosong
+    }
+
     try {
       const data = await createTransactionHeader({
         user_id: e.target.user_id.value,
@@ -31,8 +43,12 @@ const TransactionHeader = () => {
         Detail: itemTemporary.map((e) => ({
           item_id: e.item_id,
           quantity: parseInt(e.quantity),
+          price_item: parseInt(e.price_item),
         })),
-      });
+      })
+      if (!itemTemporary) {
+        console.log("data tidak ada")
+      }
 
       if (data) {
         if (data === "Quantity must not exceed stock") {
@@ -42,7 +58,7 @@ const TransactionHeader = () => {
             showConfirmButton: false,
             timer: 2000,
             customClass: "swal-custom",
-          });
+          })
         } else {
           Swal.fire({
             icon: "success",
@@ -50,10 +66,10 @@ const TransactionHeader = () => {
             showConfirmButton: false,
             timer: 2000,
             customClass: "swal-custom",
-          });
+          })
         }
       }
-      setItemTemporary([]);
+      setItemTemporary([])
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -61,73 +77,74 @@ const TransactionHeader = () => {
         showConfirmButton: false,
         timer: 2000,
         customClass: "swal-custom",
-      });
+      })
     }
-  };
+  }
 
   const handleAdd = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     const newItem = {
       item_id: dataItem[e.target.a.value].id,
       item_name: dataItem[e.target.a.value].name,
       quantity: parseInt(e.target.b.value),
-    };
+      price_item: parseInt(e.target.c.value),
+    }
 
     const existingItemIndex = itemTemporary.findIndex(
       (item) => item.item_id === newItem.item_id
-    );
+    )
 
     if (existingItemIndex !== -1) {
-      const updatedItems = [...itemTemporary];
-      updatedItems[existingItemIndex].quantity += newItem.quantity;
-      setItemTemporary(updatedItems);
+      const updatedItems = [...itemTemporary]
+      updatedItems[existingItemIndex].quantity += newItem.quantity
+      setItemTemporary(updatedItems)
     } else {
-      setItemTemporary([...itemTemporary, newItem]);
+      setItemTemporary([...itemTemporary, newItem])
     }
 
-    e.target.reset();
-  };
+    e.target.reset()
+  }
 
   const handleDelete = (index) => {
-    const newData = [...itemTemporary];
-    newData.splice(index, 1);
-    setItemTemporary(newData);
-  };
+    const newData = [...itemTemporary]
+    newData.splice(index, 1)
+    setItemTemporary(newData)
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await Item.getItem();
-      const allRes = await Item.getItem(1, res.data.totalItems);
-      setDataItem(allRes.data.data);
-    };
+      const res = await Item.getItem()
+      const allRes = await Item.getItem(1, res.data.totalItems)
+      setDataItem(allRes.data.data)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Outlet.getOutlet();
-        const allRes = await Outlet.getOutlet(1, res.data.totalItems);
-        setDataOutlet(allRes.data.data);
-        setD;
+        const res = await Outlet.getOutlet()
+        const allRes = await Outlet.getOutlet(1, res.data.totalItems)
+        setDataOutlet(allRes.data.data)
+        setD
       } catch (error) {
-        console.log("Error fetching category", error);
+        console.log("Error fetching category", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
-    const role = Cookies.get("role");
-    const idUser = Cookies.get("userId");
-    setUser(role);
-    setUserId(idUser);
+    const role = Cookies.get("role")
+    const idUser = Cookies.get("userId")
+    setUser(role)
+    setUserId(idUser)
 
     if (!role) {
-      router.push("/dashboard");
+      router.push("/dashboard")
     }
-  }, []);
+  }, [])
 
   if (user) {
     return (
@@ -136,23 +153,30 @@ const TransactionHeader = () => {
           <Breadcrumb pageName="Transaction Isuing" />
           <div className="">
             <div className=" ">
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 ">
-                <FormTemporaryItem handleAdd={handleAdd} dataItem={dataItem} />
-                <FormAddTransactionIsuing
-                  handleSubmit={handleSubmit}
-                  userId={userId}
-                  dataOutlet={dataOutlet}
-                  itemTemporary={itemTemporary}
-                  handleDelete={handleDelete}
-                />
+              <div className="flex flex-col gap-5 lg:flex-row">
+                <div className="lg:flex-[0.7]">
+                  <FormTemporaryItem
+                    handleAdd={handleAdd}
+                    dataItem={dataItem}
+                  />
+                </div>
+                <div className="lg:flex-[1.3]">
+                  <FormAddTransactionIsuing
+                    handleSubmit={handleSubmit}
+                    userId={userId}
+                    dataOutlet={dataOutlet}
+                    itemTemporary={itemTemporary}
+                    handleDelete={handleDelete}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </SidebarLayout>
       </>
-    );
+    )
   } else {
-    return null;
+    return null
   }
-};
-export default TransactionHeader;
+}
+export default TransactionHeader
