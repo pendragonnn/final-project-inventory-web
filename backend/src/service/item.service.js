@@ -1,95 +1,79 @@
 const {
-  findItems,
-  findItemById,
-  findItemByName,
-  createItem,
-  editItem,
-  deleteItem,
-  updateItemPhotos,
-  updateStock,
+	findItems,
+	findItemById,
+	// findItemByName,
+	createItem,
+	editItem,
+	deleteItem,
+	// updateItemPhotos,
+	updateStock,
 } = require("../repository/item.repository");
 
 const getAllItems = async (page, size) => {
-  const items = await findItems(page, size);
-  return items;
+	const items = await findItems(page, size);
+	return items;
 };
 
 const getItemById = async (id) => {
-  const item = await findItemById(id);
+	const item = await findItemById(id);
 
-  if (!item) {
-    throw Error("Item Not Found");
-  }
+	if (!item) {
+		throw Error("Item Not Found");
+	}
 
-  return item;
+	return item;
 };
 
 const insertItem = async (newItem) => {
-  const itemName = await findItemByName(newItem.name);
+	const item = await createItem(newItem);
 
-  if (itemName) {
-    throw new Error("Item Already Added");
-  }
-
-  const item = await createItem(newItem);
-
-  return item;
+	return item;
 };
 
 const editItemById = async (id, newItem) => {
-  try {
-    const existingItem = await getItemById(id);
+	const existingItem = await getItemById(id);
 
-    if (!existingItem) {
-      throw new Error("Outlet Not Found");
-    }
+	if (!existingItem) {
+		throw new Error("Outlet Not Found");
+	}
 
-    const itemName = await findItemByName(newItem.name);
+	const updatedItem = await editItem(id, newItem);
 
-    if (itemName && itemName.id !== id) {
-      throw new Error("Item Name  Is Already ");
-    }
-    const updatedItem = await editItem(id, newItem);
-
-    return updatedItem;
-    
-  } catch (error) {
-    throw new Error(error.massage);
-  }
+	return updatedItem;
 };
 
 const deleteItemById = async (id) => {
-  await getItemById(id);
-  await deleteItem(id);
+	await getItemById(id);
+	await deleteItem(id);
 };
 
-const updateItemPhoto = async (id, image_url) => {
-  try {
-    return await updateItemPhotos(id, image_url);
-  } catch (error) {
-    throw error;
-  }
-};
+// const updateItemPhoto = async (id, image_url) => {
+// 	try {
+// 		return await updateItemPhotos(id, image_url);
+// 	} catch (error) {
+// 		throw error;
+// 	}
+// };
 
 const decreaseStock = async (minus, id) => {
-  const item = await getItemById(id);
-  const newStock = item.stock - minus;
-  await updateStock(id, newStock);
+	const item = await getItemById(id);
+	const newStock = item.stock - minus;
+	await updateStock(id, newStock);
 };
 
 const increaseStock = async (plus, id) => {
-  const item = await getItemById(id);
-  const newStock = item.stock + plus;
-  await updateStock(id, newStock);
+	const item = await getItemById(id);
+	const newStock = item.stock + plus;
+	await updateStock(id, newStock);
 };
 
 module.exports = {
-  getAllItems,
-  getItemById,
-  insertItem,
-  editItemById,
-  deleteItemById,
-  updateItemPhoto,
-  decreaseStock,
-  increaseStock,
+	getAllItems,
+	getItemById,
+	insertItem,
+	editItemById,
+	deleteItemById,
+	// updateItemPhoto,
+	decreaseStock,
+	increaseStock,
 };

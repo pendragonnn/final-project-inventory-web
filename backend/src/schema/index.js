@@ -6,14 +6,16 @@ const transactionDetailSchema = require("./transaction.detail.schema");
 const transactionHeaderSchema = require("./transaction.header.schema");
 const userAddSchema = require("./user.add.schema");
 const userLoginSchema = require("./user.login.schema");
+const brandSchema = require("./brand.schema");
 
 module.exports = {
-  categorySchema,
-  itemSchema,
-  outletSchema,
-  supplierSchema,
-  transactionDetailSchema,
-  transactionHeaderSchema,
-  userAddSchema,
-  userLoginSchema,
+	categorySchema,
+	itemSchema,
+	outletSchema,
+	supplierSchema,
+	transactionDetailSchema,
+	transactionHeaderSchema,
+	userAddSchema,
+	userLoginSchema,
+	brandSchema,
 };

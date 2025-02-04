@@ -1,245 +1,341 @@
-const models = require("../../models")
-const TransactionsHeaders = models.TransactionHeader
-const TransactionDetail = models.TransactionDetail
-const Item = models.Item
-const User = models.User
-const Outlet = models.Outlet
-const Supplier = models.Supplier
-const { Op } = require("sequelize")
+const models = require("../../models");
+const TransactionsHeaders = models.TransactionHeader;
+const TransactionDetail = models.TransactionDetail;
+const Item = models.Item;
+const User = models.User;
+const Outlet = models.Outlet;
+const Supplier = models.Supplier;
+const { Op } = require("sequelize");
 
 const findsTransactionHeader = async (page, size) => {
-  const offset = (page - 1) * size
-  const transactionHeadersAll = await TransactionsHeaders.findAll()
-  const dataLength = transactionHeadersAll.length
-  const transactionHeaders = await TransactionsHeaders.findAll({
-    offset: offset,
-    limit: size,
-    attributes: {
-      exclude: ["outlet_id"], // Exclude the 'outlet_id' field
-    },
-    include: [
-      {
-        model: User,
-        attributes: ["full_name"],
-      },
-      {
-        model: Outlet,
-        attributes: ["name"],
-      },
-      {
-        model: Supplier,
-        attributes: ["name"],
-      },
-    ],
-    where: {
-      supplier_id: {
-        [Op.ne]: null, // Memastikan supplier_id tidak sama dengan null
-      },
-    },
-  })
-  return { transactionHeaders, dataLength }
-}
+	const offset = (page - 1) * size;
+	const transactionHeadersAll = await TransactionsHeaders.findAll();
+	const dataLength = transactionHeadersAll.length;
+	const transactionHeaders = await TransactionsHeaders.findAll({
+		offset: offset,
+		limit: size,
+		attributes: {
+			exclude: ["outlet_id"], // Exclude the 'outlet_id' field
+		},
+		include: [
+			{
+				model: User,
+				attributes: ["full_name"],
+			},
+			{
+				model: Outlet,
+				attributes: ["name"],
+			},
+			{
+				model: Supplier,
+				attributes: ["name"],
+			},
+		],
+		where: {
+			supplier_id: {
+				[Op.ne]: null, // Memastikan supplier_id tidak sama dengan null
+			},
+		},
+	});
+	return { transactionHeaders, dataLength };
+};
 
 const findsTransactionHeaderReceiving = async (page, size) => {
-  const offset = (page - 1) * size
+	const offset = (page - 1) * size;
 
-  // Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
-  const dataLength = await TransactionsHeaders.count({
-    where: {
-      supplier_id: {
-        [Op.ne]: null,
-      },
-    },
-  })
+	// Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
+	const dataLength = await TransactionsHeaders.count({
+		where: {
+			information: "Receiving",
+		},
+	});
 
-  const transactionReceiving = await TransactionsHeaders.findAll({
-    offset: offset,
-    limit: size,
-    attributes: {
-      exclude: ["outlet_id"],
-    },
-    include: [
-      {
-        model: User,
-        attributes: ["full_name"],
-      },
-      {
-        model: Outlet,
-        attributes: ["name"],
-      },
-      {
-        model: Supplier,
-        attributes: ["name"],
-      },
-    ],
-    where: {
-      supplier_id: {
-        [Op.ne]: null,
-      },
-    },
-  })
+	const transactionReceiving = await TransactionsHeaders.findAll({
+		offset: offset,
+		order: [["id", "DESC"]],
+		limit: size,
+		include: [
+			{
+				model: User,
+				attributes: ["full_name"],
+			},
+			{
+				model: Supplier,
+				attributes: ["name"],
+			},
+		],
+		where: {
+			information: "Receiving",
+		},
+	});
 
-  return { transactionReceiving, dataLength }
-}
+	return { transactionReceiving, dataLength };
+};
 
-const findsTransactionHeaderIsuing = async (page, size) => {
-  const offset = (page - 1) * size
+const findsTransactionHeaderIssuing = async (page, size) => {
+	const offset = (page - 1) * size;
 
-  // Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
-  const dataLength = await TransactionsHeaders.count({
-    where: {
-      outlet_id: {
-        [Op.ne]: null,
-      },
-    },
-  })
+	// Menggunakan count untuk menghitung jumlah data berdasarkan kondisi
+	const dataLength = await TransactionsHeaders.count({
+		where: {
+			information: "Issuing",
+		},
+	});
 
-  const transactionIsuing = await TransactionsHeaders.findAll({
-    offset: offset,
-    limit: size,
-    attributes: {
-      exclude: ["supplier_id"],
-    },
-    include: [
-      {
-        model: User,
-        attributes: ["full_name"],
-      },
-      {
-        model: Outlet,
-        attributes: ["name"],
-      },
-      {
-        model: Supplier,
-        attributes: ["name"],
-      },
-    ],
-    where: {
-      outlet_id: {
-        [Op.ne]: null,
-      },
-    },
-  })
+	const transactionIssuing = await TransactionsHeaders.findAll({
+		offset: offset,
+		limit: size,
+		order: [["id", "DESC"]],
+		// attributes: {
+		// 	exclude: ["supplier_id"],
+		// },
+		include: [
+			{
+				model: User,
+				attributes: ["full_name"],
+			},
+			{
+				model: Outlet,
+				attributes: ["name"],
+			},
+		],
+		where: {
+			information: "Issuing",
+		},
+	});
 
-  return { transactionIsuing, dataLength }
-}
+	return { transactionIssuing, dataLength };
+};
 
-const findTransactionHeadertById = async (id) => {
-  const transactionHeader = await TransactionsHeaders.findOne({
-    include: [
-      {
-        model: TransactionDetail,
-        include: [
-          {
-            model: Item,
-          },
-        ],
-      },
-    ],
-    where: {
-      id,
-    },
-  })
-  return transactionHeader
-}
+const findsTransactionHeaderReturning = async (page, size) => {
+	const offset = (page - 1) * size;
+
+	// Menghitung jumlah total data
+	const dataLength = await TransactionsHeaders.count({
+		where: {
+			information: "Returning",
+		},
+	});
+	// Query untuk mengambil data
+	const transactionReturning = await TransactionsHeaders.findAll({
+		offset: offset,
+		limit: size,
+		order: [["id", "DESC"]],
+		include: [
+			{
+				model: User,
+				attributes: ["full_name"], // Nama user
+			},
+			{
+				model: Outlet,
+				attributes: ["id", "name"], // Menampilkan ID dan nama outlet
+			},
+			{
+				model: Supplier,
+				attributes: ["id", "name"], // Menampilkan ID dan nama supplier
+			},
+		],
+		where: {
+			information: "Returning",
+		},
+	});
+
+	return { transactionReturning, dataLength };
+};
+
+const findTransactionHeaderById = async (id) => {
+	const transactionHeader = await TransactionsHeaders.findOne({
+		include: [
+			{
+				model: TransactionDetail,
+				include: [
+					{
+						model: Item,
+					},
+				],
+			},
+		],
+		where: {
+			id,
+		},
+	});
+	return transactionHeader;
+};
 
 function generateNewId(existingIds) {
-  const maxNumber = existingIds.reduce((max, id) => {
-    const currentNumber = parseInt(id.split("-")[1], 10)
-    return currentNumber > max ? currentNumber : max
-  }, 0)
+	const maxNumber = existingIds.reduce((max, id) => {
+		const currentNumber = parseInt(id.split("-")[1], 10);
+		return currentNumber > max ? currentNumber : max;
+	}, 0);
 
-  const newNumber = maxNumber + 1
-  const newId = `TH-${String(newNumber).padStart(4, "0")}`
+	const newNumber = maxNumber + 1;
+	const newId = `TH-${String(newNumber).padStart(4, "0")}`;
 
-  return newId
+	return newId;
 }
 
 const createTransactionHeader = async (transactionHeaderData) => {
-  try {
-    const existingIds = await TransactionsHeaders.findAll({
-      attributes: ["id"],
-    })
+	try {
+		const existingIds = await TransactionsHeaders.findAll({
+			attributes: ["id"],
+		});
 
-    const newId = generateNewId(
-      existingIds.map((transactionHeader) => transactionHeader.id)
-    )
+		const newId = generateNewId(
+			existingIds.map((transactionHeader) => transactionHeader.id)
+		);
 
-    const transactionHeader = await TransactionsHeaders.create({
-      id: newId,
-      user_id: transactionHeaderData.user_id,
-      outlet_id: transactionHeaderData.outlet_id,
-      supplier_id: transactionHeaderData.supplier_id,
-      transaction_date: transactionHeaderData.transaction_date,
-      information: transactionHeaderData.information,
-    })
+		const transactionHeader = await TransactionsHeaders.create({
+			id: newId,
+			user_id: transactionHeaderData.user_id,
+			outlet_id: transactionHeaderData.outlet_id,
+			supplier_id: transactionHeaderData.supplier_id,
+			transaction_date: transactionHeaderData.transaction_date,
+			information: transactionHeaderData.information,
+		});
 
-    return transactionHeader
-  } catch (error) {
-    throw error
-  }
+		return transactionHeader;
+	} catch (error) {
+		throw error;
+	}
+};
+
+function generateDetailNewId(existingIds) {
+	const maxNumber = existingIds.reduce((max, id) => {
+		const currentNumber = parseInt(id.split("-")[1], 10);
+		return currentNumber > max ? currentNumber : max;
+	}, 0);
+
+	const newNumber = maxNumber + 1;
+	const newId = `TD-${String(newNumber).padStart(4, "0")}`;
+
+	return newId;
 }
 
-const createTransactionDetail = async (transsactionDetailData, header_id) => {
-  try {
-    const existingIds = await TransactionDetail.findAll({
-      attributes: ["id"],
-    })
+const createTransactionDetail = async (transactionDetailData, header_id) => {
+	try {
+		const existingIds = await TransactionDetail.findAll({
+			attributes: ["id"],
+		});
 
-    const newId = generateNewId(
-      existingIds.map((transactionDetail) => transactionDetail.id)
-    )
+		const newId = generateDetailNewId(
+			existingIds.map((transactionDetail) => transactionDetail.id)
+		);
 
-    const transactionDetail = await TransactionDetail.create({
-      id: newId,
-      header_id: header_id,
-      item_id: transsactionDetailData.item_id,
-      quantity: transsactionDetailData.quantity,
-      price_item: transsactionDetailData.price_item,
-    })
+		// Ambil header transaksi
+		const transactionHeader = await TransactionsHeaders.findOne({
+			where: { id: header_id },
+			attributes: ["information", "outlet_id", "supplier_id"],
+		});
 
-    return transactionDetail
-  } catch (error) {
-    throw error
-  }
-}
+		if (!transactionHeader) {
+			throw new Error("Transaction header not found");
+		}
+
+		// Ambil stok item dari tabel Items
+		const items = await Item.findOne({
+			where: { id: transactionDetailData.item_id },
+			attributes: ["stock"],
+		});
+
+		if (!items) {
+			throw new Error("Item not found");
+		}
+
+		const stockBefore = items.stock;
+		let stockAfter;
+
+		// Logika perubahan stok untuk retur
+		if (transactionHeader.information.toLowerCase() === "returning") {
+			if (transactionHeader.outlet_id) {
+				// Jika dikirim ke outlet, stok bertambah
+				stockAfter = stockBefore + transactionDetailData.quantity;
+			} else if (transactionHeader.supplier_id) {
+				// Jika dikirim ke supplier, stok berkurang
+				stockAfter = stockBefore - transactionDetailData.quantity;
+
+				if (stockAfter < 0) {
+					throw new Error("Cannot return more than available stock");
+				}
+			} else {
+				throw new Error(
+					"Invalid return transaction: neither outlet_id nor supplier_id is specified"
+				);
+			}
+		} else if (transactionHeader.information.toLowerCase() === "issuing") {
+			// Logika untuk issuing
+			stockAfter = stockBefore - transactionDetailData.quantity;
+
+			if (stockAfter < 0) {
+				throw new Error("Insufficient stock for item");
+			}
+		} else if (transactionHeader.information.toLowerCase() === "receiving") {
+			// Logika untuk receiving
+			stockAfter = stockBefore + transactionDetailData.quantity;
+		} else {
+			throw new Error("Invalid transaction information");
+		}
+
+		// Perbarui stok item di tabel Items
+		await Item.update(
+			{ stock: stockAfter },
+			{ where: { id: transactionDetailData.item_id } }
+		);
+
+		// Buat detail transaksi dengan alasan (reason) jika ada
+		const transactionDetail = await TransactionDetail.create({
+			id: newId,
+			header_id: header_id,
+			item_id: transactionDetailData.item_id,
+			quantity: transactionDetailData.quantity,
+			price_item: transactionDetailData.price_item,
+			stock_before: stockBefore,
+			stock_after: stockAfter,
+			reason: transactionDetailData.reason, // Alasan retur
+		});
+
+		return transactionDetail;
+	} catch (error) {
+		throw error;
+	}
+};
 
 const editTransactionHeader = async (id, transactionHeaderData) => {
-  const updatedTransactionHeader = await TransactionsHeaders.update(
-    {
-      user_id: transactionHeaderData.user_id,
-      outlet_id: transactionHeaderData.outlet_id,
-      supplier_id: transactionHeaderData.supplier_id,
-      transaction_date: transactionHeaderData.transaction_date,
-      information: transactionHeaderData.information,
-    },
-    {
-      where: {
-        id: id,
-      },
-      returning: true,
-    }
-  )
+	const updatedTransactionHeader = await TransactionsHeaders.update(
+		{
+			user_id: transactionHeaderData.user_id,
+			outlet_id: transactionHeaderData.outlet_id,
+			supplier_id: transactionHeaderData.supplier_id,
+			transaction_date: transactionHeaderData.transaction_date,
+			information: transactionHeaderData.information,
+		},
+		{
+			where: {
+				id: id,
+			},
+			returning: true,
+		}
+	);
 
-  return updatedTransactionHeader
-}
+	return updatedTransactionHeader;
+};
 
 const deleteTransactionHeader = async (id) => {
-  const transactionHeader = await TransactionsHeaders.destroy({
-    where: {
-      id,
-    },
-  })
-  return transactionHeader
-}
+	const transactionHeader = await TransactionsHeaders.destroy({
+		where: {
+			id,
+		},
+	});
+	return transactionHeader;
+};
 
 module.exports = {
-  findsTransactionHeader,
-  findTransactionHeadertById,
-  findsTransactionHeaderIsuing,
-  findsTransactionHeaderReceiving,
-  createTransactionHeader,
-  editTransactionHeader,
-  deleteTransactionHeader,
-  createTransactionDetail,
-}
+	findsTransactionHeader,
+	findTransactionHeaderById,
+	findsTransactionHeaderIssuing,
+	findsTransactionHeaderReceiving,
+	findsTransactionHeaderReturning,
+	createTransactionHeader,
+	editTransactionHeader,
+	deleteTransactionHeader,
+	createTransactionDetail,
+};
