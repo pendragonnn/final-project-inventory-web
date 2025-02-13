@@ -7,6 +7,7 @@ const {
 	deleteTransactionHeader,
 	editTransactionHeader,
 	findsTransactionHeaderReturning,
+	calculateMovingAverage,
 } = require("../repository/transaction.header.repository");
 
 const getAllTransactionHeader = async (page, size) => {
@@ -81,6 +82,14 @@ const deleteTransactionHeaderById = async (id) => {
 	}
 };
 
+const getStockForecast = async (itemId, period) => {
+	if (!itemId) {
+		throw new Error("Item Id is required");
+	}
+
+	return await calculateMovingAverage(itemId, period || 7);
+};
+
 module.exports = {
 	getAllTransactionHeader,
 	getTransactionHeaderById,
@@ -90,4 +99,5 @@ module.exports = {
 	insertTransactionHeader,
 	editTransactionHeaderById,
 	deleteTransactionHeaderById,
+	getStockForecast,
 };

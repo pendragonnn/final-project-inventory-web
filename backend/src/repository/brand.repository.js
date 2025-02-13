@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const models = require("../../models");
 const Brand = models.Brand;
 const Category = models.Category;
@@ -44,7 +45,9 @@ const findBrandById = async (id) => {
 const findBrandByName = async (name) => {
 	const brand = await Brand.findOne({
 		where: {
-			name,
+			name: {
+				[Op.iLike]: name,
+			},
 		},
 	});
 	return brand;
@@ -53,7 +56,21 @@ const findBrandByName = async (name) => {
 const findBrandByType = async (type) => {
 	const brand = await Brand.findOne({
 		where: {
-			type,
+			type: {
+				[Op.iLike]: type,
+			},
+		},
+	});
+	return brand;
+};
+
+const findBrandByNameAndType = async (name, type) => {
+	const brand = await Brand.findOne({
+		where: {
+			[Op.and]: [
+				{ name: { [Op.iLike]: name } },
+				{ type: { [Op.iLike]: type } },
+			],
 		},
 	});
 	return brand;
@@ -88,6 +105,15 @@ const createBrand = async (brandData) => {
 		image_url: brandData.image_url,
 	});
 	return brand;
+};
+const updateBrandPhotos = async (id, image_url) => {
+	const updatedBrand = await Brand.update(
+		{ image_url: image_url },
+		{ where: { id }, returning: true }
+	);
+	if (updatedBrand[0] === 0) return null;
+
+	return updatedBrand[1][0].dataValues;
 };
 
 const editBrand = async (id, updatedFields) => {
@@ -128,16 +154,6 @@ const editBrand = async (id, updatedFields) => {
 	return updatedBrands;
 };
 
-const updateBrandPhotos = async (id, image_url) => {
-	const updatedBrand = await Brand.update(
-		{ image_url: image_url },
-		{ where: { id }, returning: true }
-	);
-	if (updatedBrand[0] === 0) return null;
-
-	return updatedBrand[1][0].dataValues;
-};
-
 const deleteBrand = async (id) => {
 	const brand = await Brand.destroy({
 		where: {
@@ -156,4 +172,5 @@ module.exports = {
 	findBrandByName,
 	findBrandByType,
 	updateBrandPhotos,
+	findBrandByNameAndType,
 };

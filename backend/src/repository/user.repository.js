@@ -2,6 +2,7 @@ const models = require("../../models");
 const User = models.User;
 const bcrypt = require("bcrypt");
 const { findUserWithRole } = require("./auth.repository");
+const { Op } = require("sequelize");
 const Role = models.Role;
 
 const findUsers = async (page, size) => {
@@ -49,7 +50,9 @@ const findUserById = async (id) => {
 const findUserByEmail = async (email) => {
 	const user = await User.findOne({
 		where: {
-			email,
+			email: {
+				[Op.iLike]: email,
+			},
 		},
 	});
 

@@ -7,10 +7,19 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 	const [file, setFile] = useState(null);
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [errorFile, setErrorFile] = useState("");
 
 	const handleFileChange = (e) => {
-		console.log(e.target.files[0]);
-		setFile(e.target.files[0]);
+		const selectedFile = e.target.files[0];
+
+		if (selectedFile && selectedFile.size > 5 * 1024 * 1024) {
+			setErrorFile("File size exceeds 5 MB!");
+			setFile(null);
+			e.target.value = null;
+		} else {
+			setErrorFile("");
+			setFile(selectedFile);
+		}
 	};
 
 	const handleSubmit = async (e) => {
@@ -40,12 +49,15 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 			formData.append("full_name", e.target.full_name.value);
 			formData.append("email", e.target.email.value);
 			formData.append("password", e.target.password.value);
-			formData.append("image_url", file);
+			if (file) {
+				formData.append("image_url", file);
+			} else {
+				const defaultImageResponse = await fetch("/uploads/user/default.png");
+				const defaultImageBlob = await defaultImageResponse.blob();
+				formData.append("image_url", defaultImageBlob, "default.png");
+			}
 
-			// Make a POST request to upload image for the user
 			const imageResponse = await UserData.uploadImage(userId, formData);
-
-			console.log(imageResponse);
 
 			Swal.fire({
 				position: "bottom-end",
@@ -53,7 +65,11 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 				title: userResponse.data.message,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			}).then(() => {
 				addToTable(userResponse.data.data);
 				modalCheckbox.current.checked = false;
@@ -61,17 +77,8 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 				document.getElementById("formId").reset();
 			});
 		} catch (error) {
-			console.error("Error:", error.message);
-
-			let errorMessage = "An error occurred. Please try again."; // Default error message
-
-			if (
-				error.response &&
-				error.response.data &&
-				error.response.data.message
-			) {
-				errorMessage = error.response.data.message;
-			}
+			const errorMessage =
+				error.response?.data?.message || "Something went wrong";
 
 			Swal.fire({
 				position: "bottom-end",
@@ -79,7 +86,11 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 				title: errorMessage,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			});
 		}
 	};
@@ -115,20 +126,16 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 						<form id="formId" action="#" onSubmit={handleSubmit}>
 							<div className="p-6.5 text-start">
 								<div className="mb-4.5">
-									<label className="block text-black dark:text-white">
+									<label className="mb-2.5 block text-black dark:text-white">
 										Role
-									</label>
-
-									<label
-										htmlFor="countries"
-										className="block  text-sm font-medium text-gray-900 dark:text-white"
-									>
-										Select an option
 									</label>
 									<select
 										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-4 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										name="role_id"
 									>
+										<option value="" disabled>
+											Select an role
+										</option>
 										<option value="1">Admin</option>
 										<option value="2">Staff</option>
 										<option value="3">Manager</option>
@@ -198,7 +205,7 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 
 								<div className="mb-4.5">
 									<label className="mb-2.5 block text-black dark:text-white">
-										Profile Photo
+										Profile Photo <span className="text-xs">*(Optional)</span>{" "}
 									</label>
 									<input
 										type="file"
@@ -207,8 +214,8 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 										accept="image/*"
 										onChange={handleFileChange}
 										className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-										required
 									/>
+									{errorFile && <p className="text-danger mt-2">{errorFile}</p>}
 								</div>
 
 								<input

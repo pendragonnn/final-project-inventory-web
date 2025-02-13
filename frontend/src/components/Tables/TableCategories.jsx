@@ -1,11 +1,12 @@
 "use client";
 import ModalAddCategory from "../Modal/Category/ModalAddCategory";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Category from "@/data/category/index";
 import ModalEditCategory from "../Modal/Category/ModalEditCategory";
+import Loader from "../common/Loader";
 
-const TableCategories = ({ loading, setLoading }) => {
+const TableCategories = () => {
 	const [data, setData] = useState([]);
 	const [update, setUpdate] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -13,10 +14,18 @@ const TableCategories = ({ loading, setLoading }) => {
 	const [totalItems, setTotalItems] = useState(0);
 	const [allData, setAllData] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
-	const size = 10;
+	const [size, setSize] = useState(10);
+	const [sortOrder, setSortOrder] = useState("desc");
+	const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+	const [sortField, setSortField] = useState("");
+
+	const [loading, setLoading] = useState(true);
+
+	const dropdownRef = useRef(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
+			const minimumLoading = new Promise((resolve) => setTimeout(resolve, 500));
 			try {
 				const res = await Category.getCategory(currentPage, size);
 				const allRes = await Category.getCategory(1, res.data.totalItems);
@@ -32,11 +41,17 @@ const TableCategories = ({ loading, setLoading }) => {
 		};
 
 		fetchData();
-	}, [currentPage, update, loading, setLoading]);
+	}, [currentPage, update, size]);
+
+	useEffect(() => {
+		if (currentPage > totalPages && totalPages > 0) {
+			setCurrentPage(totalPages);
+		}
+	}, [size, totalPages, currentPage]);
 
 	const handleAdd = async () => {
 		const res = await Category.getCategory(currentPage, size);
-		setData(res.data.data);
+		setUpdate(res.data.data);
 		setTotalPages(res.data.totalPages);
 		setTotalItems(res.data.totalItems);
 		setCurrentPage(res.data.currentPage);
@@ -49,7 +64,7 @@ const TableCategories = ({ loading, setLoading }) => {
 			)
 		);
 		const res = await Category.getCategory(currentPage, size);
-		setData(res.data.data);
+		setUpdate(res.data.data);
 	};
 
 	const handleEdit = async (id) => {
@@ -71,21 +86,33 @@ const TableCategories = ({ loading, setLoading }) => {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
+			customClass: {
+				popup: document.body.classList.contains("dark")
+					? "swal-custom-dark"
+					: "swal-custom-light",
+			},
 		}).then(async (result) => {
 			try {
 				if (result.isConfirmed) {
+					await Category.deleteCategory(id);
+					setData((prevData) =>
+						prevData.filter((category) => category.id !== id)
+					);
 					Swal.fire({
 						position: "bottom-end",
 						title: "Deleted!",
 						text: "Your file has been deleted.",
 						icon: "success",
-						customClass: "swal-custom-delete",
+						customClass: {
+							popup: document.body.classList.contains("dark")
+								? "swal-custom-dark"
+								: "swal-custom-light",
+						},
 						showConfirmButton: false,
 						timer: 2000,
 					});
-					await Category.deleteCategory(id);
 					const res = await Category.getCategory(currentPage, size);
-					setData(res.data.data);
+					setUpdate(res.data.data);
 
 					setTotalPages(res.data.totalPages);
 					setTotalItems(res.data.totalItems);
@@ -101,24 +128,53 @@ const TableCategories = ({ loading, setLoading }) => {
 					}
 				}
 			} catch (e) {
+				const errorMessage =
+					e.response?.data?.message || "Something went wrong";
+
+				// Custom pesan untuk foreign key violation
+				const userFriendlyMessage = errorMessage.includes(
+					"violates foreign key constraint"
+				)
+					? "Data tidak dapat dihapus karena terkait dengan transaksi lain."
+					: errorMessage;
 				Swal.fire({
 					position: "bottom-end",
 					icon: "error",
-					title: e.message,
+					title: userFriendlyMessage,
 					showConfirmButton: false,
 					timer: 2000,
-					customClass: "swal-custom",
+					customClass: {
+						popup: document.body.classList.contains("dark")
+							? "swal-custom-dark"
+							: "swal-custom-light",
+					},
 				});
 			}
 		});
 	};
 
-	const paginationHandle = async (currentPage) => {
-		setCurrentPage(currentPage);
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setIsFilterMenuOpen(false);
+			}
+		};
+
+		if (isFilterMenuOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [isFilterMenuOpen]);
+
+	const toggleFilterMenu = () => {
+		setIsFilterMenuOpen(!isFilterMenuOpen);
 	};
 
-	const handleSearchChange = (event) => {
-		setSearchTerm(event.target.value);
+	const paginationHandle = async (currentPage) => {
+		setCurrentPage(currentPage);
 	};
 
 	const onPaginationNext = async (currentPage) => {
@@ -129,18 +185,53 @@ const TableCategories = ({ loading, setLoading }) => {
 		setCurrentPage(currentPage - 1);
 	};
 
+	const handleSearchChange = (event) => {
+		setSearchTerm(event.target.value);
+
+		setCurrentPage(1);
+	};
+
 	const filteredData = searchTerm
 		? allData.filter((category) =>
 				category.name.toLowerCase().includes(searchTerm.toLowerCase())
 		  )
-		: data;
+		: allData;
 
-	const isDataEmpty = searchTerm && filteredData.length === 0;
+	const getNestedValue = (obj, path) => {
+		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+	};
+	const sortedData = filteredData.sort((a, b) => {
+		const valueA = getNestedValue(a, sortField)?.toString().toLowerCase() || "";
+		const valueB = getNestedValue(b, sortField)?.toString().toLowerCase() || "";
+
+		return sortOrder === "asc"
+			? valueA.localeCompare(valueB)
+			: valueB.localeCompare(valueA);
+	});
+
+	const calculatedTotalPages = Math.ceil(sortedData.length / size);
+	const currentPageSafe = Math.min(
+		currentPage,
+		calculatedTotalPages > 0 ? calculatedTotalPages : 1
+	);
+
+	const paginatedData = sortedData.slice(
+		(currentPageSafe - 1) * size,
+		currentPageSafe * size
+	);
+
+	// Menambahkan pengecekan apakah data kosong setelah pencarian
+	const isDataEmpty = searchTerm && paginatedData.length === 0;
+
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-			<div className="p-4 md:p-6 xl:p-9">
+			<div className="p-4 md:p-6 xl:p-5">
 				<div className="flex justify-between items-center gap-5 xl:gap-7.5">
+					{/* Tombol Add di bagian kiri */}
 					<label
 						type="submit"
 						className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
@@ -152,7 +243,7 @@ const TableCategories = ({ loading, setLoading }) => {
 								viewBox="0 0 24 24"
 								stroke-width="1.5"
 								stroke="currentColor"
-								class="w-6 h-6"
+								className="w-6 h-6"
 							>
 								<path
 									stroke-linecap="round"
@@ -167,45 +258,135 @@ const TableCategories = ({ loading, setLoading }) => {
 							addToTable={handleAdd}
 						/>
 					</label>
-					<div className="relative">
-						<input
-							type="text"
-							placeholder="Search..."
-							className="border dark:text-black bg-white border-dark rounded-md px-3 py-3 focus:outline-none focus:border-primary w-30 md:w-45 xl:w-80"
-							value={searchTerm}
-							onChange={handleSearchChange}
-						/>
 
-						<span className="absolute inset-y-0 right-0 flex items-center pr-3">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="w-6 h-6"
+					{/* Kolom kanan: Search, Size, dan Sorting */}
+					<div className="flex items-center gap-5">
+						{/* Search */}
+						<div className="relative">
+							<input
+								type="text"
+								placeholder="Search..."
+								className="border dark:text-black bg-white border-dark rounded-md px-3 py-2 focus:outline-none focus:border-primary w-30 md:w-45 xl:w-80"
+								value={searchTerm}
+								onChange={handleSearchChange}
+							/>
+							<span className="absolute inset-y-0 right-0 flex items-center pr-3">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									className="w-6 h-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+									/>
+								</svg>
+							</span>
+						</div>
+
+						{/* Size */}
+						<select
+							value={size}
+							onChange={(e) => {
+								setSize(Number(e.target.value));
+								setCurrentPage(1);
+							}}
+							className="border text-gray-300 bg-white dark:bg-meta-4 border-gray-200 rounded-md px-1 py-2 focus:outline-none hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white"
+						>
+							<option
+								className="bg-white text-black dark:bg-meta-4 dark:text-white"
+								value={10}
 							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-								/>
-							</svg>
-						</span>
+								10
+							</option>
+							<option
+								className="bg-white text-black dark:bg-meta-4 dark:text-white"
+								value={25}
+							>
+								25
+							</option>
+							<option
+								className="bg-white text-black dark:bg-meta-4 dark:text-white"
+								value={50}
+							>
+								50
+							</option>
+							<option
+								className="bg-white text-black dark:bg-meta-4 dark:text-white"
+								value={100}
+							>
+								100
+							</option>
+						</select>
+
+						{/* Sorting */}
+						<div className="relative" ref={dropdownRef}>
+							<button
+								className="border rounded-md p-2 bg-white text-gray-300 dark:bg-meta-4 focus:outline-none hover:bg-primary hover:text-white dark:hover:bg-primary"
+								onClick={toggleFilterMenu}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth="1.5"
+									stroke="currentColor"
+									className="w-6 h-6"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+									/>
+								</svg>
+							</button>
+
+							{/* Dropdown Menu */}
+							{isFilterMenuOpen && (
+								<div className="absolute right-0 mt-2 w-48 bg-white dark:bg-meta-4 dark:text-white border border-gray-200 rounded-md shadow-lg">
+									{[
+										{ field: "id", order: "asc", label: "ID Asc" },
+										{ field: "id", order: "desc", label: "ID Desc" },
+										{ field: "name", order: "asc", label: "Name Asc" },
+										{ field: "name", order: "desc", label: "Name Desc" },
+									].map((option) => (
+										<button
+											key={`${option.field}-${option.order}`}
+											className={`block w-full px-4 py-1 text-left ${
+												sortField === option.field && sortOrder === option.order
+													? "bg-primary text-white"
+													: "hover:bg-gray-100 dark:hover:bg-boxdark"
+											}`}
+											onClick={() => {
+												setSortField(option.field);
+												setSortOrder(option.order);
+												setIsFilterMenuOpen(false); // Tutup dropdown
+											}}
+										>
+											{option.label}
+										</button>
+									))}
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>
 			<div className="max-w-full overflow-x-auto">
-				<table className="w-full table-auto">
+				<table className="max-w-full overflow-x-auto w-full">
 					<thead>
 						<tr className="bg-bodydark text-left dark:bg-meta-4">
-							<th className="min-w-[50px] py-4 px-4 font-medium text-black  dark:text-white">
+							<th className="min-w-[50px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								#
 							</th>
-							<th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
+							<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Name
 							</th>
-							<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+							<th className="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Actions
 							</th>
 						</tr>
@@ -221,27 +402,23 @@ const TableCategories = ({ loading, setLoading }) => {
 								</td>
 							</tr>
 						) : (
-							filteredData.map((category, key) => (
+							paginatedData.map((category, key) => (
 								<tr
 									key={key}
-									className={
-										key === filteredData.length - 1
-											? ""
-											: "border-b border-stroke dark:border-strokedark"
-									}
+									className="border-b dark:border-strokedark hover:bg-gray-100 dark:hover:bg-meta-4"
 								>
-									<td className="border-b border-[#eee] py-3 px-4 dark:border-strokedark">
+									<td className="border-b border-[#eee] px-4 py-3 text-center dark:border-strokedark ">
 										{currentPage === 1
 											? key + 1
 											: (currentPage - 1) * size + key + 1}
 									</td>
-									<td className="border-b border-[#eee] py-3 px-4 dark:border-strokedark">
-										<h5 className="font-medium text-black dark:text-white">
+									<td className="border-b border-[#eee] px-4 py-3 text-center dark:border-strokedark mx-auto">
+										<p className="text-black dark:text-white">
 											{category.name}
-										</h5>
+										</p>
 									</td>
-									<td className="border-b border-[#eee] py-3 px-4 dark:border-strokedark">
-										<div className="flex items-center space-x-3.5">
+									<td className="border-b border-[#eee] px-4 py-3 text-center dark:border-strokedark">
+										<div className="flex justify-center space-x-3.5">
 											<label
 												htmlFor="edit"
 												className="hover:text-primary cursor-pointer"
@@ -249,16 +426,16 @@ const TableCategories = ({ loading, setLoading }) => {
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
+													className="w-6 h-6"
 													fill="none"
 													viewBox="0 0 24 24"
-													stroke-width="1.5"
 													stroke="currentColor"
-													class="w-6 h-6"
 												>
 													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth="1.5"
+														d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"
 													/>
 												</svg>
 											</label>
@@ -293,60 +470,96 @@ const TableCategories = ({ loading, setLoading }) => {
 						/>
 					</tbody>
 				</table>
-				<div className="items-center float-right">
-					{currentPage !== 1 && !searchTerm && (
-						<button
-							className="btn btn-outline btn-default"
-							onClick={() => onPaginationPrevious(currentPage)}
-						>
-							&laquo;
-						</button>
-					)}
+				<div className="items-center float-right py-4">
+					{filteredData.length > 0 &&
+						calculatedTotalPages > 1 &&
+						filteredData.length > size && (
+							<div className="flex items-center justify-end space-x-1">
+								{/* Tombol First */}
+								{currentPage > 2 && (
+									<button
+										className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+										onClick={() => paginationHandle(1, calculatedTotalPages)}
+										aria-label="First Page"
+									>
+										First
+									</button>
+								)}
 
-					<div className="join m-2 ">
-						{!searchTerm && (
-							<>
+								{/* Tombol Previous */}
 								{currentPage > 1 && (
 									<button
-										key={currentPage - 1}
-										className="join-item btn btn-outline btn-default"
-										onClick={() =>
-											paginationHandle(currentPage - 1, totalPages)
-										}
+										className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+										onClick={() => onPaginationPrevious(currentPage)}
+										aria-label="Previous"
 									>
-										{currentPage - 1}
+										&laquo; Previous
 									</button>
 								)}
-								<button
-									key={currentPage}
-									className="join-item btn btn-outline btn-default btn-active btn-primary"
-									onClick={() => paginationHandle(currentPage, totalPages)}
-								>
-									{currentPage}
-								</button>
-								{currentPage !== totalPages && (
-									<button
-										key={currentPage + 1}
-										className="join-item btn btn-outline btn-default"
-										onClick={() =>
-											paginationHandle(currentPage + 1, totalPages)
-										}
-									>
-										{currentPage + 1}
-									</button>
-								)}
-							</>
-						)}
-					</div>
 
-					{currentPage !== totalPages && !searchTerm && (
-						<button
-							className="join-item btn btn-outline btn-default"
-							onClick={() => onPaginationNext(currentPage)}
-						>
-							&raquo;
-						</button>
-					)}
+								{/* Pagination Numbers */}
+								<div className="flex items-center space-x-1">
+									{currentPage > 1 && (
+										<button
+											key={currentPage - 1}
+											className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+											onClick={() =>
+												paginationHandle(currentPage - 1, calculatedTotalPages)
+											}
+										>
+											{currentPage - 1}
+										</button>
+									)}
+									<button
+										key={currentPage}
+										className="px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-md shadow-sm transition-all duration-100"
+										onClick={() =>
+											paginationHandle(currentPage, calculatedTotalPages)
+										}
+									>
+										{currentPage}
+									</button>
+									{currentPage < calculatedTotalPages && (
+										<button
+											key={currentPage + 1}
+											className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+											onClick={() =>
+												paginationHandle(currentPage + 1, calculatedTotalPages)
+											}
+										>
+											{currentPage + 1}
+										</button>
+									)}
+								</div>
+
+								{/* Tombol Next */}
+								{currentPage < calculatedTotalPages && (
+									<button
+										className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+										onClick={() => onPaginationNext(currentPage)}
+										aria-label="Next"
+									>
+										Next &raquo;
+									</button>
+								)}
+
+								{/* Tombol Last */}
+								{currentPage < calculatedTotalPages - 1 && (
+									<button
+										className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 hover:text-primary transition-all duration-100 dark:text-gray-200 dark:bg-meta-4 dark:border-gray-600 dark:hover:bg-boxdark"
+										onClick={() =>
+											paginationHandle(
+												calculatedTotalPages,
+												calculatedTotalPages
+											)
+										}
+										aria-label="Last Page"
+									>
+										Last
+									</button>
+								)}
+							</div>
+						)}
 				</div>
 			</div>
 		</div>

@@ -25,40 +25,38 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
 		try {
 			const { name: newName, address: newAddress, phone: newPhone } = formData;
 
-			if (
-				data?.data?.name !== newName ||
-				data?.data?.address !== newAddress ||
-				data?.data?.phone !== newPhone
-			) {
-				const res = await Outlet.updateOutlet(data.data.id, {
-					name: newName,
-					address: newAddress,
-					phone: newPhone,
-				});
+			const updatedData = {
+				name: newName,
+				address: newAddress,
+				phone: newPhone,
+			};
 
-				Swal.fire({
-					position: "bottom-end",
-					icon: "success",
-					title: res.data.message,
-					showConfirmButton: false,
-					timer: 2000,
-					customClass: {
-						popup: document.body.classList.contains("dark")
-							? "swal-custom-dark"
-							: "swal-custom-light",
-					},
-				}).then(() => {
-					addToTable(res.data.data[1]);
-					modalCheckbox.current.checked = false;
+			const res = await Outlet.updateOutlet(data.data.id, updatedData);
 
-					setFormData({ name: "", address: "", phone: "" });
-				});
-			}
-		} catch (e) {
+			Swal.fire({
+				position: "bottom-end",
+				icon: "success",
+				title: res.data.message || "Successful Update Outlet!",
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			}).then(() => {
+				addToTable(res.data.data[1]);
+				modalCheckbox.current.checked = false;
+				setFormData({ name: "", address: "", phone: "" });
+			});
+		} catch (error) {
+			const errorMessage =
+				error.response?.data?.message || "Data already exists or update failed";
+
 			Swal.fire({
 				position: "bottom-end",
 				icon: "error",
-				title: "Data is already",
+				title: errorMessage,
 				showConfirmButton: false,
 				timer: 2000,
 				customClass: {
@@ -156,7 +154,7 @@ const ModalEditOutlet = ({ data, test, addToTable }) => {
 								<input
 									type="submit"
 									value={"edit"}
-									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

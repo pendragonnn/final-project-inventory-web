@@ -12,10 +12,20 @@ const TablesPage = () => {
 	const [user, setUser] = useState(null);
 
 	useEffect(() => {
-		const role = jwtDecode(Cookies.get("token")).role;
-		setUser(role);
+		try {
+			const token = Cookies.get("token");
+			if (!token) throw new Error("Token not found");
 
-		if (!role) {
+			const decodedToken = jwtDecode(token);
+			const role = decodedToken?.role;
+
+			if (!role) {
+				throw new Error("Invalid role");
+			}
+
+			setUser(role);
+		} catch (error) {
+			console.error("Authentication error:", error.message);
 			router.push("/forbidden");
 		}
 	}, [router]);

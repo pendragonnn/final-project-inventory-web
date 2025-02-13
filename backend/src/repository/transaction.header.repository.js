@@ -328,6 +328,78 @@ const deleteTransactionHeader = async (id) => {
 	return transactionHeader;
 };
 
+const calculateMovingAverage = async (itemId, period = 7) => {
+	const today = new Date();
+	const pastDate = new Date();
+	pastDate.setDate(today.getDate() - period);
+
+	// Ambil data transaksi issuing
+	const transactions = await TransactionDetail.findAll({
+		include: [
+			{
+				model: TransactionsHeaders,
+				attributes: ["information"],
+				where: {
+					information: "Issuing",
+				},
+			},
+		],
+		where: {
+			item_id: itemId,
+			createdAt: {
+				[Op.between]: [pastDate, today],
+			},
+		},
+		attributes: ["quantity", "createdAt"],
+		order: [["createdAt", "ASC"]],
+	});
+
+	// Ambil stok saat ini dari tabel Item
+	const item = await Item.findOne({
+		where: { id: itemId },
+		attributes: ["stock"],
+	});
+
+	if (!item) {
+		return {
+			average: null,
+			predictedSales: null,
+			stockNeeded: null,
+			additionalStockNeeded: null,
+			message: "Item not found",
+		};
+	}
+
+	const currentStock = item.stock; // Stok saat ini dari database
+
+	if (transactions.length === 0) {
+		return {
+			average: null,
+			predictedSales: null,
+			stockNeeded: null,
+			message: "No transaction data available for this item",
+		};
+	}
+
+	// Hitung rata-rata barang keluar per hari
+	const total = transactions.reduce((sum, t) => sum + t.quantity, 0);
+	const movingAverage = (total / transactions.length).toFixed(2);
+
+	// Prediksi transaksi issuing dalam periode ke depan
+	const predictedSales = (movingAverage * period).toFixed(2);
+
+	// Hitung stok yang perlu disiapkan agar stok tidak habis
+	const stockNeeded = Math.max(0, Math.ceil(predictedSales - currentStock));
+
+	return {
+		average: movingAverage,
+		predictedSales: predictedSales,
+		stockNeeded: stockNeeded, // Estimasi total barang keluar dalam periode yang dipilih
+		currentStock: currentStock,
+		message: "Forecast based on available data",
+	};
+};
+
 module.exports = {
 	findsTransactionHeader,
 	findTransactionHeaderById,
@@ -338,4 +410,5 @@ module.exports = {
 	editTransactionHeader,
 	deleteTransactionHeader,
 	createTransactionDetail,
+	calculateMovingAverage,
 };

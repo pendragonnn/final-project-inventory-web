@@ -158,7 +158,9 @@ const FormTemporaryReturning = ({ handleAdd, dataItem }) => {
 						value={selectedItemName}
 						required
 					>
-						<option value="">Select Item Name</option>
+						<option value="" disabled>
+							Select Item Name
+						</option>
 						{uniqueBrands.map((brandName) => (
 							<option key={brandName} value={brandName}>
 								{brandName}
@@ -178,7 +180,9 @@ const FormTemporaryReturning = ({ handleAdd, dataItem }) => {
 							value={selectedItemType}
 							required
 						>
-							<option value="">Select Item Type</option>
+							<option value="" disabled>
+								Select Item Type
+							</option>
 							{[...new Set(filteredItemTypes)].map((type) => (
 								<option key={type} value={type}>
 									{type}
@@ -199,7 +203,9 @@ const FormTemporaryReturning = ({ handleAdd, dataItem }) => {
 							value={selectedItemSize}
 							required
 						>
-							<option value="">Select Item Size</option>
+							<option value="" disabled>
+								Select Item Size
+							</option>
 							{filteredSizes.map((size) => (
 								<option key={size} value={size}>
 									{size}
@@ -227,7 +233,9 @@ const FormTemporaryReturning = ({ handleAdd, dataItem }) => {
 						onChange={handleReasonChange}
 						required
 					>
-						<option value="">Select a reason</option>
+						<option value="" disabled>
+							Select a reason
+						</option>
 						<option value="Damaged">Damaged</option>
 						<option value="Defective">Defective</option>
 						<option value="Wrong Item Sent">Wrong Item Sent</option>

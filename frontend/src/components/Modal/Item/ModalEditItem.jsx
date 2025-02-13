@@ -18,35 +18,41 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 	});
 
 	useEffect(() => {
-		const fetchBrands = async () => {
-			try {
-				const response = await Brand.getBrand();
-				setBrands(response.data.data);
-			} catch (error) {
-				console.error("Gagal mengambil data brands:", error);
-			}
+		const fetchData = async () => {
+			const res = await Brand.getBrand();
+			const allRes = await Brand.getBrand(1, res.data.totalItems);
+			setBrands(allRes.data.data);
 		};
 
-		fetchBrands();
+		fetchData();
 	}, []);
 
 	useEffect(() => {
-		if (data?.data?.brand_id && brands.length > 0) {
-			const brand = brands.find((brand) => brand.id === data.data.brand_id);
-			if (brand) {
-				setFormData({
-					description: data?.data?.description || "",
-					price: data?.data?.price || "",
-					size: data?.data?.size || "",
-					stock: data?.data?.stock || "",
-					brand_id: data?.data?.brand_id || "",
-					brand_name: brand.name,
-					brand_type: brand.type,
-				});
-				setFilteredTypes(
-					brands.filter((b) => b.name === brand.name).map((b) => b.type)
-				);
-			}
+		if (data?.data) {
+			console.log("Brand ID from data:", data.data.brand_id);
+
+			// Find the current brand by brand_id
+			const currentBrand = brands.find(
+				(brand) => brand.id === data.data.brand_id
+			);
+
+			setFormData({
+				description: data.data.description || "",
+				price: data.data.price || "",
+				size: data.data.size || "",
+				stock: data.data.stock || "",
+				brand_id: data.data.brand_id || "",
+				brand_name: currentBrand?.name || "Unknown Brand",
+				brand_type: currentBrand?.type || "Unknown Type",
+			});
+
+			setFilteredTypes(
+				currentBrand
+					? brands
+							.filter((brand) => brand.name === currentBrand.name)
+							.map((b) => b.type)
+					: []
+			);
 		}
 	}, [data, brands]);
 
@@ -120,7 +126,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 				showConfirmButton: false,
 				timer: 2000,
 				customClass: {
-					popup: document.body.classList.contains("dark-theme")
+					popup: document.body.classList.contains("dark")
 						? "swal-custom-dark"
 						: "swal-custom-light",
 				},
@@ -189,7 +195,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 									<select
 										value={formData.brand_name}
 										onChange={handleNameChange}
-										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none"
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 									>
 										<option value="" disabled>
 											Select Brand Name
@@ -212,7 +218,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 									<select
 										value={formData.brand_type}
 										onChange={handleTypeChange}
-										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none"
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										disabled={!formData.brand_name}
 									>
 										<option value="">Select Brand Type</option>
@@ -288,7 +294,7 @@ const ModalEditItem = ({ data, test, addToTable }) => {
 								<input
 									type="submit"
 									value="Edit"
-									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

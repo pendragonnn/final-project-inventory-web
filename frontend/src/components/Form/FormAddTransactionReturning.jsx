@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import ModalDeleteTransaction from "../Modal/Transaction/ModalDeleteTransaction";
 import { useState } from "react";
 
@@ -86,7 +85,9 @@ const FormAddTransactionReturning = ({
 						required
 						onChange={(e) => setReturnType(e.target.value)}
 					>
-						<option value="">Select</option>
+						<option value="" disabled>
+							Select
+						</option>
 						<option value="outlet">Return to Outlet</option>
 						<option value="supplier">Return to Supplier</option>
 					</select>
@@ -105,7 +106,9 @@ const FormAddTransactionReturning = ({
 							value={selectedOutlet}
 							onChange={(e) => setSelectedOutlet(e.target.value)}
 						>
-							<option value="">Select Outlet</option>
+							<option value="" disabled>
+								Select Outlet
+							</option>
 							{dataOutlet.map((outlet) => (
 								<option key={outlet.id} value={outlet.id}>
 									{outlet.name}
@@ -128,7 +131,9 @@ const FormAddTransactionReturning = ({
 							value={selectedSupplier}
 							onChange={(e) => setSelectedSupplier(e.target.value)}
 						>
-							<option value="">Select Supplier</option>
+							<option value="" disabled>
+								Select Supplier
+							</option>
 							{dataSupplier.map((supplier) => (
 								<option key={supplier.id} value={supplier.id}>
 									{supplier.name}

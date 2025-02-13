@@ -7,20 +7,30 @@ import Category from "@/data/category/index";
 
 const ModalAddBrand = ({ name, test, addToTable, data }) => {
 	const modalCheckbox = useRef(null);
-	const [dataItem, setDataItem] = useState([]);
+	const [dataCategory, setDataCategory] = useState([]);
 	const [file, setFile] = useState(null);
 	const [isAddNew, setIsAddNew] = useState(false);
 	const [newName, setNewName] = useState("");
+	const [errorFile, setErrorFile] = useState("");
 
 	const handleFileChange = (e) => {
-		setFile(e.target.files[0]);
+		const selectedFile = e.target.files[0];
+
+		if (selectedFile && selectedFile.size > 5 * 1024 * 1024) {
+			setErrorFile("File size exceeds 5 MB!");
+			setFile(null);
+			e.target.value = null;
+		} else {
+			setErrorFile("");
+			setFile(selectedFile);
+		}
 	};
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await Category.getCategory();
 			const allRes = await Category.getCategory(1, res.data.totalItems);
-			setDataItem(allRes.data.data);
+			setDataCategory(allRes.data.data);
 		};
 
 		fetchData();
@@ -177,7 +187,7 @@ const ModalAddBrand = ({ name, test, addToTable, data }) => {
 										Category
 									</label>
 									<select
-										className="mt-3 mb-5 select select-bordered text-black  w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white"
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										name="category_id"
 										required
 										defaultValue=""
@@ -185,7 +195,7 @@ const ModalAddBrand = ({ name, test, addToTable, data }) => {
 										<option value="" disabled>
 											Select an category
 										</option>
-										{dataItem.map((value) => (
+										{dataCategory.map((value) => (
 											<option key={value.id} value={value.id}>
 												{value.name}
 											</option>
@@ -207,6 +217,7 @@ const ModalAddBrand = ({ name, test, addToTable, data }) => {
 										className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										required
 									/>
+									{errorFile && <p className="text-danger mt-2">{errorFile}</p>}
 								</div>
 
 								<input

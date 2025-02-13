@@ -448,29 +448,29 @@ const TableReportReturning = ({
 					<table className="w-full table-auto  min-h-[150px]">
 						<thead>
 							<tr className="text-left dark:bg-meta-4 bg-bodydark">
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+								<th className="min-w-[120px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									No
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+								<th className="min-w-[120px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									Transaction ID
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+								<th className="min-w-[120px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									User
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-									Outlet
-								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									Supplier
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
+									Outlet
+								</th>
+								<th className="min-w-[150px] py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									Information
 								</th>
-								<th className="py-4 px-4 font-medium text-black dark:text-white">
+								<th className="py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 									Transaction Date
 								</th>
 								{user !== "2" && (
-									<th className="py-4 px-4 font-medium text-black dark:text-white">
+									<th className="py-4 px-6 text-center font-semibold text-gray-800 dark:text-white border dark:border-strokedark">
 										Action
 									</th>
 								)}
@@ -480,58 +480,37 @@ const TableReportReturning = ({
 							{isDataEmpty ? (
 								<tr>
 									<td
-										colSpan="4"
-										className="text-center text-xl font-bold italic py-4 text-danger"
+										colSpan="7"
+										className="py-4 text-center text-xl font-bold italic text-danger"
 									>
 										Data not found.
 									</td>
 								</tr>
 							) : (
 								filteredData.map((value, idx) => (
-									<tr
-										key={idx}
-										className={
-											idx === filteredData.length - 1
-												? ""
-												: "border-b border-stroke dark:border-strokedark"
-										}
-									>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark xl:pl-11 ">
-											<h5 className="font-medium text-black dark:text-white ">
-												{currentPage === 1
-													? idx + 1
-													: (currentPage - 1) * size + idx + 1}
-											</h5>
+									<tr key={idx} className="border-b dark:border-strokedark">
+										<td className="py-4 px-6 font-medium text-center">
+											{currentPage === 1
+												? idx + 1
+												: (currentPage - 1) * size + idx + 1}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark xl:pl-11 ">
-											<h5 className="font-medium text-black dark:text-white ">
-												{value?.id}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{value?.id}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark xl:pl-11 ">
-											<h5 className="font-medium text-black dark:text-white ">
-												{value?.User?.full_name}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{value?.User?.full_name}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark ">
-											<h5 className="font-medium text-black dark:text-white">
-												{value?.Outlet?.name}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{value?.Supplier?.name || "-"}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark ">
-											<h5 className="font-medium text-black dark:text-white">
-												{value?.Supplier?.name}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{value?.Outlet?.name || "-"}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark">
-											<h5 className="font-medium text-black dark:text-white">
-												{value.information}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{value.information}
 										</td>
-										<td className="border-b border-[#eee] py-4 px-4 dark:border-strokedark">
-											<h5 className="font-medium text-black dark:text-white">
-												{formatDate(value.transaction_date)}
-											</h5>
+										<td className="py-4 px-6 font-medium text-center">
+											{formatDate(value.transaction_date)}
 										</td>
 										{user !== "2" && (
 											// <>

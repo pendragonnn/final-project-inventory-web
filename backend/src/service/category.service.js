@@ -1,69 +1,69 @@
 const {
-  findCategories,
-  findCategoryById,
-  findCategoryByName,
-  createCategory,
-  editCategory,
-  deleteCategory
+	findCategories,
+	findCategoryById,
+	findCategoryByName,
+	createCategory,
+	editCategory,
+	deleteCategory,
 } = require("../repository/category.repository");
 
 const getAllCategories = async (page, size) => {
-  const categories = await findCategories(page, size);
-  return categories;
+	const categories = await findCategories(page, size);
+	return categories;
 };
 
 const getCategoryById = async (id) => {
-  const category = await findCategoryById(id);
+	const category = await findCategoryById(id);
 
-  if (!category) {
-    throw Error("Category Not Found");
-  }
-  return category;
+	if (!category) {
+		throw Error("Category Not Found");
+	}
+	return category;
 };
 
 const insertCategory = async (newCategory) => {
-  const categoryName = await findCategoryByName(newCategory.name);
+	const categoryName = await findCategoryByName(newCategory.name);
 
-  if (categoryName) {
-    throw new Error("Category Already Added");
-  }
+	if (categoryName) {
+		throw new Error("Category Already Added");
+	}
 
-  const category = await createCategory(newCategory);
+	const category = await createCategory(newCategory);
 
-  return category;
+	return category;
 };
 
 const editCategoryById = async (id, newCategory) => {
-  try {
-    // const categoryName = await findCategoryByName(newOutlet.name);
+	try {
+		const categoryName = await findCategoryByName(newCategory.name);
 
-    // if (categoryName) {
-    //   throw new Error("Kategori sudah Terdaftar");
-    // }
+		if (categoryName && categoryName.id !== parseInt(id)) {
+			throw new Error("Category Already Added");
+		}
 
-    await getCategoryById(id);
+		await getCategoryById(id);
 
-    const category = await editCategory(id, newCategory);
-    return category;
-  } catch (err) {
-    return null;
-  }
+		const category = await editCategory(id, newCategory);
+		return category;
+	} catch (err) {
+		throw err;
+	}
 };
 
 const deleteCategoryById = async (id) => {
-  try {
-    await getCategoryById(id);
+	try {
+		await getCategoryById(id);
 
-    await deleteCategory(id);
-  } catch (err) {
-    throw err;
-  }
+		await deleteCategory(id);
+	} catch (err) {
+		throw err;
+	}
 };
 
 module.exports = {
-  getAllCategories,
-  getCategoryById,
-  insertCategory,
-  editCategoryById,
-  deleteCategoryById
+	getAllCategories,
+	getCategoryById,
+	insertCategory,
+	editCategoryById,
+	deleteCategoryById,
 };

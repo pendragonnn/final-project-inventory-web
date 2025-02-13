@@ -22,6 +22,56 @@ const TransactionHeader = () => {
 	const [userName, setUserName] = useState(null);
 	const router = useRouter();
 
+	useEffect(() => {
+		const token = Cookies.get("token");
+		if (!token) {
+			router.push("/forbidden");
+			return;
+		}
+
+		try {
+			const decodedToken = jwtDecode(token);
+			setUser(decodedToken.role);
+			setUserId(decodedToken.id);
+			setUserName(decodedToken.full_name);
+		} catch (error) {
+			console.error("Invalid token:", error.message);
+			router.push("/forbidden");
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (!user) return;
+
+		const fetchData = async () => {
+			try {
+				const res = await Item.getItem();
+				const allRes = await Item.getItem(1, res.data.totalItems);
+				setDataItem(allRes.data.data);
+			} catch (error) {
+				console.error("Error fetching items:", error);
+			}
+		};
+
+		fetchData();
+	}, [user]);
+
+	useEffect(() => {
+		if (!user) return;
+
+		const fetchData = async () => {
+			try {
+				const res = await Supplier.getSupplier();
+				const allRes = await Supplier.getSupplier(1, res.data.totalItems);
+				setDataSupplier(allRes.data.data);
+			} catch (error) {
+				console.error("Error fetching suppliers:", error);
+			}
+		};
+
+		fetchData();
+	}, [user]);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
@@ -114,75 +164,31 @@ const TransactionHeader = () => {
 		setItemTemporary(newData);
 	};
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const res = await Item.getItem();
-			const allRes = await Item.getItem(1, res.data.totalItems);
-			setDataItem(allRes.data.data);
-		};
-
-		fetchData();
-	}, []);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const res = await Supplier.getSupplier();
-				const allRes = await Supplier.getSupplier(1, res.data.totalItems);
-				setDataSupplier(allRes.data.data);
-			} catch (error) {
-				console.log("Error fetching category", error);
-			}
-		};
-		fetchData();
-	}, []);
-
-	useEffect(() => {
-		const role = jwtDecode(Cookies.get("token")).role;
-		const idUser = jwtDecode(Cookies.get("token")).id;
-		const nameUser = jwtDecode(Cookies.get("token")).full_name;
-		setUser(role);
-		setUserId(idUser);
-		setUserName(nameUser);
-
-		if (!role) {
-			// Ubah kondisi role agar sesuai dengan string '2'
-			router.push("/dashboard");
-		}
-	}, []);
-
-	if (user) {
-		return (
-			<>
-				<SidebarLayout>
-					<Breadcrumb pageName="Transaction Receiving" />
-					<div className="">
-						<div className=" ">
-							<div className="flex flex-col gap-5 lg:flex-row">
-								<div className="lg:flex-[0.7]">
-									<FormTemporaryItem
-										handleAdd={handleAdd}
-										dataItem={dataItem}
-									/>
-								</div>
-								<div className="lg:flex-[1.3]">
-									<FormAddTransactionReceiving
-										handleSubmit={handleSubmit}
-										userId={userId}
-										userName={userName}
-										dataSupplier={dataSupplier}
-										itemTemporary={itemTemporary}
-										handleDelete={handleDelete}
-									/>
-								</div>
+	return user ? (
+		<>
+			<SidebarLayout>
+				<Breadcrumb pageName="Transaction Receiving" />
+				<div className="">
+					<div className=" ">
+						<div className="flex flex-col gap-5 lg:flex-row">
+							<div className="lg:flex-[0.7]">
+								<FormTemporaryItem handleAdd={handleAdd} dataItem={dataItem} />
+							</div>
+							<div className="lg:flex-[1.3]">
+								<FormAddTransactionReceiving
+									handleSubmit={handleSubmit}
+									userId={userId}
+									userName={userName}
+									dataSupplier={dataSupplier}
+									itemTemporary={itemTemporary}
+									handleDelete={handleDelete}
+								/>
 							</div>
 						</div>
 					</div>
-				</SidebarLayout>
-			</>
-		);
-	} else {
-		return null;
-	}
+				</div>
+			</SidebarLayout>
+		</>
+	) : null;
 };
 export default TransactionHeader;

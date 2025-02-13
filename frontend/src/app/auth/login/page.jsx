@@ -10,16 +10,6 @@ import auth from "@/data/auth";
 const SignIn = () => {
 	const router = useRouter();
 
-	// useEffect(() => {
-	// 	const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-	// 	if (isLoggedIn == "true") {
-	// 		router.push("/dashboard");
-	// 	} else {
-	// 		router.push("/");
-	// 	}
-	// }, []);
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -35,12 +25,12 @@ const SignIn = () => {
 				title: res.data.message,
 				showConfirmButton: false,
 				timer: 1000,
-				customClass: "swal-custom-auth-success",
 			});
 
 			Cookies.set("token", res.data.token, { expires: 1 });
 
 			router.push("/dashboard");
+			router.refresh(); // Segarkan data di halaman dashboard
 		} catch (error) {
 			Swal.fire({
 				position: "bottom-end",
@@ -48,7 +38,6 @@ const SignIn = () => {
 				title: "Invalid username or password!",
 				showConfirmButton: false,
 				timer: 3000,
-				customClass: "swal-custom-auth-error",
 			});
 		}
 	};

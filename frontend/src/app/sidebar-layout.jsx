@@ -26,7 +26,7 @@ const SidebarLayout = ({ children }) => {
 					{/* <!-- ===== Header End ===== --> */}
 
 					{/* <!-- ===== Main Content Start ===== --> */}
-					<main className="p-10">{children}</main>
+					<main className="px-10 py-6">{children}</main>
 					{/* <!-- ===== Main Content End ===== --> */}
 				</div>
 				{/* <!-- ===== Content Area End ===== --> */}

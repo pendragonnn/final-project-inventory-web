@@ -10,7 +10,6 @@ import Loader from "../common/Loader";
 const TableItems = () => {
 	const [data, setData] = useState([]);
 	const [update, setUpdate] = useState(null);
-	const [image, setItemImageUrl] = useState(null);
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [imageModal, setImageModalUrl] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
@@ -220,11 +219,17 @@ const TableItems = () => {
 		  )
 		: allData;
 
+	// Filter stock < 10 jika dipilih
+	const filteredStockData =
+		sortField === "lowStock"
+			? filteredData.filter((item) => item.stock < 10)
+			: filteredData;
+
 	const getNestedValue = (obj, path) => {
 		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 	};
-	const sortedData = filteredData.sort((a, b) => {
-		// Memeriksa apakah sortField adalah nested property seperti 'Brand.name'
+
+	const sortedData = filteredStockData.sort((a, b) => {
 		const valueA = getNestedValue(a, sortField)?.toString().toLowerCase() || "";
 		const valueB = getNestedValue(b, sortField)?.toString().toLowerCase() || "";
 
@@ -259,7 +264,7 @@ const TableItems = () => {
 						{/* Tombol Add di bagian kiri */}
 						<label
 							type="submit"
-							className="inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
+							className="rounded-md inline-flex items-center justify-center gap-2.5 cursor-pointer bg-primary py-4 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
 						>
 							<span>
 								<svg
@@ -281,6 +286,7 @@ const TableItems = () => {
 								name={"Add Item"}
 								test={"add"}
 								addToTable={handleAdd}
+								data={data}
 							/>
 						</label>
 
@@ -374,18 +380,19 @@ const TableItems = () => {
 								{isFilterMenuOpen && (
 									<div className="absolute right-0 mt-2 w-48 bg-white dark:bg-meta-4 dark:text-white border border-gray-200 rounded-md shadow-lg">
 										{[
-											{ field: "id", order: "asc", label: "ID Ascending" },
-											{ field: "id", order: "desc", label: "ID Descending" },
+											{ field: "id", order: "asc", label: "ID Asc" },
+											{ field: "id", order: "desc", label: "ID Desc" },
 											{
 												field: "Brand.name",
 												order: "asc",
-												label: "Name Ascending",
+												label: "Name Asc",
 											},
 											{
 												field: "Brand.name",
 												order: "desc",
-												label: "Name Descending",
+												label: "Name Desc",
 											},
+											{ field: "lowStock", order: "asc", label: "Low Stock" },
 										].map((option) => (
 											<button
 												key={`${option.field}-${option.order}`}
@@ -413,35 +420,35 @@ const TableItems = () => {
 				<div className="max-w-full overflow-x-auto">
 					<table className="max-w-full overflow-x-auto w-full">
 						<thead>
-							<tr className="bg-bodydark text-left dark:bg-meta-4">
-								<th className="min-w-[50px] py-4 px-4 font-medium text-black  dark:text-white">
+							<tr className="dark:bg-form-strokedark bg-bodydark text-left">
+								<th className="min-w-[50px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									#
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="max-w-[10px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Image
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Name
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Type
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Category
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Price
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[120px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Size
 								</th>
-								<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[120px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Stock
 								</th>
-								<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+								<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									description
 								</th>
-								<th className="py-4 px-4 font-medium text-black dark:text-white">
+								<th className="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 									Actions
 								</th>
 							</tr>
@@ -457,76 +464,73 @@ const TableItems = () => {
 									</td>
 								</tr>
 							) : (
-								paginatedData.map((item, key) => (
+								paginatedData.map((value, key) => (
 									<tr
 										key={key}
-										className={
-											key === paginatedData.length - 1
-												? ""
-												: "border-b border-stroke dark:border-strokedark"
-										}
+										className="border-b dark:border-strokedark hover:bg-gray-100 dark:hover:bg-meta-4"
 									>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark ">
+										<td className="border-b border-[#eee] px-4 text-center dark:border-strokedark ">
 											{currentPage === 1
 												? key + 1
 												: (currentPage - 1) * size + key + 1}
 										</td>
-										<td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark ">
+										<td className=" py-2  px-4 dark:border-strokedark flex items-center justify-center">
 											<div
-												className=" w-10 h-10 cursor-pointer"
-												onClick={() => openModal(item?.Brand?.image_url)}
+												className="w-10 h-10 cursor-pointer"
+												onClick={() => openModal(value?.Brand?.image_url)}
 											>
 												<img
-													src={`uploads/brand/${item?.Brand?.image_url}`}
-													className="object-cover  w-full h-full rounded-full "
+													src={`uploads/brand/${value?.Brand?.image_url}`}
+													alt={value?.Brand?.name || "Brand image"}
+													className="object-cover w-full h-full rounded-full"
 												/>
 											</div>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
-												{item?.Brand?.name}
+												{value?.Brand?.name}
 											</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
-												{item?.Brand?.type}
+												{value?.Brand?.type}
 											</p>
 										</td>
 
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
-												{item?.Brand?.Category?.name}
+												{value?.Brand?.Category?.name}
 											</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
-												{formatIDR(item.price)}
+												{formatIDR(value.price)}
 											</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
-											<p className="text-black dark:text-white">{item.size}</p>
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
+											<p className="text-black dark:text-white">{value.size}</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark">
 											<p
 												className={
-													item.stock < 10
-														? "text-danger flex "
+													value.stock < 10
+														? "text-warning flex justify-center items-center"
 														: "text-black dark:text-white"
 												}
 											>
-												{item.stock < 10
-													? `${item.stock} 
+												{value.stock < 10
+													? `${value.stock} 
 `
-													: item.stock}
+													: value.stock}
 
-												{item.stock < 10 ? (
+												{value.stock < 10 ? (
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
 														fill="none"
 														viewBox="0 0 24 24"
 														stroke-width="1.5"
 														stroke="currentColor"
-														class="w-6 h-6 ml-2"
+														className="w-6 h-6 ml-2"
 													>
 														<path
 															stroke-linecap="round"
@@ -539,50 +543,50 @@ const TableItems = () => {
 												)}
 											</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
-												{item.description}
+												{value.description}
 											</p>
 										</td>
 
-										<td className="border-b border-[#eee] px-4 dark:border-strokedark">
-											<div className="flex items-center space-x-3.5">
+										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark">
+											<div className="flex justify-center space-x-3.5">
 												<label
 													htmlFor="edit"
 													className="hover:text-primary cursor-pointer"
-													onClick={() => handleEdit(item.id)}
+													onClick={() => handleEdit(value.id)}
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
+														className="w-6 h-6"
 														fill="none"
 														viewBox="0 0 24 24"
-														stroke-width="1.5"
 														stroke="currentColor"
-														class="w-6 h-6"
 													>
 														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="1.5"
+															d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"
 														/>
 													</svg>
 												</label>
 
 												<button
 													className="hover:text-primary"
-													onClick={() => handleDelete(item.id)}
+													onClick={() => handleDelete(value.id)}
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
+														className="w-6 h-6"
 														fill="none"
 														viewBox="0 0 24 24"
-														stroke-width="1.5"
 														stroke="red"
-														class="w-6 h-6"
 													>
 														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="1.5"
 															d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
 														/>
 													</svg>
@@ -596,6 +600,7 @@ const TableItems = () => {
 								data={update}
 								test={"edit"}
 								addToTable={handleEditData}
+								setUpdate={setUpdate}
 							/>
 						</tbody>
 					</table>

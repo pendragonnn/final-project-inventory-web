@@ -63,7 +63,11 @@ const DropdownUser = () => {
 			confirmButtonColor: "#3C50E0",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Logout",
-			customClass: "swal-custom",
+			customClass: {
+				popup: document.body.classList.contains("dark")
+					? "swal-custom-dark"
+					: "swal-custom-light",
+			},
 		}).then(async (result) => {
 			try {
 				if (result.isConfirmed) {
@@ -93,7 +97,11 @@ const DropdownUser = () => {
 						title: res.data.message,
 						showConfirmButton: false,
 						timer: 1000,
-						customClass: "swal-custom-auth-success",
+						customClass: {
+							popup: document.body.classList.contains("dark")
+								? "swal-custom-dark"
+								: "swal-custom-light",
+						},
 					});
 					router.push("/");
 				}
@@ -104,7 +112,11 @@ const DropdownUser = () => {
 					title: e.message,
 					showConfirmButton: false,
 					timer: 3000,
-					customClass: "swal-custom-auth-error",
+					customClass: {
+						popup: document.body.classList.contains("dark")
+							? "swal-custom-dark"
+							: "swal-custom-light",
+					},
 				});
 			}
 		});

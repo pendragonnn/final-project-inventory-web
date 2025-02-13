@@ -272,6 +272,7 @@ const TableBrand = () => {
 							test={"add"}
 							addToTable={handleAdd}
 							data={data}
+							setUpdate={update}
 						/>
 					</label>
 
@@ -365,27 +366,27 @@ const TableBrand = () => {
 							{isFilterMenuOpen && (
 								<div className="absolute right-0 mt-2 w-48 bg-white dark:bg-meta-4 dark:text-white border border-gray-200 rounded-md shadow-lg">
 									{[
-										{ field: "id", order: "asc", label: "ID Ascending" },
-										{ field: "id", order: "desc", label: "ID Descending" },
+										{ field: "id", order: "asc", label: "ID Asc" },
+										{ field: "id", order: "desc", label: "ID Desc" },
 										{
 											field: "name",
 											order: "asc",
-											label: "Name Ascending",
+											label: "Name Asc",
 										},
 										{
 											field: "name",
 											order: "desc",
-											label: "Name Descending",
+											label: "Name Desc",
 										},
 										{
 											field: "Category.name",
 											order: "asc",
-											label: "Category Ascending",
+											label: "Category Asc",
 										},
 										{
 											field: "Category.name",
 											order: "desc",
-											label: "Category Descending",
+											label: "Category Desc",
 										},
 									].map((option) => (
 										<button
@@ -414,23 +415,23 @@ const TableBrand = () => {
 			<div className="max-w-full overflow-x-auto">
 				<table className="w-full table-auto">
 					<thead>
-						<tr className="bg-bodydark text-left dark:bg-meta-4">
-							<th className="min-w-[50px] py-4 px-4 font-medium text-black  dark:text-white">
+						<tr className="dark:bg-form-strokedark bg-bodydark text-left">
+							<th className="min-w-[50px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								#
 							</th>
-							<th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+							<th className="max-w-[10px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Image
 							</th>
-							<th className="min-w-[150px] py-4 px-4 font-medium text-black  dark:text-white">
+							<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Name
 							</th>
-							<th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
+							<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Type
 							</th>
-							<th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
+							<th className="min-w-[150px] py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Category
 							</th>
-							<th className="py-4 px-4 font-medium text-black dark:text-white">
+							<th className="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white">
 								Actions
 							</th>
 						</tr>
@@ -446,70 +447,65 @@ const TableBrand = () => {
 								</td>
 							</tr>
 						) : (
-							paginatedData.map((brand, key) => (
+							paginatedData.map((value, key) => (
 								<tr
 									key={key}
-									className={
-										key === paginatedData.length - 1
-											? ""
-											: "border-b border-stroke dark:border-strokedark"
-									}
+									className="border-b dark:border-strokedark hover:bg-gray-100 dark:hover:bg-meta-4"
 								>
-									<td className="border-b border-[#eee] py-4.5 px-4 dark:border-strokedark">
+									<td className="border-b border-[#eee] px-4 text-center dark:border-strokedark ">
 										{currentPage === 1
 											? key + 1
 											: (currentPage - 1) * size + key + 1}
 									</td>
-									<td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark ">
+									<td className=" py-2 px-4 dark:border-strokedark flex items-center justify-center">
 										<div
 											className=" w-10 h-10 cursor-pointer"
-											onClick={() => openModal(brand.image_url)}
+											onClick={() => openModal(value?.image_url)}
 										>
 											<img
-												src={`uploads/brand/${brand.image_url}`}
+												src={`uploads/brand/${value?.image_url}`}
+												alt={value?.name || "Brand image"}
 												className="object-cover  w-full h-full rounded-full "
 											/>
 										</div>
 									</td>
 
-									<td className="border-b border-[#eee] py-4.5 px-4 dark:border-strokedark">
-										<h5 className="font-medium text-black dark:text-white">
-											{brand.name}
-										</h5>
+									<td className="border-b border-[#eee] px-4 py-2 text-center dark:border-strokedark mx-auto">
+										<p className="text-black dark:text-white">{value.name}</p>
 									</td>
-									<td className="border-b border-[#eee] py-4.5 px-4 dark:border-strokedark">
-										<p className="text-black dark:text-white">{brand.type}</p>
+									<td className="border-b border-[#eee] px-4 py-2 text-center dark:border-strokedark mx-auto">
+										<p className="text-black dark:text-white">{value.type}</p>
 									</td>
-									<td className="border-b border-[#eee] py-4.5 px-4 dark:border-strokedark">
+									<td className="border-b border-[#eee] px-4 py-2 text-center dark:border-strokedark mx-auto">
 										<p className="dark:text-meta-3 text-black">
-											{brand.Category.name}
+											{value.Category.name}
 										</p>
 									</td>
-									<td className="border-b border-[#eee] py-4.5 px-4 dark:border-strokedark">
-										<div className="flex items-center space-x-3.5">
+									<td className="border-b border-[#eee] px-4 py-2 text-center dark:border-strokedark">
+										<div className="flex justify-center space-x-3.5">
 											<label
 												htmlFor="edit"
 												className="hover:text-primary cursor-pointer"
-												onClick={() => handleEdit(brand.id)}
+												onClick={() => handleEdit(value.id)}
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
+													className="w-6 h-6"
 													fill="none"
 													viewBox="0 0 24 24"
-													stroke-width="1.5"
 													stroke="currentColor"
-													class="w-6 h-6"
 												>
 													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth="1.5"
+														d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"
 													/>
 												</svg>
 											</label>
 											<button
 												className="hover:text-primary"
-												onClick={() => handleDelete(brand.id)}
+												onClick={() => handleDelete(value.id)}
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -533,6 +529,7 @@ const TableBrand = () => {
 						)}
 						<ModalEditBrand
 							data={update}
+							setData={setData}
 							allData={data}
 							test={"edit"}
 							addToTable={handleEditData}

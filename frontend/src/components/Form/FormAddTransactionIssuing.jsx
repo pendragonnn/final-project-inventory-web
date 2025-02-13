@@ -87,7 +87,9 @@ const FormAddTransactionIssuing = ({
 						value={selectedOutlet}
 						onChange={(e) => setSelectedOutlet(e.target.value)}
 					>
-						<option value="">Select Outlet</option>
+						<option value="" disabled>
+							Select Outlet
+						</option>
 						{dataOutlet.map((value) => (
 							<option key={value.id} value={value.id}>
 								{value.name}

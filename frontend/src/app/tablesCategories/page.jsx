@@ -6,37 +6,36 @@ import SidebarLayout from "../sidebar-layout";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import Loader from "@/components/common/Loader";
 
 const TablesPage = () => {
 	const router = useRouter();
 	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const role = jwtDecode(Cookies.get("token")).role;
-		setUser(role);
+		try {
+			const token = Cookies.get("token");
+			if (!token) throw new Error("Token not found");
 
-		if (!role) {
+			const decodedToken = jwtDecode(token);
+			const role = decodedToken?.role;
+
+			if (!role) {
+				throw new Error("Invalid role");
+			}
+
+			setUser(role);
+		} catch (error) {
+			console.error("Authentication error:", error.message);
 			router.push("/forbidden");
 		}
-		const minimumLoading = new Promise((resolve) => setTimeout(resolve, 500));
-
-		minimumLoading.then(() => {
-			setLoading(false);
-		});
 	}, [router]);
-
-	if (loading) {
-		return <Loader />;
-	}
 
 	if (user) {
 		return (
 			<SidebarLayout>
 				<Breadcrumb pageName="Table Categories" />
 				<div className="flex flex-col gap-10">
-					<TableCategories loading={loading} setLoading={setLoading} />
+					<TableCategories />
 				</div>
 			</SidebarLayout>
 		);

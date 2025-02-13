@@ -7,6 +7,7 @@ const {
 	deleteTransactionHeaderById,
 	editTransactionHeaderById,
 	getTransactionHeaderReturning,
+	getStockForecast,
 } = require("../service/transaction.header.service");
 
 const {
@@ -201,6 +202,22 @@ const removeTransactionHeader = async (req, res) => {
 	}
 };
 
+const stockForecast = async (req, res) => {
+	try {
+		const { period } = req.query;
+		const itemId = req.params.itemId;
+
+		const forecast = await getStockForecast(itemId, parseInt(period) || 7);
+
+		res.status(200).json({
+			itemId,
+			forecast,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
 module.exports = {
 	allTransactionHeader,
 	alltransactionReceiving,
@@ -210,4 +227,5 @@ module.exports = {
 	postTransactionHeader,
 	updateTransactionHeader,
 	removeTransactionHeader,
+	stockForecast,
 };

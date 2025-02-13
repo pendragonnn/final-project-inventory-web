@@ -79,7 +79,9 @@ const FormAddTransactionReceiving = ({
 						value={selectedSupplier}
 						onChange={(e) => setSelectedSupplier(e.target.value)}
 					>
-						<option value="">Select Supplier</option>
+						<option value="" disabled>
+							Select Supplier
+						</option>
 						{dataSupplier.map((value) => (
 							<option key={value.id} value={value.id}>
 								{value.name}

@@ -25,35 +25,30 @@ const ModalEditSupplier = ({ data, test, addToTable }) => {
 		try {
 			const { name: newName, address: newAddress, phone: newPhone } = formData;
 
-			if (
-				data?.data?.name !== newName ||
-				data?.data?.address !== newAddress ||
-				data?.data?.phone !== newPhone
-			) {
-				const res = await Supplier.updateSupplier(data.data.id, {
-					name: newName,
-					address: newAddress,
-					phone: newPhone,
-				});
+			const updatedData = {
+				name: newName,
+				address: newAddress,
+				phone: newPhone,
+			};
+			const res = await Supplier.updateSupplier(data.data.id, updatedData);
 
-				Swal.fire({
-					position: "bottom-end",
-					icon: "success",
-					title: res.data.message,
-					showConfirmButton: false,
-					timer: 2000,
-					customClass: {
-						popup: document.body.classList.contains("dark")
-							? "swal-custom-dark"
-							: "swal-custom-light",
-					},
-				}).then(() => {
-					addToTable(res.data.data[1]);
-					modalCheckbox.current.checked = false;
+			Swal.fire({
+				position: "bottom-end",
+				icon: "success",
+				title: res.data.message,
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			}).then(() => {
+				addToTable(res.data.data[1]);
+				modalCheckbox.current.checked = false;
 
-					setFormData({ name: "", address: "", phone: "" });
-				});
-			}
+				setFormData({ name: "", address: "", phone: "" });
+			});
 		} catch (e) {
 			const errorMessage = e.response?.data?.message || "Something went wrong";
 			Swal.fire({
@@ -157,7 +152,7 @@ const ModalEditSupplier = ({ data, test, addToTable }) => {
 								<input
 									type="submit"
 									value={"edit"}
-									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

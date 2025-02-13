@@ -18,36 +18,44 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
 		try {
 			const { name: newName } = formData;
 
-			if (data?.data?.name !== newName) {
-				const res = await Category.updateCategory(data.data.id, {
-					name: newName,
-				});
+			const res = await Category.updateCategory(data.data.id, {
+				name: newName,
+			});
 
-				Swal.fire({
-					position: "bottom-end",
-					icon: "success",
-					title: res.data.message,
-					showConfirmButton: false,
-					timer: 2000,
-					customClass: "swal-custom",
-				}).then(() => {
-					addToTable(res.data.data[1]);
-					modalCheckbox.current.checked = false;
-
-					setFormData({ name: "" });
-				});
-			}
+			Swal.fire({
+				position: "bottom-end",
+				icon: "success",
+				title: res.data.message || "Update successful.",
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			}).then(() => {
+				addToTable(res.data.data[1]);
+				modalCheckbox.current.checked = false;
+				setFormData({ name: "" });
+			});
 		} catch (e) {
+			const errorMessage = e.response?.data?.message || "Something went wrong";
+
 			Swal.fire({
 				position: "bottom-end",
 				icon: "error",
-				title: "Data is already",
+				title: errorMessage,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			});
 		}
 	};
@@ -75,7 +83,8 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
 					</label>
 					<div className="rounded-sm bg-white dark:bg-boxdark">
 						<div className=" py-4 px-6.5 ">
-							<h3 className="font-medium text-black dark:text-white">
+							<h3 className="font-medium text-center text-black dark:text-white">
+								{" "}
 								Edit data Category
 							</h3>
 						</div>
@@ -102,7 +111,7 @@ const ModalEditCategory = ({ data, test, addToTable }) => {
 								<input
 									type="submit"
 									value={"edit"}
-									className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

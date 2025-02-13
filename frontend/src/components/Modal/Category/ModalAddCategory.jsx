@@ -17,20 +17,29 @@ const ModalAddCategory = ({ name, test, addToTable }) => {
 				title: res.data.message,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			}).then(() => {
 				addToTable(res.data.data);
 				modalCheckbox.current.checked = false;
 				document.getElementById("formId").reset();
 			});
 		} catch (e) {
+			const errorMessage = e.response?.data?.message || "Something went wrong";
 			Swal.fire({
 				position: "bottom-end",
 				icon: "error",
-				title: e.message,
+				title: errorMessage,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			});
 		}
 	};

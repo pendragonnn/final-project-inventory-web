@@ -11,6 +11,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 	const [filteredTypes, setFilteredTypes] = useState([]); // Type berdasarkan brand
 	const [selectedType, setSelectedType] = useState(""); // Type yang dipilih
 	const [file, setFile] = useState(null);
+	const [dataBrand, setDataBrand] = useState([]);
 
 	// Ambil data brand dari API
 	useEffect(() => {
@@ -25,13 +26,23 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 		fetchBrands();
 	}, []);
 
+	useEffect(() => {
+		const fetchData = async () => {
+			const res = await Brand.getBrand();
+			const allRes = await Brand.getBrand(1, res.data.totalItems);
+			setDataBrand(allRes.data.data);
+		};
+
+		fetchData();
+	}, []);
+
 	// Ketika Name dipilih
 	const handleNameChange = (e) => {
 		const selectedName = e.target.value;
 		setSelectedName(selectedName);
 
 		// Filter type berdasarkan name yang dipilih
-		const typesForName = brands
+		const typesForName = dataBrand
 			.filter((brand) => brand.name === selectedName)
 			.map((brand) => brand.type);
 		setFilteredTypes(typesForName);
@@ -49,7 +60,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 
 		try {
 			// Cari brand_id berdasarkan Name dan Type
-			const selectedBrand = brands.find(
+			const selectedBrand = dataBrand.find(
 				(brand) => brand.name === selectedName && brand.type === selectedType
 			);
 
@@ -156,7 +167,7 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 							<div className="p-6.5 text-start">
 								<div className="mb-4.5">
 									<label className="mb-2.5 block text-black dark:text-white">
-										Name
+										Brand Name
 									</label>
 									<select
 										name="name"
@@ -164,8 +175,11 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										required
 									>
+										<option value="" disabled>
+											Select an brand name
+										</option>
 										<option value="">Select a name</option>
-										{[...new Set(brands.map((brand) => brand.name))].map(
+										{[...new Set(dataBrand.map((brand) => brand.name))].map(
 											(name, index) => (
 												<option key={index} value={name}>
 													{name}
@@ -186,6 +200,9 @@ const ModalItemAdd = ({ name, test, addToTable }) => {
 										required
 										disabled={!filteredTypes.length}
 									>
+										<option value="" disabled>
+											Select an type
+										</option>
 										<option value="">Select a type</option>
 										{filteredTypes.map((type, index) => (
 											<option key={index} value={type}>

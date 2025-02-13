@@ -26,4 +26,15 @@ const upload = multer({
 	},
 });
 
-module.exports = { upload, uploadDir };
+const multerErrorHandler = (err, req, res, next) => {
+	if (err instanceof multer.MulterError) {
+		if (err.code === "LIMIT_FILE_SIZE") {
+			return res.status(400).json({
+				message: "File size exceeds the 5 MB limit.",
+			});
+		}
+	}
+	next(err);
+};
+
+module.exports = { upload, uploadDir, multerErrorHandler };

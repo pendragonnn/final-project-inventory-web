@@ -7,6 +7,7 @@ const {
 	deleteBrand,
 	updateBrandPhotos,
 	findBrandByName,
+	findBrandByNameAndType,
 } = require("../repository/brand.repository");
 
 const getAllBrands = async (page, size) => {
@@ -23,30 +24,17 @@ const getBrandById = async (id) => {
 };
 
 const insertBrand = async (newBrand) => {
-	const brandName = await findBrandById(newBrand.name);
-	const brandType = await findBrandByType(newBrand.type);
+	const existingBrand = await findBrandByNameAndType(
+		newBrand.name,
+		newBrand.type
+	);
 
-	if (brandName || brandType) {
-		throw new Error("Brand already exist");
+	if (existingBrand) {
+		throw new Error("Brand already exists with the same name and type.");
 	}
+
 	const brand = await createBrand(newBrand);
 	return brand;
-};
-
-const editBrandById = async (id, newBrand) => {
-	const brand = await findBrandById(id);
-	if (!brand) {
-		throw new Error("Brand not found");
-	}
-
-	const brandType = await findBrandByType(newBrand.type);
-
-	if (brandType && brandType.id !== id) {
-		throw new Error("Brand type already exist");
-	}
-
-	const updatedBrand = await editBrand(id, newBrand);
-	return updatedBrand;
 };
 
 const updateBrandPhoto = async (id, image_url) => {
@@ -55,6 +43,25 @@ const updateBrandPhoto = async (id, image_url) => {
 	} catch (error) {
 		throw error;
 	}
+};
+
+const editBrandById = async (id, newBrand) => {
+	const brand = await findBrandById(id);
+	if (!brand) {
+		throw new Error("Brand not found");
+	}
+
+	const existingBrand = await findBrandByNameAndType(
+		newBrand.name,
+		newBrand.type
+	);
+
+	if (existingBrand && existingBrand.id !== id) {
+		throw new Error("Brand already exists with the same name and type.");
+	}
+
+	const updatedBrand = await editBrand(id, newBrand);
+	return updatedBrand;
 };
 
 const deleteBrandById = async (id) => {

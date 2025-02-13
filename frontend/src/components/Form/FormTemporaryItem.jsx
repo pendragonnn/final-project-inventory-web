@@ -144,7 +144,9 @@ const FormTemporaryItem = ({ handleAdd }) => {
 						value={selectedItemName}
 						required
 					>
-						<option value="">Select Item Name</option>
+						<option value="" disabled>
+							Select Item Name
+						</option>
 						{uniqueBrands.map((brandName) => (
 							<option key={brandName} value={brandName}>
 								{brandName}
@@ -165,7 +167,9 @@ const FormTemporaryItem = ({ handleAdd }) => {
 							value={selectedItemType}
 							required
 						>
-							<option value="">Select Item Type</option>
+							<option value="" disabled>
+								Select Item Type
+							</option>
 							{[...new Set(filteredItemTypes)].map((type) => (
 								<option key={type} value={type}>
 									{type}
@@ -187,7 +191,9 @@ const FormTemporaryItem = ({ handleAdd }) => {
 							value={selectedItemSize}
 							required
 						>
-							<option value="">Select Item Size</option>
+							<option value="" disabled>
+								Select Item Size
+							</option>
 							{filteredSizes.map((size) => (
 								<option key={size} value={size}>
 									{size}

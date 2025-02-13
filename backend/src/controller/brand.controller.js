@@ -45,6 +45,39 @@ const postBrand = async (req, res) => {
 	}
 };
 
+const uploadBrandPhoto = async (req, res) => {
+	try {
+		if (!req.file) {
+			return res
+				.status(400)
+				.json({ message: "No file uploaded or invalid file size." });
+		}
+
+		const id = req.params.id;
+		const brand = await getBrandById(id);
+
+		if (!brand) {
+			fs.unlinkSync(path.join(uploadDir, req.file.filename));
+			return res.status(404).json({ message: "Brand not found" });
+		}
+
+		const image_url = req.file.filename;
+		const updatedBrand = await updateBrandPhoto(id, image_url);
+
+		if (!updatedBrand) {
+			fs.unlinkSync(path.join(uploadDir, req.file.filename));
+			return res.status(500).json({ message: "Failed to update brand photo." });
+		}
+
+		res.status(200).json({
+			message: "Brand photo updated successfully",
+			data: updatedBrand,
+		});
+	} catch (error) {
+		if (req.file) fs.unlinkSync(path.join(uploadDir, req.file.filename));
+		res.status(500).json({ message: error.message });
+	}
+};
 const updateBrand = async (req, res) => {
 	const brandId = req.params.id;
 	const brandData = req.body;
@@ -70,32 +103,6 @@ const removeBrand = async (req, res) => {
 
 		await deleteBrandById(brandId);
 		res.status(200).json({ message: "Successful Delete Brand!" });
-	} catch (error) {
-		res.status(500).json({ message: error.message });
-	}
-};
-
-const uploadBrandPhoto = async (req, res) => {
-	try {
-		const id = req.params.id;
-		const brand = await getBrandById(id);
-
-		if (!brand) {
-			return res.status(404).json({ message: "Brand not found" });
-		}
-
-		if (!req.file) {
-			return res.status(400).json({ message: "No file uploaded" });
-		}
-
-		const image_url = req.file.filename;
-
-		const updatedBrand = await updateBrandPhoto(id, image_url);
-
-		res.status(200).json({
-			message: "Brand photo updated successfully",
-			data: updatedBrand,
-		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}

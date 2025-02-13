@@ -5,10 +5,11 @@ import Brand from "@/data/brand/index";
 
 const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 	const modalCheckbox = useRef(null);
-	const [dataBrand, setDataBrand] = useState([]);
+	const [dataCategory, setDataCategory] = useState([]);
 	const [file, setFile] = useState(null);
-	const [isAddNew, setIsAddNew] = useState(false); // State untuk kontrol form baru
-	const [newName, setNewName] = useState(""); // State untuk nama baru
+	const [isAddNew, setIsAddNew] = useState(false);
+	const [newName, setNewName] = useState("");
+	const [errorFile, setErrorFile] = useState("");
 
 	const [formData, setFormData] = useState({
 		name: data?.data?.name || "",
@@ -24,17 +25,28 @@ const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 			category_id: data?.data?.category_id || "",
 			image_url: data?.data?.image_url || "",
 		});
+		setErrorFile("");
+		setFile(null);
 	}, [data]);
 
 	const handleFileChange = (e) => {
-		setFile(e.target.files[0]);
+		const selectedFile = e.target.files[0];
+
+		if (selectedFile && selectedFile.size > 5 * 1024 * 1024) {
+			setErrorFile("File size exceeds 5 MB!");
+			setFile(null);
+			e.target.value = null;
+		} else {
+			setErrorFile("");
+			setFile(selectedFile);
+		}
 	};
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await Category.getCategory();
 			const allRes = await Category.getCategory(1, res.data.totalItems);
-			setDataBrand(allRes.data.data);
+			setDataCategory(allRes.data.data);
 		};
 
 		fetchData();
@@ -207,7 +219,7 @@ const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 									<label className="mb-2.5 block text-black dark:text-white">
 										Category
 									</label>
-									{dataBrand.length > 0 && (
+									{allData.length > 0 && (
 										<select
 											className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 											name="category_id"
@@ -223,7 +235,7 @@ const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 											<option value="" disabled>
 												Select a category
 											</option>
-											{dataBrand.map((value) => (
+											{dataCategory.map((value) => (
 												<option key={value.id} value={value.id}>
 													{value.name}
 												</option>
@@ -259,6 +271,7 @@ const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										required={!data?.data?.image_url}
 									/>
+									{errorFile && <p className="text-danger mt-2">{errorFile}</p>}
 									{!data?.data?.image_url && (
 										<p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
 											No image uploaded. Please choose a photo.
@@ -270,7 +283,7 @@ const ModalEditBrand = ({ data, test, addToTable, allData }) => {
 								<input
 									type="submit"
 									value={"Edit"}
-									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

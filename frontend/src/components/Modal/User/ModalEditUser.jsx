@@ -5,6 +5,7 @@ import UserData from "@/data/user/index";
 const ModalEditUser = ({ data, test, addToTable }) => {
 	const modalCheckbox = useRef(null);
 	const [file, setFile] = useState(null);
+	const [errorFile, setErrorFile] = useState("");
 
 	const [formData, setFormData] = useState({
 		role_id: data?.data?.role_id || "",
@@ -22,137 +23,83 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 			password: data?.data?.password || "",
 			image_url: data?.data?.image_url || "",
 		});
+
+		setErrorFile("");
+		setFile(null);
 	}, [data]);
 
 	const handleFileChange = (e) => {
-		setFile(e.target.files[0]);
-		setFormData({
-			...formData,
-			image_url: null,
-		});
+		const selectedFile = e.target.files[0];
+		if (selectedFile && selectedFile.size > 5 * 1024 * 1024) {
+			setErrorFile("File size exceeds 5 MB!");
+			setFile(null);
+			e.target.value = null;
+		} else {
+			setErrorFile("");
+			setFile(selectedFile);
+		}
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		try {
-			const {
-				role_id: newRole,
-				full_name: newFullName,
-				email: newEmail,
-				password: newPassword,
-			} = formData;
+			const updatedData = {
+				role_id: formData.role_id,
+				full_name: formData.full_name,
+				email: formData.email,
+				password: formData.password,
+			};
 
-			const hasChanges =
-				data?.data?.role_id !== newRole ||
-				data?.data?.full_name !== newFullName ||
-				data?.data?.email !== newEmail ||
-				data?.data?.password !== newPassword;
+			// Kirim data update
+			const userResponse = await UserData.updateUser(data.data.id, updatedData);
 
-			if (hasChanges) {
-				const userResponse = await UserData.updateUser(data.data.id, {
-					role_id: newRole,
-					full_name: newFullName,
-					email: newEmail,
-					password: newPassword,
-				});
-
-				console.log(userResponse);
-				console.log(data.data.id);
-				Swal.fire({
-					position: "bottom-end",
-					icon: "success",
-					title: userResponse.data.message,
-					showConfirmButton: false,
-					timer: 2000,
-					customClass: "swal-custom",
-				}).then(() => {
-					addToTable(userResponse.data.data);
-					modalCheckbox.current.checked = false;
-
-					setFormData({
-						role_id: "",
-						full_name: "",
-						email: "",
-						password: "",
-						image_url: null,
-					});
-					setFile(null);
-					setFile(null);
-
-					// Check if a new file is selected
-					if (file) {
-						// Create FormData to handle file upload
-						const formData = new FormData();
-						formData.append("role_id", newRole);
-						formData.append("full_name", newFullName);
-						formData.append("email", newEmail);
-						formData.append("password", newPassword);
-						formData.append("image_url", file);
-
-						// Make a POST request to upload image for the user
-						UserData.uploadImage(data?.data?.id, formData)
-							.then(() => {
-								addToTable(imageResponse.data.data);
-								modalCheckbox.current.checked = false;
-								document.getElementById("formId").reset();
-								setFile(null);
-								e.target.reset();
-							})
-							.catch((imageError) => {
-								console.error("Image Upload Error:", imageError.message);
-							});
-					}
-				});
+			// Upload file jika ada gambar baru
+			if (file) {
+				const formDataUpload = new FormData();
+				formDataUpload.append("image_url", file);
+				await UserData.uploadImage(data.data.id, formDataUpload);
 			}
+
+			Swal.fire({
+				position: "bottom-end",
+				icon: "success",
+				title: userResponse.data.message || "Update successful.",
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			}).then(() => {
+				addToTable(userResponse.data.data);
+				modalCheckbox.current.checked = false;
+
+				setFormData({
+					role_id: "",
+					full_name: "",
+					email: "",
+					password: "",
+					image_url: "",
+				});
+				setFile(null);
+			});
 		} catch (error) {
-			console.error("Error:", error.message);
-			let errorMessage = "An error occurred. Please try again."; // Default error message
+			const errorMessage =
+				error.response?.data?.message || "Something went wrong";
 
-			if (
-				error.response &&
-				error.response.data &&
-				error.response.data.message
-			) {
-				errorMessage = error.response.data.message;
-			}
 			Swal.fire({
 				position: "bottom-end",
 				icon: "error",
 				title: errorMessage,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: "swal-custom",
-			});
-		} // Check if a new file is selected
-		if (file) {
-			// Create FormData to handle file upload
-			const formData = new FormData();
-			formData.append("role_id", e.target.role_id.value);
-			formData.append("full_name", e.target.full_name.value);
-			formData.append("email", e.target.email.value);
-			formData.append("password", e.target.password.value);
-			formData.append("image_url", file);
-
-			// Make a POST request to upload image for the user
-			const imageResponse = await UserData.uploadImage(
-				data?.data?.id,
-				formData
-			);
-			console.log(imageResponse);
-			Swal.fire({
-				position: "bottom-end",
-				icon: "success",
-				title: imageResponse.data.message,
-				showConfirmButton: false,
-				timer: 2000,
-				customClass: "swal-custom",
-			}).then(() => {
-				addToTable(imageResponse.data.data);
-				modalCheckbox.current.checked = false;
-				document.getElementById("formId").reset();
-				setFile(null);
-				e.target.reset();
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
 			});
 		}
 	};
@@ -180,7 +127,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 					</label>
 					<div className="rounded-sm bg-white dark:bg-boxdark">
 						<div className=" py-4 px-6.5 ">
-							<h3 className="font-medium text-black dark:text-white">
+							<h3 className="font-medium text-center text-black dark:text-white">
+								{" "}
 								Edit User
 							</h3>
 						</div>
@@ -262,7 +210,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 
 								<div className="mb-4.5">
 									<label className="mb-2.5 block text-black dark:text-white">
-										Profile Photo
+										Profile Photo <span className="text-xs">*(Optional)</span>
 									</label>
 									{data?.data?.image_url && (
 										<div className="mb-3">
@@ -287,6 +235,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 										className="w-full text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 										required={!data?.data?.image_url} // Make it required only if no existing image
 									/>
+									{errorFile && <p className="text-danger mt-2">{errorFile}</p>}
+
 									{!data?.data?.image_url && (
 										<p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
 											No photo uploaded. Please choose a photo.
@@ -297,7 +247,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 								<input
 									type="submit"
 									value={"Update"}
-									className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-gray"
+									className="flex w-full justify-center rounded cursor-pointer bg-primary p-3 font-medium text-white"
 								/>
 							</div>
 						</form>

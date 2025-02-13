@@ -6,30 +6,29 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import TableUser from "@/components/Tables/TableUser";
 import { jwtDecode } from "jwt-decode";
-import Loader from "@/components/common/Loader";
 
 const TablesPage = () => {
 	const router = useRouter();
 	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const role = jwtDecode(Cookies.get("token")).role;
-		setUser(role);
+		try {
+			const token = Cookies.get("token");
+			if (!token) throw new Error("Token not found");
 
-		if (role !== "1" && role !== "3") {
+			const decodedToken = jwtDecode(token);
+			const role = decodedToken?.role;
+
+			if (!role || (role !== "1" && role !== "3")) {
+				throw new Error("Unauthorized role");
+			}
+
+			setUser(role);
+		} catch (error) {
+			console.error("Authentication error:", error.message);
 			router.push("/forbidden");
 		}
-		const minimumLoading = new Promise((resolve) => setTimeout(resolve, 500));
-
-		minimumLoading.then(() => {
-			setLoading(false);
-		});
 	}, [router]);
-
-	if (loading) {
-		return <Loader />;
-	}
 
 	if (user) {
 		return (
@@ -41,7 +40,7 @@ const TablesPage = () => {
 			</SidebarLayout>
 		);
 	} else {
-		return <p>Loading...</p>; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
+		return null;
 	}
 };
 
