@@ -10,8 +10,6 @@ import Item from "@/data/item/index";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import FormTemporaryItem from "@/components/Form/FormTemporaryItem";
-import FormAddTransactionIsuing from "@/components/Form/FormAddTransactionIssuing";
 import { jwtDecode } from "jwt-decode";
 import FormTemporaryReturning from "@/components/Form/FormTemporaryReturning";
 import FormAddTransactionReturning from "@/components/Form/FormAddTransactionReturning";
@@ -20,15 +18,17 @@ const TransactionHeader = () => {
 	const [dataItem, setDataItem] = useState([]);
 	const [dataOutlet, setDataOutlet] = useState([]);
 	const [dataSupplier, setDataSupplier] = useState([]);
-	const [dataStock, setDataStock] = useState([]);
 	const [user, setUser] = useState(null);
 	const [userId, setUserId] = useState(null);
 	const [itemTemporary, setItemTemporary] = useState([]);
 	const [userName, setUserName] = useState(null);
+	const [formKey, setFormKey] = useState(Date.now()); // Untuk memaksa re-render form
+
 	const router = useRouter();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
 		if (itemTemporary.length === 0) {
 			Swal.fire({
 				position: "bottom-end",
@@ -36,11 +36,6 @@ const TransactionHeader = () => {
 				title: "Must add item",
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: {
-					popup: document.body.classList.contains("dark")
-						? "swal-custom-dark"
-						: "swal-custom-light",
-				},
 			});
 			return;
 		}
@@ -48,7 +43,6 @@ const TransactionHeader = () => {
 		const outletId = e.target.outlet_id ? e.target.outlet_id.value : null;
 		const supplierId = e.target.supplier_id ? e.target.supplier_id.value : null;
 
-		// Pastikan hanya satu yang diisi
 		if (!outletId && !supplierId) {
 			Swal.fire({
 				position: "bottom-end",
@@ -56,11 +50,6 @@ const TransactionHeader = () => {
 				title: "Please select either Outlet or Supplier",
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: {
-					popup: document.body.classList.contains("dark")
-						? "swal-custom-dark"
-						: "swal-custom-light",
-				},
 			});
 			return;
 		}
@@ -76,25 +65,40 @@ const TransactionHeader = () => {
 					item_id: e.item_id,
 					quantity: parseInt(e.quantity),
 					price_item: parseInt(e.price_item),
-					reason: e.reason, // Pastikan reason disertakan
+					reason: e.reason,
 				})),
 			});
 
 			if (data) {
+				const updatedDataItem = dataItem.map((item) => {
+					const matchingItem = itemTemporary.find(
+						(tempItem) => tempItem.item_id === item.id
+					);
+
+					if (matchingItem) {
+						return {
+							...item,
+							stock: supplierId
+								? item.stock - matchingItem.quantity
+								: item.stock + matchingItem.quantity,
+						};
+					}
+					return item;
+				});
+
+				setDataItem(updatedDataItem);
+				setItemTemporary([]); // Reset daftar item sementara
+				setFormKey(Date.now()); // Reset form dengan key baru
+				e.target.reset(); // Reset input form
+
 				Swal.fire({
 					position: "bottom-end",
-					icon: data === "Quantity must not exceed stock" ? "error" : "success",
-					title: data.message || data,
+					icon: "success",
+					title: "Transaction Successful",
 					showConfirmButton: false,
 					timer: 2000,
-					customClass: {
-						popup: document.body.classList.contains("dark")
-							? "swal-custom-dark"
-							: "swal-custom-light",
-					},
 				});
 			}
-			setItemTemporary([]);
 		} catch (err) {
 			Swal.fire({
 				position: "bottom-end",
@@ -102,34 +106,20 @@ const TransactionHeader = () => {
 				title: err.message,
 				showConfirmButton: false,
 				timer: 2000,
-				customClass: {
-					popup: document.body.classList.contains("dark")
-						? "swal-custom-dark"
-						: "swal-custom-light",
-				},
 			});
 		}
 	};
 
 	const handleAdd = (item) => {
-		// Validasi data sebelum ditambahkan ke array
-		if (!item.item_id) {
-			console.error("Item ID is missing");
-			return;
-		}
-
-		// Periksa apakah item sudah ada di `itemTemporary`
 		const existingItemIndex = itemTemporary.findIndex(
 			(tempItem) => tempItem.item_id === item.item_id
 		);
 
 		if (existingItemIndex !== -1) {
-			// Jika sudah ada, tambahkan jumlahnya
 			const updatedItems = [...itemTemporary];
 			updatedItems[existingItemIndex].quantity += item.quantity;
 			setItemTemporary(updatedItems);
 		} else {
-			// Jika belum ada, tambahkan sebagai item baru
 			setItemTemporary([...itemTemporary, item]);
 		}
 	};
@@ -146,7 +136,6 @@ const TransactionHeader = () => {
 			const allRes = await Item.getItem(1, res.data.totalItems);
 			setDataItem(allRes.data.data);
 		};
-
 		fetchData();
 	}, []);
 
@@ -195,26 +184,25 @@ const TransactionHeader = () => {
 				<SidebarLayout>
 					<Breadcrumb pageName="Transaction Returning" />
 					<div className="">
-						<div className=" ">
-							<div className="flex flex-col gap-5 lg:flex-row">
-								<div className="lg:flex-[0.7]">
-									<FormTemporaryReturning
-										handleAdd={handleAdd}
-										dataItem={dataItem}
-									/>
-								</div>
-								<div className="lg:flex-[1.3]">
-									<FormAddTransactionReturning
-										handleSubmit={handleSubmit}
-										userId={userId}
-										userName={userName}
-										dataOutlet={dataOutlet}
-										dataItem={dataItem}
-										dataSupplier={dataSupplier}
-										itemTemporary={itemTemporary}
-										handleDelete={handleDelete}
-									/>
-								</div>
+						<div className="flex flex-col gap-5 lg:flex-row">
+							<div className="lg:flex-[0.7]">
+								<FormTemporaryReturning
+									handleAdd={handleAdd}
+									dataItem={dataItem}
+								/>
+							</div>
+							<div className="lg:flex-[1.3]">
+								<FormAddTransactionReturning
+									key={formKey} // Memaksa form reset setelah submit
+									handleSubmit={handleSubmit}
+									userId={userId}
+									userName={userName}
+									dataOutlet={dataOutlet}
+									dataItem={dataItem}
+									dataSupplier={dataSupplier}
+									itemTemporary={itemTemporary}
+									handleDelete={handleDelete}
+								/>
 							</div>
 						</div>
 					</div>
@@ -225,4 +213,5 @@ const TransactionHeader = () => {
 		return null;
 	}
 };
+
 export default TransactionHeader;

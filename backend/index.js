@@ -6,12 +6,14 @@ const apiDocumentation = require("./src/doc/apidocs.json");
 const router = require("./src/route/index");
 const authRoutes = require("./src/route/auth.route");
 const cors = require("cors");
+const morgan = require("morgan");
 dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiDocumentation));
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -21,5 +23,5 @@ app.use("/api/v1", router);
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Server running on https://localhost: ${PORT}`);
+	console.log(`Server running on https://localhost: ${PORT}`);
 });

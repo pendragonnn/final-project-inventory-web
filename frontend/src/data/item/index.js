@@ -19,6 +19,48 @@ const getItem = async (page, size) => {
 	return result;
 };
 
+const getItemSelect = async () => {
+	try {
+		let allItems = [];
+		let currentPage = 1;
+		let totalPages = 1;
+
+		while (currentPage <= totalPages) {
+			const response = await axios.get(
+				`http://localhost:8000/api/v1/item?page=${currentPage}`,
+				{ headers: headers }
+			);
+
+			const data = response.data.data;
+			if (data.length > 0) {
+				allItems = [...allItems, ...data]; // Gabungkan semua data dari setiap halaman
+			}
+
+			totalPages = response.data.totalPages; // Update total halaman
+			currentPage++; // Pindah ke halaman berikutnya
+		}
+
+		return { data: allItems };
+	} catch (error) {
+		console.error("Error fetching items:", error);
+		return { data: [] };
+	}
+};
+
+const getItemStock = async (size) => {
+	const result = await axios.get(
+		"http://localhost:8000/api/v1/item/find-stock",
+		{
+			headers: headers,
+			params: {
+				size: size,
+			},
+		}
+	);
+
+	return result;
+};
+
 const getItemByid = async (id) => {
 	const result = await axios.get(`http://localhost:8000/api/v1/item/${id}`, {
 		headers: headers,
@@ -114,4 +156,6 @@ export default {
 	uploadItem,
 	addItem2,
 	getItemImageUrl,
+	getItemStock,
+	getItemSelect,
 };

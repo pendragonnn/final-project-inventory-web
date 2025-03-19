@@ -133,7 +133,7 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 							</h3>
 						</div>
 
-						<form id="formId" action="#" onSubmit={handleSubmit}>
+						<form action="#" onSubmit={handleSubmit}>
 							<div className="p-6.5 text-start">
 								<div className="mb-4.5">
 									<label className="block text-black dark:text-white">

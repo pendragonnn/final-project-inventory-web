@@ -3,9 +3,12 @@ const TransactionsHeaders = models.TransactionHeader;
 const TransactionDetail = models.TransactionDetail;
 const Item = models.Item;
 const User = models.User;
+const Brand = models.Brand;
 const Outlet = models.Outlet;
+const Category = models.Category;
 const Supplier = models.Supplier;
-const { Op } = require("sequelize");
+const { Op, Sequelize, where } = require("sequelize");
+const axios = require("axios");
 
 const findsTransactionHeader = async (page, size) => {
 	const offset = (page - 1) * size;
@@ -14,9 +17,6 @@ const findsTransactionHeader = async (page, size) => {
 	const transactionHeaders = await TransactionsHeaders.findAll({
 		offset: offset,
 		limit: size,
-		attributes: {
-			exclude: ["outlet_id"], // Exclude the 'outlet_id' field
-		},
 		include: [
 			{
 				model: User,
@@ -31,11 +31,6 @@ const findsTransactionHeader = async (page, size) => {
 				attributes: ["name"],
 			},
 		],
-		where: {
-			supplier_id: {
-				[Op.ne]: null, // Memastikan supplier_id tidak sama dengan null
-			},
-		},
 	});
 	return { transactionHeaders, dataLength };
 };
@@ -93,6 +88,10 @@ const findsTransactionHeaderIssuing = async (page, size) => {
 			{
 				model: User,
 				attributes: ["full_name"],
+			},
+			{
+				model: TransactionDetail,
+				attributes: ["item_id", "quantity"],
 			},
 			{
 				model: Outlet,
@@ -328,33 +327,184 @@ const deleteTransactionHeader = async (id) => {
 	return transactionHeader;
 };
 
-const calculateMovingAverage = async (itemId, period = 7) => {
+const findMostIssuedItems = async (size) => {
+	const items = await TransactionDetail.findAll({
+		attributes: [
+			"item_id",
+			[Sequelize.fn("SUM", Sequelize.col("quantity")), "total_issued"],
+		],
+		include: [
+			{
+				model: Item,
+				attributes: ["size"], // Ambil stok dari Item
+				include: [
+					{
+						model: Brand,
+						attributes: ["name", "type", "image_url"], // Nama ada di Brand
+					},
+				],
+			},
+			{
+				model: TransactionsHeaders,
+				attributes: [],
+				where: { information: "Issuing" }, // Hanya transaksi Issuing
+			},
+		],
+		group: ["item_id", "Item.id", "Item->Brand.id"],
+		order: [[Sequelize.literal("total_issued"), "DESC"]],
+		limit: size,
+	});
+
+	return items;
+};
+
+const findTransactionTrends = async (period = 30) => {
+	const transactions = await TransactionsHeaders.findAll({
+		attributes: [
+			[Sequelize.fn("DATE", Sequelize.col("transaction_date")), "date"],
+			"information",
+			[Sequelize.fn("COUNT", Sequelize.col("id")), "total"],
+		],
+		where: {
+			transaction_date: {
+				[Op.gte]: Sequelize.literal(`CURRENT_DATE - INTERVAL '${period} DAY'`),
+			},
+		},
+		group: ["date", "information"],
+		order: [["date", "ASC"]],
+		raw: true, // Supaya hasilnya berupa array biasa, bukan instance Sequelize
+	});
+
+	// Proses data agar lebih rapi
+	const formattedData = {};
+	transactions.forEach(({ date, information, total }) => {
+		if (!formattedData[date]) {
+			formattedData[date] = { date, Receiving: 0, Issuing: 0, Returning: 0 };
+		}
+		formattedData[date][information] = total;
+	});
+
+	return Object.values(formattedData);
+};
+
+const mostTransactionsOutletCount = async (size, period = 30) => {
+	const outlets = await TransactionsHeaders.findAll({
+		attributes: [
+			"outlet_id",
+			[Sequelize.fn("COUNT", Sequelize.col("TransactionHeader.id")), "total"],
+		],
+		where: {
+			information: "Issuing",
+			transaction_date: {
+				[Op.gte]: Sequelize.literal(`CURRENT_DATE - INTERVAL '${period} DAY'`),
+			},
+		},
+		include: [
+			{
+				model: Outlet,
+				attributes: ["name", "address", "phone"],
+			},
+		],
+		group: ["TransactionHeader.outlet_id", "Outlet.id"],
+		order: [[Sequelize.literal("total"), "DESC"]],
+		limit: size,
+		raw: true,
+		nest: true,
+	});
+
+	return outlets;
+};
+
+const getTopItemCategories = async (period) => {
+	try {
+		// Hitung batasan tanggal berdasarkan periode
+		const startDate = new Date();
+		startDate.setDate(startDate.getDate() - period);
+
+		const data = await TransactionDetail.findAll({
+			attributes: [
+				[Sequelize.col("Item.Brand.category_id"), "category_id"], // Ambil category_id dari Brand
+				[Sequelize.fn("SUM", Sequelize.col("quantity")), "total_quantity"], // Total barang yang terjual
+			],
+			include: [
+				{
+					model: Item,
+					attributes: [], // Tidak perlu ambil item name, karena fokus ke kategori
+					include: {
+						model: Brand,
+						attributes: [], // Tidak perlu ambil brand name, hanya category_id
+						include: {
+							model: Category,
+							attributes: ["name"], // Hanya ambil nama kategori
+						},
+					},
+				},
+				{
+					model: TransactionsHeaders,
+					attributes: [], // Tidak perlu ambil tanggalnya, hanya buat filter
+					where: {
+						transaction_date: { [Op.gte]: startDate },
+					},
+				},
+			],
+			group: [
+				"Item.Brand.category_id",
+				"Item.Brand.Category.id", // Tambahkan id ke GROUP BY
+				"Item.Brand.Category.name", // Group berdasarkan name
+			],
+			order: [[Sequelize.literal("total_quantity"), "DESC"]],
+			limit: 5, // Ambil 5 kategori terlaris
+			raw: true,
+			nest: true,
+		});
+
+		// Format ulang respons untuk menghilangkan id
+		const formattedData = data.map((item) => ({
+			category_id: item.category_id,
+			total_quantity: item.total_quantity,
+			category_name: item.Item.Brand.Category.name,
+		}));
+
+		return formattedData;
+	} catch (error) {
+		console.error("Error fetching top item categories:", error);
+		throw error;
+	}
+};
+
+const featureMachineLearning = async (itemId, period = 7) => {
 	const today = new Date();
 	const pastDate = new Date();
 	pastDate.setDate(today.getDate() - period);
+	pastDate.setHours(0, 0, 0, 0); // Set waktu ke awal hari
 
-	// Ambil data transaksi issuing
 	const transactions = await TransactionDetail.findAll({
 		include: [
 			{
 				model: TransactionsHeaders,
-				attributes: ["information"],
+				as: "TransactionHeader", // Tambahkan alias sesuai asosiasi
+				attributes: ["information", "transaction_date"],
 				where: {
 					information: "Issuing",
+					transaction_date: {
+						[Op.between]: [pastDate, today],
+					},
 				},
 			},
 		],
 		where: {
 			item_id: itemId,
-			createdAt: {
-				[Op.between]: [pastDate, today],
-			},
 		},
-		attributes: ["quantity", "createdAt"],
-		order: [["createdAt", "ASC"]],
+		attributes: ["quantity"],
+		order: [
+			[
+				{ model: TransactionsHeaders, as: "TransactionHeader" },
+				"transaction_date",
+				"ASC",
+			],
+		],
 	});
 
-	// Ambil stok saat ini dari tabel Item
 	const item = await Item.findOne({
 		where: { id: itemId },
 		attributes: ["stock"],
@@ -365,39 +515,85 @@ const calculateMovingAverage = async (itemId, period = 7) => {
 			average: null,
 			predictedSales: null,
 			stockNeeded: null,
-			additionalStockNeeded: null,
 			message: "Item not found",
 		};
 	}
 
-	const currentStock = item.stock; // Stok saat ini dari database
+	const currentStock = item.stock;
 
-	if (transactions.length === 0) {
+	const transactionData = transactions.map((t) => ({
+		date: new Date(t.TransactionHeader.transaction_date).getTime(),
+		quantity: t.quantity,
+	}));
+
+	const X = transactionData.map(
+		(t) => new Date(t.date).toISOString().split("T")[0]
+	);
+	const y = transactionData.map((t) => t.quantity);
+
+	try {
+		const response = await axios.post("http://localhost:5000/predict", {
+			X,
+			y,
+			period,
+			currentStock,
+			model: "prophet", // atau "sarima"
+		});
+
+		if (response.data.error) {
+			return {
+				average: (
+					y.reduce((sum, quantity) => sum + quantity, 0) / y.length
+				).toFixed(2),
+				predictedSales: null,
+				stockNeeded: null,
+				message: response.data.message,
+			};
+		}
+		console.log(response.data);
+
+		const predictedSales = parseFloat(
+			response.data.forecast.predictedSales
+		).toFixed(2);
+
+		const confidence = parseFloat(response.data.forecast.confidence);
+		const errorMargin = parseFloat(response.data.forecast.errorMargin);
+		const predictionInterval = parseFloat(
+			response.data.forecast.predictionInterval
+		);
+
+		const stockNeeded = Math.max(0, Math.ceil(predictedSales - currentStock));
+
+		const forecast = response.data.forecast;
 		return {
-			average: null,
+			average: (
+				y.reduce((sum, quantity) => sum + quantity, 0) / y.length
+			).toFixed(2),
+			predictedSales: predictedSales,
+			predictedSalesDaily: forecast.predictedSalesDaily.map((dailySale) =>
+				parseFloat(dailySale).toFixed(2)
+			),
+			stockNeeded: stockNeeded,
+			currentStock: currentStock,
+			confidence: confidence.toFixed(4),
+			errorMargin: errorMargin.toFixed(4),
+			predictionInterval: predictionInterval.toFixed(4),
+			message: "Forecast based on available data and ML model",
+		};
+	} catch (error) {
+		console.error(
+			"Error from Flask:",
+			error.response ? error.response.data : error.message
+		);
+		return {
+			average: (
+				y.reduce((sum, quantity) => sum + quantity, 0) / y.length
+			).toFixed(2),
 			predictedSales: null,
 			stockNeeded: null,
-			message: "No transaction data available for this item",
+			message: error.response ? error.response.data : error.message,
 		};
 	}
-
-	// Hitung rata-rata barang keluar per hari
-	const total = transactions.reduce((sum, t) => sum + t.quantity, 0);
-	const movingAverage = (total / transactions.length).toFixed(2);
-
-	// Prediksi transaksi issuing dalam periode ke depan
-	const predictedSales = (movingAverage * period).toFixed(2);
-
-	// Hitung stok yang perlu disiapkan agar stok tidak habis
-	const stockNeeded = Math.max(0, Math.ceil(predictedSales - currentStock));
-
-	return {
-		average: movingAverage,
-		predictedSales: predictedSales,
-		stockNeeded: stockNeeded, // Estimasi total barang keluar dalam periode yang dipilih
-		currentStock: currentStock,
-		message: "Forecast based on available data",
-	};
 };
 
 module.exports = {
@@ -410,5 +606,9 @@ module.exports = {
 	editTransactionHeader,
 	deleteTransactionHeader,
 	createTransactionDetail,
-	calculateMovingAverage,
+	featureMachineLearning,
+	findMostIssuedItems,
+	findTransactionTrends,
+	mostTransactionsOutletCount,
+	getTopItemCategories,
 };

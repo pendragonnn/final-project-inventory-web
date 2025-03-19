@@ -42,7 +42,6 @@ const ModalUserAdd = ({ name, test, addToTable }) => {
 
 			// Retrieve user ID from the response
 			const userId = userResponse.data.data.id;
-			console.log(userId);
 			// Create FormData to handle file upload
 			const formData = new FormData();
 			formData.append("role_id", e.target.role_id.value);

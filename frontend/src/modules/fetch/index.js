@@ -91,6 +91,82 @@ async function getTransactionDetailById(id) {
 	}
 }
 
+async function getForcastTransaction(itemId, period) {
+	try {
+		const res = await instance.get(
+			`/transaction-detail/Forecast/${itemId}?period=${period}`
+		);
+
+		return res.data;
+	} catch (error) {
+		const errorMessage = error.response ? error.response.data : error.message;
+		console.error("Error while fetching forecast:", errorMessage);
+		throw new Error(errorMessage);
+	}
+}
+
+async function mostItemIssued(size) {
+	const payload = {
+		size: size,
+	};
+	try {
+		const res = await instance.get(`/transaction-header/most-issued`, {
+			params: payload,
+		});
+
+		return res.data;
+	} catch (error) {
+		console.log(error);
+		throw new Error(error.response.data);
+	}
+}
+
+async function getTransactionTrends(period) {
+	const payload = {
+		period,
+	};
+	try {
+		const res = await instance.get(`/transaction-header/trends`, {
+			params: payload,
+		});
+
+		return res.data.data;
+	} catch (error) {
+		throw new Error(error.response.data);
+	}
+}
+
+async function getMostOutletTransaction(size, period) {
+	const payload = {
+		size,
+		period,
+	};
+	try {
+		const res = await instance.get(`/transaction-header/most-outlet`, {
+			params: payload,
+		});
+
+		return res.data;
+	} catch (error) {
+		throw new Error(error.response.data);
+	}
+}
+
+async function getMostCategoryIssued(period) {
+	const payload = {
+		period,
+	};
+	try {
+		const res = await instance.get(`/transaction-header/most-categories`, {
+			params: payload,
+		});
+
+		return res.data;
+	} catch (error) {
+		throw new Error(error.response.data);
+	}
+}
+
 async function deleteTransactionHeader(id) {
 	try {
 		const res = await instance.delete(`/transaction-header/${id}`);
@@ -109,4 +185,9 @@ module.exports = {
 	getTransactionHeaderById,
 	getTransactionDetailById,
 	deleteTransactionHeader,
+	getForcastTransaction,
+	mostItemIssued,
+	getTransactionTrends,
+	getMostOutletTransaction,
+	getMostCategoryIssued,
 };

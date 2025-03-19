@@ -15,13 +15,17 @@ export default function RootLayout({ children }) {
 		<html lang="en">
 			<head>
 				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1.0, user-scalable=no"
+				/>
+				<meta
 					name="description"
 					content="Shoe inventory manager website called ShoeStock."
 				/>
-				<link rel="shortcut icon" href="/Logo.svg" type="image/x-icon" />
+				<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 				<title>ShoeStock</title>
 			</head>
-			<body suppressHydrationWarning={true}>
+			<body suppressHydrationWarning={true} className="min-h-screen">
 				<div className="dark:bg-boxdark-2 dark:text-bodydark">
 					{loading ? <Loader /> : children}
 				</div>

@@ -9,7 +9,6 @@ import auth from "@/data/auth";
 
 const SignIn = () => {
 	const router = useRouter();
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -19,18 +18,12 @@ const SignIn = () => {
 				password: e.target.password.value,
 			});
 
-			Swal.fire({
-				position: "bottom-end",
-				icon: "success",
-				title: res.data.message,
-				showConfirmButton: false,
-				timer: 1000,
-			});
-
 			Cookies.set("token", res.data.token, { expires: 1 });
 
-			router.push("/dashboard");
-			router.refresh(); // Segarkan data di halaman dashboard
+			window.location.reload();
+			setTimeout(() => {
+				router.push("/dashboard");
+			}, 100);
 		} catch (error) {
 			Swal.fire({
 				position: "bottom-end",

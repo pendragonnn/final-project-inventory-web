@@ -8,6 +8,10 @@ const {
 	editTransactionHeaderById,
 	getTransactionHeaderReturning,
 	getStockForecast,
+	getMostSoldItem,
+	getTransactionTrends,
+	mostOutlet,
+	mostCategory,
 } = require("../service/transaction.header.service");
 
 const {
@@ -74,6 +78,17 @@ const alltransactionIssuing = async (req, res) => {
 			currentPage: parseInt(page),
 			totalPages: Math.ceil(dataLength / size),
 		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+const mostTransactionIssuing = async (req, res) => {
+	const size = req.query.size || 10;
+	try {
+		const transactionIssuing = await getMostSoldItem(size);
+
+		res.status(200).json({ data: transactionIssuing });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -202,6 +217,43 @@ const removeTransactionHeader = async (req, res) => {
 	}
 };
 
+const TransactionTrends = async (req, res) => {
+	const period = parseInt(req.query.period) || 30;
+	try {
+		const data = await getTransactionTrends(period);
+		res.status(200).json({
+			data,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+const mostTransactionIssuingOutlet = async (req, res) => {
+	const period = parseInt(req.query.period) || 30;
+	const size = req.query.size || 10;
+	try {
+		const data = await mostOutlet(size, period);
+		res.status(200).json({
+			data,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+const mostCategoryIssued = async (req, res) => {
+	const period = parseInt(req.query.period) || 30;
+	try {
+		const data = await mostCategory(period);
+		res.status(200).json({
+			data,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
 const stockForecast = async (req, res) => {
 	try {
 		const { period } = req.query;
@@ -210,8 +262,7 @@ const stockForecast = async (req, res) => {
 		const forecast = await getStockForecast(itemId, parseInt(period) || 7);
 
 		res.status(200).json({
-			itemId,
-			forecast,
+			data: { itemId, forecast },
 		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
@@ -228,4 +279,8 @@ module.exports = {
 	updateTransactionHeader,
 	removeTransactionHeader,
 	stockForecast,
+	mostTransactionIssuing,
+	TransactionTrends,
+	mostTransactionIssuingOutlet,
+	mostCategoryIssued,
 };

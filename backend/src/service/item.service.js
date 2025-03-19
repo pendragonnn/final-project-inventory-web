@@ -7,10 +7,16 @@ const {
 	deleteItem,
 	// updateItemPhotos,
 	updateStock,
+	findItemStock,
 } = require("../repository/item.repository");
 
 const getAllItems = async (page, size) => {
 	const items = await findItems(page, size);
+	return items;
+};
+
+const getFindItemStock = async (size) => {
+	const items = await findItemStock(size);
 	return items;
 };
 
@@ -76,4 +82,5 @@ module.exports = {
 	// updateItemPhoto,
 	decreaseStock,
 	increaseStock,
+	getFindItemStock,
 };

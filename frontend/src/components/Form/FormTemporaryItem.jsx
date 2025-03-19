@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Brand from "@/data/brand/index";
 import Item from "@/data/item/index";
 
-const FormTemporaryItem = ({ handleAdd }) => {
+const FormTemporaryItem = ({ handleAdd, dataItem }) => {
 	const [selectedItemName, setSelectedItemName] = useState("");
 	const [selectedItemType, setSelectedItemType] = useState("");
 	const [selectedItemSize, setSelectedItemSize] = useState("");
@@ -30,8 +30,9 @@ const FormTemporaryItem = ({ handleAdd }) => {
 	useEffect(() => {
 		const fetchItems = async () => {
 			try {
-				const response = await Item.getItem();
-				setItems(response.data.data);
+				const response = await Item.getItemSelect();
+
+				setItems(response.data);
 			} catch (error) {
 				console.error("Error fetching items:", error);
 			}
@@ -54,13 +55,20 @@ const FormTemporaryItem = ({ handleAdd }) => {
 	const handleItemNameChange = (event) => {
 		const itemName = event.target.value;
 		setSelectedItemName(itemName);
-		resetSelections();
+
+		// Reset type dan size ketika ganti brand
+		setSelectedItemType("");
+		setSelectedItemSize("");
+		setSelectedItem(null);
 	};
 
 	const handleItemTypeChange = (event) => {
 		const itemType = event.target.value;
 		setSelectedItemType(itemType);
-		resetSelections();
+
+		// Reset size ketika ganti tipe
+		setSelectedItemSize("");
+		setSelectedItem(null);
 	};
 
 	const handleItemSizeChange = (event) => {
@@ -105,11 +113,6 @@ const FormTemporaryItem = ({ handleAdd }) => {
 		resetForm();
 	};
 
-	const resetSelections = () => {
-		setSelectedItemSize("");
-		setSelectedItem(null);
-	};
-
 	const resetForm = () => {
 		setSelectedItemName("");
 		setSelectedItemType("");
@@ -119,15 +122,7 @@ const FormTemporaryItem = ({ handleAdd }) => {
 		setMessage("");
 	};
 
-	const uniqueBrands = [
-		...new Set(
-			items
-				.map((item) => {
-					return brands.find((brand) => brand.id === item.brand_id)?.name;
-				})
-				.filter(Boolean)
-		),
-	];
+	const uniqueBrands = [...new Set(items.map((item) => item.Brand.name))];
 
 	return (
 		<form onSubmit={handleSubmit} className="flex-1">
@@ -203,7 +198,8 @@ const FormTemporaryItem = ({ handleAdd }) => {
 						{selectedItem && (
 							<div className="mt-2">
 								<p className="text-md text-gray-600 dark:text-gray-400">
-									Available stock: {selectedItem.stock}
+									Available stock:{" "}
+									{dataItem.find((item) => item.id === selectedItem.id)?.stock}
 								</p>
 							</div>
 						)}

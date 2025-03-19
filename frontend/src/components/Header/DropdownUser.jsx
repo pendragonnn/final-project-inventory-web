@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -6,7 +7,6 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import auth from "@/data/auth";
 import user from "@/data/user";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 const DropdownUser = () => {
@@ -15,6 +15,7 @@ const DropdownUser = () => {
 	const router = useRouter();
 	const trigger = useRef(null);
 	const dropdown = useRef(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const clickHandler = ({ target }) => {
@@ -29,8 +30,8 @@ const DropdownUser = () => {
 		};
 		document.addEventListener("click", clickHandler);
 		return () => document.removeEventListener("click", clickHandler);
-	});
-	// close if the esc key is pressed
+	}, [dropdownOpen]); // Menambahkan dependency dropdownOpen
+
 	useEffect(() => {
 		const keyHandler = ({ keyCode }) => {
 			if (!dropdownOpen || keyCode !== 27) return;
@@ -38,21 +39,39 @@ const DropdownUser = () => {
 		};
 		document.addEventListener("keydown", keyHandler);
 		return () => document.removeEventListener("keydown", keyHandler);
-	});
+	}, [dropdownOpen]); // Menambahkan dependency dropdownOpen
+
+	const fetchData = async () => {
+		try {
+			const token = Cookies.get("token");
+			if (!token) return;
+
+			const id = jwtDecode(token).id;
+			const res = await user.getUserById(id);
+			setData(res.data.data);
+		} catch (e) {
+			console.error("Error while fetching data:", e);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const id = jwtDecode(Cookies.get("token")).id;
-				const res = await user.getUserById(id);
-				setData(res.data.data);
-			} catch (e) {
-				console.error("error while fetching data", e);
-			}
-		};
-
+		// Fetch data pertama kali
 		fetchData();
+
+		// Set interval untuk refresh setiap 5 detik
+		const interval = setInterval(() => {
+			fetchData();
+		}, 5000);
+
+		// Hapus interval saat komponen di-unmount
+		return () => clearInterval(interval);
 	}, []);
+
+	if (loading) {
+		return <div>Loading...</div>; // Tampilkan loading state
+	}
 
 	const handleLogout = () => {
 		Swal.fire({
@@ -72,15 +91,7 @@ const DropdownUser = () => {
 			try {
 				if (result.isConfirmed) {
 					const token = Cookies.get("token");
-					const res = await axios.delete(
-						"http://localhost:8000/api/v1/logout",
-						{
-							headers: {
-								"content-type": "application/json; charset=utf=UTF-8",
-								Authorization: `Bearer ${token}`,
-							},
-						}
-					);
+					const res = await auth.logout(token);
 
 					Cookies.remove("token");
 					Cookies.remove("role");
@@ -145,6 +156,7 @@ const DropdownUser = () => {
 							src={`/uploads/user/${data?.image_url}`}
 							alt="User"
 							className="rounded-full"
+							unoptimized={true}
 						/>
 					</span>
 				)}
@@ -158,7 +170,9 @@ const DropdownUser = () => {
 				)}
 
 				<svg
-					className="hidden fill-current sm:block"
+					className={`hidden fill-current sm:block ${
+						dropdownOpen && "rotate-180"
+					}`}
 					width="12"
 					height="8"
 					viewBox="0 0 12 8"

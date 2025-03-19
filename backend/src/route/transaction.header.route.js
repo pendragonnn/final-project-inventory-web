@@ -9,6 +9,13 @@ route.get("/", transactionheaderController.allTransactionHeader);
 route.get("/receiving", transactionheaderController.alltransactionReceiving);
 route.get("/issuing", transactionheaderController.alltransactionIssuing);
 route.get("/returning", transactionheaderController.alltransactionReturning);
+route.get("/most-issued", transactionheaderController.mostTransactionIssuing);
+route.get("/trends", transactionheaderController.TransactionTrends);
+route.get(
+	"/most-outlet",
+	transactionheaderController.mostTransactionIssuingOutlet
+);
+route.get("/most-categories", transactionheaderController.mostCategoryIssued);
 route.get("/:id", transactionheaderController.transactionHeaderById);
 route.post(
 	"/",

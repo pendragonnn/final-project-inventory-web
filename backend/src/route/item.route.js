@@ -5,6 +5,7 @@ const itemsController = require("../controller/item.controller");
 const { itemValidator } = require("../middleware/data.validator.middleware");
 
 router.get("/", itemsController.allItems);
+router.get("/find-stock", itemsController.allItemStock);
 router.get("/:id", itemsController.itemById);
 router.post("/", itemValidator, itemsController.postItem);
 // router.post(

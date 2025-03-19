@@ -16,8 +16,6 @@ const Profile = () => {
 			const res = await user.getUserById(id);
 
 			setData(res.data.data);
-
-			console.log(res.data.data);
 		} catch (error) {
 			console.error("Error fetching user data", error);
 		}
@@ -32,7 +30,6 @@ const Profile = () => {
 			const id = jwtDecode(Cookies.get("token")).id;
 
 			const selectedFile = e.target.files[0];
-			console.log(selectedFile);
 
 			const formData = new FormData();
 			formData.append("image_url", selectedFile);
@@ -60,13 +57,16 @@ const Profile = () => {
 	return (
 		<div className="overflow-hidden w-full md:w-2/3 mx-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 			<div className="relative z-20 h-35 md:h-65">
-				<Image
-					src={"/images/cover/cover-01.png"}
-					alt="profile cover"
-					className="h-full w-full rounded-tl-sm rounded-tr-sm object-cover object-center"
-					width={970}
-					height={260}
-				/>
+				<div className="relative z-20 h-35 md:h-65">
+					<Image
+						src="/images/cover/cover-01.png"
+						alt="profile cover"
+						className="rounded-tl-sm rounded-tr-sm object-cover object-center"
+						fill
+						sizes="(max-width: 768px) 100vw, 970px"
+						priority
+					/>
+				</div>
 			</div>
 			<div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
 				<div className="relative flex items-center justify-center z-30 mx-auto -mt-22 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3">
@@ -74,11 +74,17 @@ const Profile = () => {
 						<div className="relative drop-shadow-2">
 							<span className="avatar h-[10rem] w-[10rem] top-1">
 								<Image
-									src={`/uploads/user/${data?.image_url}`}
+									src={
+										data?.image_url
+											? `/uploads/user/${data.image_url}`
+											: "/images/favicon.ico" // Gambar default jika image_url kosong
+									}
 									width={150}
 									height={150}
 									alt="profile"
 									className="rounded-full"
+									style={{ width: "auto", height: "auto" }}
+									priority
 								/>
 							</span>
 

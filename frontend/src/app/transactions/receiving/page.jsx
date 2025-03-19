@@ -102,7 +102,8 @@ const TransactionHeader = () => {
 					return item;
 				});
 
-				setDataItem(updatedDataItem);
+				setDataItem(updatedDataItem); // Perbarui state `dataItem` sementara
+
 				setItemTemporary([]);
 
 				Swal.fire({

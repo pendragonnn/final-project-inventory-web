@@ -7,7 +7,11 @@ const {
 	deleteTransactionHeader,
 	editTransactionHeader,
 	findsTransactionHeaderReturning,
-	calculateMovingAverage,
+	featureMachineLearning,
+	findMostIssuedItems,
+	findTransactionTrends,
+	mostTransactionsOutletCount,
+	getTopItemCategories,
 } = require("../repository/transaction.header.repository");
 
 const getAllTransactionHeader = async (page, size) => {
@@ -25,6 +29,11 @@ const getTransactionHeaderReceiving = async (page, size) => {
 
 const getTransactionHeaderIssuing = async (page, size) => {
 	const transactionIssuing = await findsTransactionHeaderIssuing(page, size);
+	return transactionIssuing;
+};
+
+const getMostSoldItem = async (size) => {
+	const transactionIssuing = await findMostIssuedItems(size);
 	return transactionIssuing;
 };
 
@@ -82,12 +91,27 @@ const deleteTransactionHeaderById = async (id) => {
 	}
 };
 
+const getTransactionTrends = async (period) => {
+	const transactionTrends = await findTransactionTrends(period);
+	return transactionTrends;
+};
+
+const mostOutlet = async (size, period) => {
+	const outlets = await mostTransactionsOutletCount(size, period);
+	return outlets;
+};
+
+const mostCategory = async (period) => {
+	const category = await getTopItemCategories(period);
+	return category;
+};
+
 const getStockForecast = async (itemId, period) => {
 	if (!itemId) {
 		throw new Error("Item Id is required");
 	}
 
-	return await calculateMovingAverage(itemId, period || 7);
+	return await featureMachineLearning(itemId, period || 7);
 };
 
 module.exports = {
@@ -100,4 +124,8 @@ module.exports = {
 	editTransactionHeaderById,
 	deleteTransactionHeaderById,
 	getStockForecast,
+	getMostSoldItem,
+	getTransactionTrends,
+	mostOutlet,
+	mostCategory,
 };

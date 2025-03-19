@@ -54,20 +54,6 @@ const DetailReportReceiving = () => {
 		0
 	);
 
-	const getBase64Image = async (url) => {
-		try {
-			const response = await fetch(url);
-			const blob = await response.blob();
-			return new Promise((resolve) => {
-				const reader = new FileReader();
-				reader.onloadend = () => resolve(reader.result);
-				reader.readAsDataURL(blob);
-			});
-		} catch (error) {
-			console.error("Gagal memuat gambar:", error);
-			return null;
-		}
-	};
 	const handleExportPDF = () => {
 		const doc = new jsPDF();
 		const margin = 20;
@@ -300,8 +286,10 @@ const DetailReportReceiving = () => {
 												<Image
 													src={`/uploads/brand/${item?.Item?.Brand?.image_url}`}
 													alt={item.Item.Brand.name}
-													layout="fill"
+													fill
+													sizes="100%"
 													className="object-cover"
+													priority
 												/>
 											</div>
 											<div className="mt-4">
@@ -384,8 +372,8 @@ const DetailReportReceiving = () => {
 													},
 												].map(({ title, value, icon, children }, idx) => (
 													<div
-														key={idx}
-														className="flex items-center p-4 bg-gray-100 dark:bg-meta-4 rounded-lg shadow-md transition-all hover:bg-gray-200 dark:hover:bg-black"
+														key={idx} // Gunakan idx sebagai fallback (kurang optimal)
+														className="flex items-center p-4 bg-gray-100 dark:bg-strokedark rounded-lg shadow-md transition-all hover:bg-gray-200 dark:hover:bg-black"
 													>
 														<div className="bg-blue-500 p-2 rounded-md mr-4 text-white">
 															<i className={`fas fa-${icon} text-xl`}></i>
@@ -399,16 +387,21 @@ const DetailReportReceiving = () => {
 															</p>
 															{children && (
 																<div className="mt-2">
-																	{children.map(({ label, value }) => (
-																		<div className="flex items-center">
-																			<p className="text-sm text-gray-500 dark:text-gray-400">
-																				{label}:
-																			</p>
-																			<p className="text-sm text-gray-900 dark:text-white ml-2">
-																				{value}
-																			</p>
-																		</div>
-																	))}
+																	{children.map(
+																		({ label, value }, childIdx) => (
+																			<div
+																				key={childIdx}
+																				className="flex items-center"
+																			>
+																				<p className="text-sm text-gray-500 dark:text-gray-400">
+																					{label}:
+																				</p>
+																				<p className="text-sm text-gray-900 dark:text-white ml-2">
+																					{value}
+																				</p>
+																			</div>
+																		)
+																	)}
 																</div>
 															)}
 														</div>

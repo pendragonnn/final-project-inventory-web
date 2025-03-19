@@ -210,7 +210,7 @@ const ModalAddBrand = ({ name, test, addToTable, data }) => {
 									<input
 										type="file"
 										name="image_url"
-										enctype="multipart/form-data"
+										formEncType="multipart/form-data"
 										key={"item-photo"}
 										accept="image/*"
 										onChange={handleFileChange}

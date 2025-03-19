@@ -4,6 +4,7 @@ const {
 	insertItem,
 	editItemById,
 	deleteItemById,
+	getFindItemStock,
 	// updateItemPhoto,
 } = require("../service/item.service");
 
@@ -20,6 +21,18 @@ const allItems = async (req, res) => {
 		});
 	} catch (err) {
 		res.status(500).json({ message: err.message });
+	}
+};
+
+const allItemStock = async (req, res) => {
+	const size = req.query.size;
+	try {
+		const items = await getFindItemStock(size);
+		res.status(200).json({
+			data: items,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -121,5 +134,6 @@ module.exports = {
 	postItem,
 	updateItem,
 	removeItem,
+	allItemStock,
 	// uploadItemPhoto,
 };

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const models = require("../../models");
 const Item = models.Item;
 const Category = models.Category;
@@ -30,6 +31,27 @@ const findItems = async (page, size) => {
 		order: [["id", "DESC"]],
 	});
 	return { items, dataLength };
+};
+
+const findItemStock = async (size) => {
+	const items = await Item.findAll({
+		include: [
+			{
+				model: Brand,
+			},
+		],
+		where: [
+			{
+				stock: {
+					[Op.lt]: 10,
+				},
+			},
+		],
+		limit: size,
+		order: [["id", "DESC"]],
+	});
+
+	return items;
 };
 
 const findItemById = async (id) => {
@@ -239,4 +261,5 @@ module.exports = {
 	deleteItem,
 	// updateItemPhotos,
 	updateStock,
+	findItemStock,
 };

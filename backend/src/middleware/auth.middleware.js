@@ -26,7 +26,6 @@ const authenticateToken = async (req, res, next) => {
 
 		req.user = user;
 		const role = decodedToken.role;
-		console.log(role);
 
 		if (
 			(role == 2 && req.path.startsWith("/asdasd")) ||
