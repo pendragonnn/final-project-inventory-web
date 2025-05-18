@@ -57,7 +57,7 @@ const FormAddTransactionIssuing = ({
 						type="text"
 						value={userName}
 						readOnly
-						className="w-full text-body rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-graydark"
+						className="w-full dark:text-body text-bodydark2 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:disabled:bg-graydark"
 					/>
 				</div>
 
@@ -71,7 +71,7 @@ const FormAddTransactionIssuing = ({
 						name="information"
 						value="Issuing"
 						readOnly
-						className="w-full text-body rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+						className="w-full dark:text-body text-bodydark2 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
 					/>
 				</div>
 			</div>
@@ -113,6 +113,9 @@ const FormAddTransactionIssuing = ({
 									Item
 								</th>
 								<th className="py-4 px-4 font-medium text-black dark:text-white">
+									Size
+								</th>
+								<th className="py-4 px-4 font-medium text-black dark:text-white">
 									Quantity
 								</th>
 								<th className="py-4 px-4 font-medium text-black dark:text-white">
@@ -137,10 +140,20 @@ const FormAddTransactionIssuing = ({
 												required
 												readOnly
 												name="item_id"
-												value={value.item_name}
+												value={`${value.item_name} ${value.item_type}`}
 											/>
 										</td>
-										<td className="border-b border-[#eee] py-4 px-5 dark:border-strokedark">
+										<td className="border-b border-[#eee] py-4 px-1 dark:border-strokedark">
+											<input
+												type="text"
+												className="w-full rounded border-[1.5px] border-none bg-transparent py-2 font-medium outline-none transition focus:border-primary dark:bg-boxdark dark:disabled:bg-graydark text-center"
+												required
+												readOnly
+												name="item_id"
+												value={value.size}
+											/>
+										</td>
+										<td className="border-b border-[#eee] py-4 px-1 dark:border-strokedark">
 											<input
 												type="text"
 												className="w-full rounded border-[1.5px] border-none bg-transparent py-2 font-medium outline-none transition focus:border-primary dark:bg-boxdark dark:disabled:bg-graydark text-center"

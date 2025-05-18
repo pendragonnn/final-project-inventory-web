@@ -502,7 +502,7 @@ const TableItems = () => {
 												{value?.Brand?.Category?.name}
 											</p>
 										</td>
-										<td className="border-b border-[#eee] px-4 py-4 text-center dark:border-strokedark mx-auto">
+										<td className="border-b border-[#eee] px-4 py-4 text-left dark:border-strokedark mx-auto">
 											<p className="text-black dark:text-white">
 												{formatIDR(value.price)}
 											</p>

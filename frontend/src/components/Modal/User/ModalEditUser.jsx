@@ -154,8 +154,8 @@ const ModalEditUser = ({ data, test, addToTable }) => {
 										}
 									>
 										<option value="1">Admin</option>
-										<option value="2">Staff</option>
-										<option value="3">Manager</option>
+										<option value="2">Operator</option>
+										<option value="3">Owner</option>
 									</select>
 								</div>
 

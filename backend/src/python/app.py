@@ -26,12 +26,12 @@ def aggregate_daily_data(X_dates, y):
 def fill_missing_dates(X_dates, y):
     df = pd.DataFrame({'ds': pd.to_datetime(X_dates), 'y': y})
     
-    if df.empty or df['ds'].isna().all():  # Cek jika dataset kosong atau semua tanggal NaT
+    if df.empty or df['ds'].isna().all():
         return [], []
 
     min_date, max_date = df['ds'].min(), df['ds'].max()
     
-    if pd.isna(min_date) or pd.isna(max_date):  # Cek jika tanggal masih NaT
+    if pd.isna(min_date) or pd.isna(max_date):
         return [], []
 
     date_range = pd.date_range(start=min_date, end=max_date, freq='D')
@@ -40,10 +40,8 @@ def fill_missing_dates(X_dates, y):
     
     return df['ds'].dt.date.astype(str).tolist(), df['y'].tolist()
 
-
 def adjust_predictions(predictions, average_sales, period):
     if len(predictions) < period:
-        # Isi prediksi yang kurang dengan rata-rata harian
         predictions = np.append(predictions, [average_sales] * (period - len(predictions)))
     return predictions
 
@@ -61,56 +59,91 @@ def train_sarima(X_dates, y, period):
     return pred_mean.tolist(), conf_int
 
 def train_prophet(X_dates, y, period):
-    df = pd.DataFrame({'ds': pd.to_datetime(X_dates), 'y': y})  # Gunakan data asli
+    df = pd.DataFrame({'ds': pd.to_datetime(X_dates), 'y': y})
 
     model = Prophet(
-        seasonality_mode='additive',
+        seasonality_mode='multiplicative',
         growth='flat',
-        changepoint_prior_scale=0.01  # Kurangi sensitivitas
+        changepoint_prior_scale=0.1,
+        seasonality_prior_scale=15.0,
+        daily_seasonality=False
     )
-    model.add_seasonality(name='weekly', period=7, fourier_order=3)
-    model.add_seasonality(name='monthly', period=30.5, fourier_order=5)
-
+    
+    # 1. Pisahkan fitur Sabtu dan Minggu
+    df['is_saturday'] = (df['ds'].dt.weekday == 5).astype(int)
+    df['is_sunday'] = (df['ds'].dt.weekday == 6).astype(int)
+    
+    # 2. Tambahkan regressor khusus hari
+    df['saturday_boost'] = df['is_saturday'] * 1.3  # Boost 50% untuk Sabtu
+    df['sunday_boost'] = df['is_sunday'] * 1.3       # Boost 30% untuk Minggu
+    
+    # 3. Fitur tambahan
     df['day'] = df['ds'].dt.day
-    df['is_weekend'] = (df['ds'].dt.weekday >= 5).astype(int)
-    df['is_25_26'] = df['day'].isin([25, 26]).astype(int)
-    df['is_double_date'] = (df['day'] == df['ds'].dt.month).astype(int)
     df['is_25_31'] = df['day'].isin(range(25, 32)).astype(int)
-
-    for col in ['is_weekend', 'is_25_26', 'is_double_date', 'is_25_31']:
-        model.add_regressor(col)
+    df['is_double_date'] = (df['day'] == df['ds'].dt.month).astype(int)
+    
+    # 4. Interaksi khusus weekend
+    df['saturday_25_31'] = (df['is_saturday'] & df['is_25_31']).astype(int)
+    df['sunday_special'] = (df['is_sunday'] & (df['day'] == 1)).astype(int)  # Contoh interaksi khusus
+    
+    regressors = [
+        'is_saturday',
+        'is_sunday',
+        'saturday_boost',
+        'sunday_boost',
+        'is_25_31',
+        'is_double_date',
+        'saturday_25_31',
+        'sunday_special'
+    ]
+    
+    for reg in regressors:
+        model.add_regressor(reg)
 
     model.fit(df)
 
+    # Persiapkan future dataframe
     future = model.make_future_dataframe(periods=period)
     future['day'] = future['ds'].dt.day
-    future['is_weekend'] = (future['ds'].dt.weekday >= 5).astype(int)
-    future['is_25_26'] = future['day'].isin([25, 26]).astype(int)
-    future['is_double_date'] = (future['day'] == future['ds'].dt.month).astype(int)
+    future['is_saturday'] = (future['ds'].dt.weekday == 5).astype(int)
+    future['is_sunday'] = (future['ds'].dt.weekday == 6).astype(int)
+    future['saturday_boost'] = future['is_saturday'] * 1.5
+    future['sunday_boost'] = future['is_sunday'] * 1.3
     future['is_25_31'] = future['day'].isin(range(25, 32)).astype(int)
+    future['is_double_date'] = (future['day'] == future['ds'].dt.month).astype(int)
+    future['saturday_25_31'] = (future['is_saturday'] & future['is_25_31']).astype(int)
+    future['sunday_special'] = (future['is_sunday'] & (future['day'] == 1)).astype(int)
 
     forecast = model.predict(future)
-    pred = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(period)
-
-    # Pastikan yhat_lower dan yhat_upper tidak negatif
-    pred['yhat_lower'] = np.maximum(0, pred['yhat_lower'])
-    pred['yhat_upper'] = np.maximum(0, pred['yhat_upper'])
-
-    return pred['yhat'].tolist(), (pred['yhat_lower'].tolist(), pred['yhat_upper'].tolist())
+    
+    # Post-processing khusus
+    pred = forecast.tail(period)
+    predictions = pred['yhat'].values
+    
+    # Dapatkan hari untuk prediksi
+    pred_dates = future.tail(period)['ds'].dt.weekday
+    
+    # Atur hubungan Sabtu-Minggu
+    for i in range(1, len(predictions)):
+        # Jika hari ini Minggu dan kemarin Sabtu
+        if pred_dates.iloc[i] == 6 and pred_dates.iloc[i-1] == 5:
+            # Pastikan prediksi Minggu minimal 80% dari Sabtu
+            min_sunday = predictions[i-1] * 0.8
+            predictions[i] = max(predictions[i], min_sunday)
+            
+            # Jika Sabtu > 20 transaksi, Minggu minimal 60%
+            if predictions[i-1] > 20:
+                predictions[i] = max(predictions[i], predictions[i-1] * 0.6)
+    
+    return predictions.tolist(), (pred['yhat_lower'].tolist(), pred['yhat_upper'].tolist())
 
 def calculate_confidence(y_true, y_pred, intervals, error_margin):
-    # Cek berapa banyak prediksi yang berada dalam interval dengan margin kesalahan
     within_interval_count = sum(
         1 for true, pred, lower, upper in zip(y_true, y_pred, intervals[0], intervals[1])
         if lower - error_margin <= pred <= upper + error_margin
     )
-    
-    # Persentase prediksi yang berada dalam interval
     confidence = within_interval_count / len(y_true)
-    
-    # Jika confidence lebih kecil dari 0.5, set minimum ke 0.5
-    return  confidence
-
+    return max(0.5, confidence)  # Minimum confidence 50%
 
 @app.route('/predict', methods=['POST'])
 def predict_sales():
@@ -120,17 +153,10 @@ def predict_sales():
     y = np.array(data['y'])
     period = data.get('period', 7)
     current_stock = data.get('currentStock', 0)
-  
 
-    # Aggregasi dan isi tanggal yang hilang
+
     X_dates, y = aggregate_daily_data(X_dates, y)
     X_dates, y = fill_missing_dates(X_dates, y)
-
-    if len(y) < 2 or np.count_nonzero(y) < 2:  # Pastikan minimal 2 transaksi
-        return jsonify({
-            "error": "Not enough transactions for forecasting."
-        }), 400
-
     print("X_dates (aggregated):", X_dates)
     print("y (aggregated):", y)
     print("period:", period)
@@ -138,36 +164,30 @@ def predict_sales():
     print("total_transaction:", sum(y))
     print("total_day:", len(y))
 
-    model_type = data.get('model', 'sarima')
+    if len(y) < 2 or np.count_nonzero(y) < 2:
+        return jsonify({
+            "error": "Not enough transactions for forecasting."
+        }), 400
+
+    model_type = data.get('model', 'prophet')  # Default ke Prophet sekarang
 
     if model_type == 'prophet':
         predictions, intervals = train_prophet(X_dates, y, period)
     else:
         predictions, intervals = train_sarima(X_dates, y, period)
 
-    # Clamp dengan IQR
     predictions = clamp_iqr(predictions, y)
-
-    # Smooth prediksi harian
     smoothed_predictions = moving_average_smoothing(predictions)
-
-    # Sesuaikan prediksi jika kurang dari period
     average_sales = np.mean(y)
     smoothed_predictions = adjust_predictions(smoothed_predictions, average_sales, period)
 
     predicted_sales = sum(smoothed_predictions)
     stock_needed = max(0, predicted_sales - current_stock)
 
-    # Calculate confidence dynamically
     error_margin = mean_absolute_error(y, predictions[:len(y)]) if len(predictions) >= len(y) else 0
     confidence = calculate_confidence(y, predictions[:len(y)], intervals, error_margin)
 
-
-    # Error margin dihitung berdasarkan panjang data yang valid
-    min_len = min(len(y), len(predictions))
-
-    # Calculate prediction interval
-    prediction_interval = np.std(predictions) * 1.96  # 95% confidence interval
+    prediction_interval = np.std(predictions) * 1.96
 
     response = {
         "itemId": item_id,
@@ -180,11 +200,15 @@ def predict_sales():
             "confidence": f"{confidence * 100:.4f}",
             "errorMargin": f"{error_margin:.4f}",
             "predictionInterval": f"{prediction_interval:.4f}",
-            "message": f"Forecast based on {model_type.upper()} with IQR clamping & smoothing"
+            "message": f"Forecast based on {model_type.upper()} with weekend optimization"
         }
     }
 
     return jsonify(response)
 
 if __name__ == '__main__':
+    # Jalankan hanya jika ini adalah proses utama, bukan reloader
+    import os
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        print("Flask running (actual execution)")
     app.run(debug=True)
