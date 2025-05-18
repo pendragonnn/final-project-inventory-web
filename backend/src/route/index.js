@@ -9,11 +9,13 @@ const userRouter = require("./user.route");
 const itemRouter = require("./item.route");
 const categoryRoutes = require("./category.route");
 const roleRoutes = require("./role.route");
+const brandRoutes = require("./brand.route");
 
 router.use(authMiddleware.authenticateToken);
 router.use("/transaction-header", transactionheaderRoutes);
 router.use("/transaction-detail", transactiondetailRoutes);
 router.use("/item", itemRouter);
+router.use("/brand", brandRoutes);
 router.use("/supplier", suppliersRoutes);
 router.use("/outlet", outletsRoutes);
 router.use("/user", userRouter);

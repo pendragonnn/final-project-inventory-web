@@ -1,328 +1,308 @@
 import Swal from "sweetalert2";
-import React from "react";
-import { useRef, useEffect, useState } from "react";
-import Category from "@/data/category/index";
-
+import React, { useRef, useEffect, useState } from "react";
 import Item from "@/data/item/index";
+import Brand from "@/data/brand/index"; // Import untuk mengambil data brand
 
 const ModalEditItem = ({ data, test, addToTable }) => {
-  const modalCheckbox = useRef(null);
-  const [dataItem, setDataItem] = useState([]);
-  const [file, setFile] = useState(null);
+	const modalCheckbox = useRef(null);
+	const [brands, setBrands] = useState([]); // State untuk menyimpan data brands
+	const [filteredTypes, setFilteredTypes] = useState([]); // State untuk dropdown Type
+	const [formData, setFormData] = useState({
+		description: data?.data?.description || "",
+		price: data?.data?.price || "",
+		size: data?.data?.size || "",
+		stock: data?.data?.stock || "",
+		brand_id: data?.data?.brand_id || "",
+		brand_name: "",
+		brand_type: "",
+	});
 
+	useEffect(() => {
+		const fetchData = async () => {
+			const res = await Brand.getBrand();
+			const allRes = await Brand.getBrand(1, res.data.totalItems);
+			setBrands(allRes.data.data);
+		};
 
+		fetchData();
+	}, []);
 
+	useEffect(() => {
+		if (data?.data) {
+			console.log("Brand ID from data:", data.data.brand_id);
 
-  const [formData, setFormData] = useState({
-    name: data?.data?.name || "",
-    description: data?.data?.description || "",
-    category_id: data?.data?.category_id || "",
-    price: data?.data?.price || "",
-    stock: data?.data?.stock || "",
-    image_url: data?.data?.image_url || "",
-  });
+			// Find the current brand by brand_id
+			const currentBrand = brands.find(
+				(brand) => brand.id === data.data.brand_id
+			);
 
-  useEffect(() => {
-    setFormData({
-      name: data?.data?.name || "",
-      description: data?.data?.description || "",
-      category_id: data?.data?.category_id || "",
-      price: data?.data?.price || "",
-      stock: data?.data?.stock || "",
-      image_url: data?.data?.image_url || "",
-    });
-  }, [data]);
+			setFormData({
+				description: data.data.description || "",
+				price: data.data.price || "",
+				size: data.data.size || "",
+				stock: data.data.stock || "",
+				brand_id: data.data.brand_id || "",
+				brand_name: currentBrand?.name || "Unknown Brand",
+				brand_type: currentBrand?.type || "Unknown Type",
+			});
 
-  const handleStockChange = (e) => {
-  const newStock = e.target.value;
-  setFormData((prevData) => ({
-    ...prevData,
-    stock: newStock,
-  }));
-};
+			setFilteredTypes(
+				currentBrand
+					? brands
+							.filter((brand) => brand.name === currentBrand.name)
+							.map((b) => b.type)
+					: []
+			);
+		}
+	}, [data, brands]);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+	const handleNameChange = (e) => {
+		const selectedName = e.target.value;
+		setFormData((prevData) => ({
+			...prevData,
+			brand_name: selectedName,
+			brand_type: "",
+		}));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await Category.getCategory();
-      const allRes = await Category.getCategory(1, res.data.totalItems);
-      setDataItem(allRes.data.data);
-    };
+		const types = brands
+			.filter((brand) => brand.name === selectedName)
+			.map((brand) => brand.type);
+		setFilteredTypes(types);
+	};
 
-    fetchData();
-  }, []);
+	const handleTypeChange = (e) => {
+		const selectedType = e.target.value;
+		setFormData((prevData) => ({
+			...prevData,
+			brand_type: selectedType,
+		}));
 
- 
+		const selectedBrand = brands.find(
+			(brand) =>
+				brand.name === formData.brand_name && brand.type === selectedType
+		);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+		if (selectedBrand) {
+			setFormData((prevData) => ({
+				...prevData,
+				brand_id: selectedBrand.id,
+			}));
+		}
+	};
 
-    try {
-      const {
-        name: newName,
-        description: newDescription,
-        category_id: newcategory_id,
-        price: newPrice,
-        stock: newStock,
-        image_url: newImageUrl,
-      } = formData;
-      if (
-        data?.data?.name !== newName ||
-        data?.data?.description !== newDescription ||
-        data?.data?.category_id !== newcategory_id ||
-        data?.data?.price !== newPrice ||
-        data?.data?.stock !== newStock ||
-        data?.data?.image_url !== newImageUrl
-      ) {
-        const itemResponse = await Item.updateItem(data.data.id, {
-          name: newName,
-          description: newDescription,
-          category_id: newcategory_id,
-          price: newPrice,
-          stock: newStock,
-          image_url: newImageUrl,
-        });
+	const handleStockChange = (e) => {
+		const newStock = e.target.value;
+		setFormData((prevData) => ({
+			...prevData,
+			stock: newStock,
+		}));
+	};
 
-        console.log(itemResponse);
-        console.log(data.data.id);
-        Swal.fire({
-          position: "bottom-end",
-          icon: "success",
-          title: itemResponse.data.message || imageResponse,
-          showConfirmButton: false,
-          timer: 2000,
-          customClass: "swal-custom",
-        }).then(() => {
-          addToTable(itemResponse.data.data);
-          modalCheckbox.current.checked = false;
+	const handleSizeChange = (e) => {
+		const newSize = e.target.value;
+		setFormData((prevData) => ({
+			...prevData,
+			size: newSize,
+		}));
+	};
 
-          setFormData({
-            name: "",
-            description: "",
-            category_id: "",
-            price: "",
-            stock: "",
-            image_url: "",
-          });
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error.message);
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 
-      let errorMessage = "An error occurred. Please try again."; // Default error message
+		try {
+			const { description, price, stock, size, brand_id } = formData;
+			const itemResponse = await Item.updateItem(data.data.id, {
+				description,
+				price,
+				stock,
+				size,
+				brand_id,
+			});
 
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        errorMessage = error.response.data.message;
-      }
+			Swal.fire({
+				position: "bottom-end",
+				icon: "success",
+				title: itemResponse.data.message,
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			}).then(() => {
+				addToTable(itemResponse.data.data);
+				modalCheckbox.current.checked = false;
+			});
+		} catch (error) {
+			const errorMessage =
+				error?.response?.data?.message || "Something went wrong"; // Menambahkan fallback error message
 
-      Swal.fire({
-        position: "bottom-end",
-        icon: "error",
-        title: errorMessage,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      });
-    }
+			console.error("Error:", errorMessage);
+			Swal.fire({
+				position: "bottom-end",
+				icon: "error",
+				title: errorMessage,
+				showConfirmButton: false,
+				timer: 2000,
+				customClass: {
+					popup: document.body.classList.contains("dark")
+						? "swal-custom-dark"
+						: "swal-custom-light",
+				},
+			});
+		}
+	};
 
-    // Check if a new file is selected
-    if (file) {
-      // Create FormData to handle file upload
-      const formData = new FormData();
-      formData.append("name", e.target.name.value);
-      formData.append("description", e.target.description.value);
-      formData.append("category_id", e.target.category_id.value);
-      formData.append("price", e.target.price.value);
-      formData.append("stock", e.target.stock.value);
-      formData.append("image_url", file);
+	return (
+		<>
+			<input
+				type="checkbox"
+				ref={modalCheckbox}
+				id={test}
+				className="modal-toggle"
+			/>
+			<div className="modal" role="dialog">
+				<div
+					className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
+					onClick={() => (modalCheckbox.current.checked = false)}
+				></div>
 
-      // Make a POST request to upload image for the user
-      const imageResponse = await Item.uploadItem(data?.data?.id, formData);
-      console.log(imageResponse);
-      Swal.fire({
-        position: "bottom-end",
-        icon: "success",
-        title: imageResponse.data.message,
-        showConfirmButton: false,
-        timer: 2000,
-        customClass: "swal-custom",
-      });
-    }
-  };
+				<div className="modal-box bg-white dark:bg-boxdark relative z-50">
+					<label
+						htmlFor={test}
+						className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
+					>
+						x
+					</label>
+					<div className="rounded-sm bg-white dark:bg-boxdark">
+						<div className="py-4 px-6.5">
+							<h3 className="font-medium text-center text-black dark:text-white">
+								Edit Item
+							</h3>
+						</div>
 
-  return (
-    <>
-      <input
-        type="checkbox"
-        ref={modalCheckbox}
-        id={test}
-        className="modal-toggle"
-      />
-      <div className="modal" role="dialog">
-        <div className="modal-box bg-white dark:bg-boxdark">
-          <label
-            htmlFor={test}
-            className="bg-[#F1F3FB] dark:bg-graydark dark:text-white w-9 h-9 rounded-full flex items-center justify-center float-right cursor-pointer text-xl text-[#6A718A] hover:text-primary"
-          >
-            x
-          </label>
-          <div className="rounded-sm bg-white dark:bg-boxdark">
-            <div className=" py-4 px-6.5 ">
-              <h3 className="font-medium text-black dark:text-white">
-                Edit data Item
-              </h3>
-            </div>
+						<form action="#" onSubmit={handleSubmit}>
+							<div className="p-6.5 text-start">
+								{/* Input Fields */}
+								{/* ... Field lainnya ... */}
 
-            <form action="#" onSubmit={handleSubmit}>
-              <div className="p-6.5 text-start">
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter  name"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
+								{/* Dropdown Name */}
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										Brand Name
+									</label>
+									<select
+										value={formData.brand_name}
+										onChange={handleNameChange}
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+									>
+										<option value="" disabled>
+											Select Brand Name
+										</option>
+										{[...new Set(brands.map((brand) => brand.name))].map(
+											(name) => (
+												<option key={name} value={name}>
+													{name}
+												</option>
+											)
+										)}
+									</select>
+								</div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    description
-                  </label>
-                  <input
-                    type="text"
-                    name="description"
-                    placeholder="Enter description"
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                    required
-                  />
-                </div>
+								{/* Dropdown Type */}
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										Brand Type
+									</label>
+									<select
+										value={formData.brand_type}
+										onChange={handleTypeChange}
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+										disabled={!formData.brand_name}
+									>
+										<option value="">Select Brand Type</option>
+										{filteredTypes.map((type) => (
+											<option key={type} value={type}>
+												{type}
+											</option>
+										))}
+									</select>
+								</div>
 
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Category
-                  </label>
-                  {dataItem.length > 0 && (
-                    <select
-                      className="mt-3 mb-5 select select-bordered w-full border-stroke bg-transparent py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input"
-                      name="category_id"
-                      value={formData.category_id}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          category_id: e.target.value,
-                        })
-                      }
-                    >
-                    
-                      {dataItem.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    placeholder="Enter price"
-                    value={formData.price}
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Stock
-                  </label>
-                  <input
-                    type="number"
-                    name="stock"
-                    placeholder="Enter Stock"
-                    onChange={handleStockChange}
-                    value={formData.stock}
-                
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required
-                  />
-               
-                </div>
-                <div className="mb-4.5">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Image
-                  </label>
-                  {data?.data?.image_url && (
-                    <div className="mb-3">
-                      <img
-                        src={`/uploads/item/${data.data.image_url}`}
-                        alt="Item Image"
-                        className="w-200 h-200 mb-2"
-                      />
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        image is already uploaded. To replace it, choose a new
-                        image below.
-                      </p>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    name="image_url"
-                    placeholder="Enter Image"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    required={!data?.data?.image_url}
-                  />
-                  {!data?.data?.image_url && (
-                    <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">
-                      No image uploaded. Please choose a photo.
-                    </p>
-                  )}
-                </div>
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										description
+									</label>
+									<input
+										type="text"
+										name="description"
+										placeholder="Enter description"
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+										value={formData.description}
+										onChange={(e) =>
+											setFormData({ ...formData, description: e.target.value })
+										}
+										required
+									/>
+								</div>
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										Size
+									</label>
+									<input
+										type="number"
+										name="size"
+										placeholder="Enter Size"
+										onChange={handleSizeChange}
+										value={formData.size}
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+										required
+									/>
+								</div>
 
-                <input
-                  type="submit"
-                  value={"Edit"}
-                  className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-gray"
-                />
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										Price
+									</label>
+									<input
+										type="number"
+										name="price"
+										placeholder="Enter price"
+										value={formData.price}
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+										onChange={(e) =>
+											setFormData({ ...formData, price: e.target.value })
+										}
+										required
+									/>
+								</div>
+								<div className="mb-4.5">
+									<label className="mb-2.5 block text-black dark:text-white">
+										Stock
+									</label>
+									<input
+										type="number"
+										name="stock"
+										placeholder="Enter Stock"
+										onChange={handleStockChange}
+										value={formData.stock}
+										className="w-full rounded border-[1.5px] text-black dark:text-white border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+										required
+									/>
+								</div>
+								<input
+									type="submit"
+									value="Edit"
+									className="flex w-full justify-center cursor-pointer rounded bg-primary p-3 font-medium text-white"
+								/>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default ModalEditItem;

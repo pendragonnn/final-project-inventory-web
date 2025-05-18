@@ -1,169 +1,180 @@
 const {
-  categorySchema,
-  itemSchema,
-  outletSchema,
-  supplierSchema,
-  transactionDetailSchema,
-  transactionHeaderSchema,
-  userAddSchema,
-  userLoginSchema,
+	categorySchema,
+	itemSchema,
+	outletSchema,
+	supplierSchema,
+	transactionDetailSchema,
+	transactionHeaderSchema,
+	userAddSchema,
+	userLoginSchema,
 } = require("../schema");
+const brandSchema = require("../schema/brand.schema");
 
 const userLoginValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = userLoginSchema.validate(dataToValidate);
+	const { error } = userLoginSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({ status: "fail", message: `login failed, ${errorMessage}` });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res
+			.status(400)
+			.json({ status: "fail", message: `login failed, ${errorMessage}` });
+	}
 
-  next();
+	next();
 };
 
 const userValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = userAddSchema.validate(dataToValidate);
+	const { error } = userAddSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({ status: "fail", message: `add user failed, ${errorMessage}` });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res
+			.status(400)
+			.json({ status: "fail", message: `add user failed, ${errorMessage}` });
+	}
 
-  next();
+	next();
 };
 
 const transactionHeaderValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = transactionHeaderSchema.validate(dataToValidate);
+	const { error } = transactionHeaderSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({
-        status: "fail",
-        message: `add transaction failed, ${errorMessage}`,
-      });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res.status(400).json({
+			status: "fail",
+			message: `add transaction failed, ${errorMessage}`,
+		});
+	}
 
-  next();
+	next();
 };
 
 const transactionDetailValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = transactionDetailSchema.validate(dataToValidate);
+	const { error } = transactionDetailSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({
-        status: "fail",
-        message: `add transaction failed, ${errorMessage}`,
-      });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res.status(400).json({
+			status: "fail",
+			message: `add transaction failed, ${errorMessage}`,
+		});
+	}
 
-  next();
+	next();
 };
 
 const itemValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = itemSchema.validate(dataToValidate);
+	const { error } = itemSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({ status: "fail", message: `add item failed, ${errorMessage}` });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res
+			.status(400)
+			.json({ status: "fail", message: `add item failed, ${errorMessage}` });
+	}
 
-  next();
+	next();
 };
 
 const outletValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = outletSchema.validate(dataToValidate);
+	const { error } = outletSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({ status: "fail", message: `add outlet failed, ${errorMessage}` });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res
+			.status(400)
+			.json({ status: "fail", message: `add outlet failed, ${errorMessage}` });
+	}
 
-  next();
+	next();
 };
 
 const supplierValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = supplierSchema.validate(dataToValidate);
+	const { error } = supplierSchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({
-        status: "fail",
-        message: `add supplier failed, ${errorMessage}`,
-      });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res.status(400).json({
+			status: "fail",
+			message: `add supplier failed, ${errorMessage}`,
+		});
+	}
 
-  next();
+	next();
 };
 
 const categoryValidator = (req, res, next) => {
-  const dataToValidate = req.body;
+	const dataToValidate = req.body;
 
-  const { error } = categorySchema.validate(dataToValidate);
+	const { error } = categorySchema.validate(dataToValidate);
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return res
-      .status(400)
-      .json({
-        status: "fail",
-        message: `add category failed, ${errorMessage}`,
-      });
-  }
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res.status(400).json({
+			status: "fail",
+			message: `add category failed, ${errorMessage}`,
+		});
+	}
 
-  next();
+	next();
+};
+
+const brandValidator = (req, res, next) => {
+	const dataToValidate = req.body;
+
+	const { error } = brandSchema.validate(dataToValidate);
+
+	if (error) {
+		const errorMessage = error.details
+			.map((detail) => detail.message)
+			.join(", ");
+		return res
+			.status(400)
+			.json({ status: "fail", message: `add brand failed, ${errorMessage}` });
+	}
+
+	next();
 };
 
 module.exports = {
-  transactionDetailValidator,
-  transactionHeaderValidator,
-  userValidator,
-  userLoginValidator,
-  itemValidator,
-  outletValidator,
-  supplierValidator,
-  categoryValidator,
+	transactionDetailValidator,
+	transactionHeaderValidator,
+	userValidator,
+	userLoginValidator,
+	itemValidator,
+	outletValidator,
+	supplierValidator,
+	categoryValidator,
+	brandValidator,
 };

@@ -5,33 +5,43 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import TableUser from "@/components/Tables/TableUser";
+import { jwtDecode } from "jwt-decode";
 
 const TablesPage = () => {
-  const router = useRouter();
-  const [user, setUser] = useState(null); // Berikan nilai awal pada useState
+	const router = useRouter();
+	const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const role = Cookies.get("role");
-    setUser(role);
-    console.log(role);
+	useEffect(() => {
+		try {
+			const token = Cookies.get("token");
+			if (!token) throw new Error("Token not found");
 
-    if (role !== "1" && role !== "3") {
-      router.push("/forbidden");
-    }
-  }, []);
+			const decodedToken = jwtDecode(token);
+			const role = decodedToken?.role;
 
-  if (user) {
-    return (
-      <SidebarLayout>
-        <Breadcrumb pageName="Table Users" />
-        <div className="flex flex-col gap-10">
-          <TableUser />
-        </div>
-      </SidebarLayout>
-    );
-  } else {
-    return <p>Loading...</p>; // Atau tampilkan pesan loading atau lainnya jika user belum di-set
-  }
+			if (!role || (role !== "1" && role !== "3")) {
+				throw new Error("Unauthorized role");
+			}
+
+			setUser(role);
+		} catch (error) {
+			console.error("Authentication error:", error.message);
+			router.push("/forbidden");
+		}
+	}, [router]);
+
+	if (user) {
+		return (
+			<SidebarLayout>
+				<Breadcrumb pageName="Table Users" />
+				<div className="flex flex-col gap-10">
+					<TableUser />
+				</div>
+			</SidebarLayout>
+		);
+	} else {
+		return null;
+	}
 };
 
 export default TablesPage;

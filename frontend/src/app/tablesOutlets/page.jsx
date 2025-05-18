@@ -1,37 +1,48 @@
-"use client"
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { useEffect, useState } from "react"
-import TableOutlets from "@/components/Tables/TableOutlet"
-import SidebarLayout from "../sidebar-layout"
-import { useRouter } from "next/navigation"
-import Cookies from "js-cookie"
+"use client";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { useEffect, useState } from "react";
+import TableOutlets from "@/components/Tables/TableOutlet";
+import SidebarLayout from "../sidebar-layout";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode"; // Import correctly
 
 const TablesPage = () => {
-  const router = useRouter()
-  const [user, setUser] = useState(null) // Berikan nilai awal pada useState
+	const router = useRouter();
+	const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const role = Cookies.get("role")
-    setUser(role)
+	useEffect(() => {
+		const token = Cookies.get("token");
 
-    if (!role) {
-      // Ubah kondisi role agar sesuai dengan string '2'
-      router.push("/forbidden")
-    }
-  }, [])
+		if (token) {
+			try {
+				const decodedToken = jwtDecode(token);
+				const role = decodedToken?.role;
 
-  if (user) {
-    return (
-      <SidebarLayout>
-        <Breadcrumb pageName="Table Outlets" />
-        <div className="flex flex-col gap-10">
-          <TableOutlets />
-        </div>
-      </SidebarLayout>
-    )
-  } else {
-    return null
-  }
-}
+				if (!role) {
+					throw new Error("Invalid role");
+				}
 
-export default TablesPage
+				setUser(role);
+			} catch (error) {
+				console.error("Authentication error:", error.message);
+				router.push("/forbidden");
+			}
+		} else {
+			router.push("/login");
+		}
+	}, [router]);
+
+	return (
+		user && (
+			<SidebarLayout>
+				<Breadcrumb pageName="Table Outlets" />
+				<div className="flex flex-col gap-10">
+					<TableOutlets />
+				</div>
+			</SidebarLayout>
+		)
+	);
+};
+
+export default TablesPage;

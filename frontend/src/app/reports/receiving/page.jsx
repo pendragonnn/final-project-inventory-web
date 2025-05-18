@@ -1,180 +1,214 @@
-"use client"
+"use client";
 
-import SidebarLayout from "@/app/sidebar-layout"
-import TableReportReceiving from "@/components/Tables/TableReportReceiving"
-import React from "react"
-import Swal from "sweetalert2"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import SidebarLayout from "@/app/sidebar-layout";
+import React from "react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
-  deleteTransactionHeader,
-  getTransactionHeaderReceiving,
-} from "@/modules/fetch/index"
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import Cookies from "js-cookie"
+	deleteTransactionHeader,
+	getTransactionHeaderReceiving,
+} from "@/modules/fetch/index";
+import Cookies from "js-cookie";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { jwtDecode } from "jwt-decode";
+import TableReportReceiving from "@/components/Tables/TableReportReceiving";
+import Loader from "@/components/common/Loader";
 
-const ReportsReceiving = () => {
-  const [user, setUser] = useState(null)
-  const [data, setData] = useState([])
-  const [allData, setAllData] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
-  const [totalItems, setTotalItems] = useState(0)
-  const [searchTerm, setSearchTerm] = useState("")
-  const size = 10
-  const router = useRouter()
+const ReportReceiving = () => {
+	const [user, setUser] = useState(null);
+	const [data, setData] = useState([]);
+	const [allData, setAllData] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	const [totalItems, setTotalItems] = useState(0);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [size, setSize] = useState(10);
+	const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getTransactionHeaderReceiving(currentPage, size)
-        setData(res.data)
+	const router = useRouter();
 
-        const allRes = await getTransactionHeaderReceiving(1, res.totalItems)
-        setAllData(allRes.data)
-        setTotalPages(res.totalPages)
-        setTotalItems(res.totalItems)
-      } catch (error) {
-        console.log("Error Fetching data", error)
-      }
-    }
+	useEffect(() => {
+		const fetchData = async () => {
+			const minimumLoading = new Promise((resolve) => setTimeout(resolve, 500));
+			try {
+				const res = await getTransactionHeaderReceiving(currentPage, size);
+				setData(res.data);
+				const allRes = await getTransactionHeaderReceiving(1, res.totalItems);
+				setAllData(allRes.data);
+				setTotalPages(res.totalPages);
+				setTotalItems(res.totalItems);
 
-    fetchData()
-  }, [currentPage, size]) // Sertakan dependensi dalam array dependensi
+				await minimumLoading;
 
-  useEffect(() => {
-    const role = Cookies.get("role")
-    setUser(role)
+				setLoading(false);
+			} catch (error) {
+				console.error("Error Fetching data:", error);
+			}
+		};
 
-    if (!role) {
-      // Ubah kondisi role agar sesuai dengan string '2'
-      router.push("/dashboard")
-    }
-  }, [])
+		fetchData();
+	}, [currentPage, size]); // Sertakan 'size' sebagai dependensi
 
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      try {
-        if (result.isConfirmed) {
-          await deleteTransactionHeader(id)
-          setData((prevData) =>
-            prevData.filter((transaction) => transaction.id !== id)
-          )
-          Swal.fire({
-            position: "bottom-end",
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success",
-            customClass: "swal-custom-delete",
-          })
-          const res = await getTransactionHeaderReceiving(currentPage, size)
-          console.log("res", res.data)
-          setData(res.data)
+	const handleSizeChange = (newSize) => {
+		setSize(newSize);
+		setCurrentPage(1); // Reset ke halaman pertama saat ukuran data berubah
+	};
 
-          setTotalPages(res.totalPages)
-          setTotalItems(res.totalItems)
-          setCurrentPage(res.currentPage)
+	const paginationHandle = async (currentPage) => {
+		setCurrentPage(currentPage);
+	};
 
-          if (
-            res.totalItems % (size * res.totalPages) <= size &&
-            currentPage > 1
-          ) {
-            paginationHandle(currentPage - 1)
-          } else {
-            paginationHandle(res.currentPage)
-          }
-        }
-      } catch (e) {
-        Swal.fire({
-          position: "bottom-end",
-          icon: "error",
-          title: e.message,
-          showConfirmButton: false,
-          timer: 2000,
-          customClass: "swal-custom",
-        })
-      }
-    })
-  }
+	const onPaginationNext = async (currentPage) => {
+		setCurrentPage(currentPage + 1);
+	};
 
-  const paginationHandle = async (currentPage) => {
-    setCurrentPage(currentPage)
-  }
+	const onPaginationPrevious = async (currentPage) => {
+		setCurrentPage(currentPage - 1);
+	};
 
-  const onPaginationNext = async (currentPage) => {
-    setCurrentPage(currentPage + 1)
-  }
+	const handleSearchChange = (event) => {
+		setSearchTerm(event.target.value);
+	};
 
-  const onPaginationPrevious = async (currentPage) => {
-    setCurrentPage(currentPage - 1)
-  }
+	function formatDate(isoDate) {
+		const date = new Date(isoDate);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0"); // Menambahkan leading zero jika bulan < 10
+		const day = String(date.getDate()).padStart(2, "0"); // Menambahkan leading zero jika tanggal < 10
+		return `${year}-${month}-${day}`;
+	}
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value)
-  }
+	const searchByTransactionDate = (data, searchTerm) => {
+		return data.filter((transaction) => {
+			const formattedDate = formatDate(transaction.transaction_date);
+			const fullName = transaction?.User?.full_name?.toLowerCase();
+			const supplier = transaction?.Supplier?.name?.toLowerCase();
 
-  function formatDate(isoDate) {
-    const date = new Date(isoDate)
-    const options = { day: "numeric", month: "long", year: "numeric" }
-    return date.toLocaleDateString("id-ID", options)
-  }
+			return (
+				formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				fullName?.includes(searchTerm.toLowerCase()) ||
+				supplier?.includes(searchTerm.toLowerCase())
+			);
+		});
+	};
 
-  const searchByTransactionDate = (data, searchTerm) => {
-    return data.filter((transaction) => {
-      const formattedDate = formatDate(transaction.transaction_date)
-      const fullName = transaction?.User?.full_name?.toLowerCase()
-      const outlet = transaction?.Supplier?.name?.toLowerCase()
+	// Contoh penggunaan pada filteredData
+	const filteredData = searchTerm
+		? searchByTransactionDate(allData, searchTerm)
+		: data.sort(
+				(a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
+		  );
 
-      return (
-        formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        fullName?.includes(searchTerm.toLowerCase()) ||
-        outlet?.includes(searchTerm.toLowerCase())
-      )
-    })
-  }
+	useEffect(() => {
+		try {
+			const token = Cookies.get("token");
 
-  // Contoh penggunaan pada filteredData
-  const filteredData = searchTerm
-    ? searchByTransactionDate(allData, searchTerm)
-    : data.sort(
-        (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
-      )
+			if (!token) {
+				throw new Error("Token not found");
+			}
 
-  if (user) {
-    return (
-      <SidebarLayout>
-        <Breadcrumb pageName="Tables" />
-        <div className="flex flex-col gap-10">
-          <TableReportReceiving
-            formatDate={formatDate}
-            handleDelete={handleDelete}
-            user={user}
-            paginationHandle={paginationHandle}
-            onPaginationNext={onPaginationNext}
-            onPaginationPrevious={onPaginationPrevious}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            searchTerm={searchTerm}
-            handleSearchChange={handleSearchChange}
-            filteredData={filteredData}
-            allData={allData}
-            size={size}
-            router={router}
-          />
-        </div>
-      </SidebarLayout>
-    )
-  } else {
-    return null
-  }
-}
+			const decodedToken = jwtDecode(token);
+			const role = decodedToken.role;
+			if (role !== "1" && role !== "2" && role !== "3") {
+				router.push("/dashboard");
+			} else {
+				setUser(role);
+			}
+		} catch (error) {
+			console.error("Invalid or expired token:", error.message);
+			Cookies.remove("token");
+			router.push("/");
+		}
+	}, [router]);
 
-export default ReportsReceiving
+	const handleDelete = async (id) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, delete it!",
+		}).then(async (result) => {
+			try {
+				if (result.isConfirmed) {
+					await deleteTransactionHeader(id);
+					setData((prevData) =>
+						prevData.filter((transaction) => transaction.id !== id)
+					);
+					setAllData((prevAllData) =>
+						prevAllData.filter((transaction) => transaction.id !== id)
+					);
+
+					Swal.fire({
+						position: "bottom-end",
+						title: "Deleted!",
+						text: "Your file has been deleted.",
+						icon: "success",
+						customClass: "swal-custom-delete",
+					});
+
+					// Refresh data dari server untuk memastikan sinkronisasi
+					const res = await getTransactionHeaderReceiving(currentPage, size);
+					setData(res.data);
+					setTotalPages(res.totalPages);
+					setTotalItems(res.totalItems);
+
+					if (
+						res.totalItems % (size * res.totalPages) <= size &&
+						currentPage > 1
+					) {
+						paginationHandle(currentPage - 1);
+					} else {
+						paginationHandle(res.currentPage);
+					}
+				}
+			} catch (e) {
+				Swal.fire({
+					position: "bottom-end",
+					icon: "error",
+					title: e.message,
+					showConfirmButton: false,
+					timer: 2000,
+					customClass: "swal-custom",
+				});
+			}
+		});
+	};
+
+	if (loading) {
+		return <Loader />;
+	}
+
+	if (user) {
+		return (
+			<SidebarLayout>
+				<Breadcrumb pageName="Report Receiving" />
+				<TableReportReceiving
+					reportType="Receiving"
+					formatDate={formatDate}
+					handleDelete={handleDelete}
+					user={user}
+					paginationHandle={paginationHandle}
+					onPaginationNext={onPaginationNext}
+					onPaginationPrevious={onPaginationPrevious}
+					currentPage={currentPage}
+					totalPages={totalPages}
+					searchTerm={searchTerm}
+					handleSearchChange={handleSearchChange}
+					filteredData={filteredData}
+					allData={allData}
+					size={size}
+					setSize={handleSizeChange}
+					router={router}
+				/>
+			</SidebarLayout>
+		);
+	} else {
+		return null;
+	}
+};
+
+export default ReportReceiving;
